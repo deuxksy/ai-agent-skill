@@ -1,0 +1,9 @@
+{
+  "name": "ecoai",
+  "description": "EcoAI project skills for React Native development and deployment",
+  "version": "1.0.0",
+  "author": {
+    "name": "Crong"
+  },
+  "skills": "./skills/"
+}
