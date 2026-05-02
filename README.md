@@ -18,7 +18,7 @@ Claude Code용 커스텀 Skill 플러그인. 개인 자동화 스킬 모음.
 ### Marketplace 등록 (최초 1회)
 
 ```
-claude plugin marketplace add https://repository.kr/crong/crong.git
+claude plugin marketplace add https://github.com/deuxksy/ai-agent-skill.git
 ```
 
 ### Plugin 설치
