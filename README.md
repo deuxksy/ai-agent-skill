@@ -1,4 +1,4 @@
-# EcoAI
+# AI-Agent-Skill
 
 Claude Code용 커스텀 Skill 플러그인. 개인 자동화 스킬 모음.
 
@@ -18,19 +18,19 @@ Claude Code용 커스텀 Skill 플러그인. 개인 자동화 스킬 모음.
 ### Marketplace 등록 (최초 1회)
 
 ```
-claude plugin marketplace add https://repository.kr/crong/ecoai.git
+claude plugin marketplace add https://repository.kr/crong/crong.git
 ```
 
 ### Plugin 설치
 
 ```
-claude plugin install ecoai
+claude plugin install crong
 ```
 
 ### 대화형 명령어로 설치
 
 ```
-/plugin install ecoai
+/plugin install crong
 ```
 
 ## 사용
@@ -38,24 +38,24 @@ claude plugin install ecoai
 Claude Code 대화에서 Skill 트리거 키워드 사용 또는 Skill 직접 호출:
 
 ```
-/ecoai:deploy-android-wifi
-/ecoai:security-audit
-/ecoai:korean-translation-verify
-/ecoai:openwrt-initd-service
-/ecoai:hot-game-deals-n-news
-/ecoai:exchange-rate-tracker
+/crong:deploy-android-wifi
+/crong:security-audit
+/crong:korean-translation-verify
+/crong:openwrt-initd-service
+/crong:hot-game-deals-n-news
+/crong:exchange-rate-tracker
 ```
 
 ## 업그레이드
 
 ```bash
-claude plugin update ecoai
+claude plugin update crong
 ```
 
 ## 제거
 
 ```bash
-claude plugin uninstall ecoai
+claude plugin uninstall crong
 ```
 
 ## Skill 개발

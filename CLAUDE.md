@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## 프로젝트 개요
 
-**ecoai** — Claude Code 플러그인. 개인 자동화 Skill 모음.
+**crong** — Claude Code 플러그인. 개인 자동화 Skill 모음.
 
 - Author: Crong (kyolim)
 - 버전 관리: Conventional Commits (말머리 영어, 메시지 한국어)
