@@ -12,9 +12,10 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## 구조
 
 ```
-.claude-plugin/
-├── plugin.json          # 플러그인 매니페스트
-├── marketplace.json     # 마켓플레이스 등록 정보
+.
+├── .claude-plugin/
+│   ├── plugin.json          # 플러그인 매니페스트
+│   └── marketplace.json     # 마켓플레이스 등록 정보
 └── skills/
     ├── deploy-android-wifi/       # WiFi ADB 배포 자동화
     ├── security-audit/            # 보안 취약점 점검
@@ -37,7 +38,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 | `deploy-android-wifi` | WiFi ADB로 Android 기기에 React Native 앱 빌드/배포 자동화 |
 | `security-audit` | 크로스 플랫폼 보안 취약점 및 업데이트 점검 (brew, npm, pip, mise 등) |
 | `korean-translation-verify` | Gemma API로 한국어 기술 문서 번역 품질 검증 |
-| `openwrt-initd-service` | OpenWrt init.d 백그라운드 서비스 설치 (procd 감시) |
+| `openwrt-initd` | OpenWrt init.d 백그라운드 서비스 설치 (procd 감시) |
 | `hot-game-deals-n-news` | Steam/Epic/GOG 게임 할인, 무료 게임, 뉴스 체크 |
 | `exchange-rate-tracker` | USD/KRW, USD/VND 환율 수집 및 그래프 시각화 |
 
