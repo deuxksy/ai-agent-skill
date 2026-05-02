@@ -1,12 +1,17 @@
 # EcoAI
 
-Claude Code용 커스텀 Skill 플러그인. React Native Android 배포 자동화 제공.
+Claude Code용 커스텀 Skill 플러그인. 개인 자동화 스킬 모음.
 
 ## Skill 목록
 
 | Skill | 설명 |
 | :--- | :--- |
 | `deploy-android-wifi` | WiFi ADB로 Android 기기에 React Native 앱 빌드/배포 자동화 |
+| `security-audit` | 크로스 플랫폼 보안 취약점 및 업데이트 점검 (brew, npm, pip, mise 등) |
+| `korean-translation-verify` | Gemma API로 한국어 기술 문서 번역 품질 검증 |
+| `openwrt-initd-service` | OpenWrt init.d 백그라운드 서비스 설치 (procd 감시) |
+| `hot-game-deals-n-news` | Steam/Epic/GOG 게임 할인, 무료 게임, 뉴스 체크 |
+| `exchange-rate-tracker` | USD/KRW, USD/VND 환율 수집 및 그래프 시각화 |
 
 ## 설치
 
@@ -30,28 +35,21 @@ claude plugin install ecoai
 
 ## 사용
 
-Claude Code 대화에서 Skill 트리거 키워드 사용:
-
-```
-배포해줘
-디플로이
-deploy
-```
-
-또는 Skill 직접 호출:
+Claude Code 대화에서 Skill 트리거 키워드 사용 또는 Skill 직접 호출:
 
 ```
 /ecoai:deploy-android-wifi
+/ecoai:security-audit
+/ecoai:korean-translation-verify
+/ecoai:openwrt-initd-service
+/ecoai:hot-game-deals-n-news
+/ecoai:exchange-rate-tracker
 ```
 
 ## 업그레이드
 
 ```bash
-# Plugin 업데이트
 claude plugin update ecoai
-
-# 대화형 명령어
-/plugin update ecoai
 ```
 
 ## 제거
@@ -64,7 +62,7 @@ claude plugin uninstall ecoai
 
 ### 새 Skill 추가
 
-1. `.claude-plugin/skills/<skill-name>/SKILL.md` 생성
+1. `skills/<skill-name>/SKILL.md` 생성
 2. 아래 프론트매터 형식 준수:
 
 ```markdown
@@ -85,11 +83,6 @@ description: Skill 설명
 
 [Semantic Versioning](https://semver.org/) 준수. `plugin.json`과 `marketplace.json` 버전 동기화 필수.
 
-```bash
-# patch 업그레이드 예시 (1.0.0 → 1.0.1)
-# plugin.json, marketplace.json 두 파일 모두 수정 후 커밋
-```
-
 ## 프로젝트 구조
 
 ```
@@ -98,8 +91,24 @@ description: Skill 설명
 │   ├── plugin.json           # 플러그인 매니페스트
 │   ├── marketplace.json      # 마켓플레이스 등록 정보
 │   └── skills/
-│       └── deploy-android-wifi/
-│           └── SKILL.md      # 배포 자동화 Skill
-├── CLAUDE.md                 # Claude Code 프로젝트 가이드
+│       ├── deploy-android-wifi/
+│       │   └── SKILL.md
+│       ├── security-audit/
+│       │   ├── SKILL.md
+│       │   └── references/
+│       ├── korean-translation-verify/
+│       │   ├── SKILL.md
+│       │   ├── scripts/
+│       │   └── pyproject.toml
+│       ├── openwrt-initd/
+│       │   └── SKILL.md
+│       ├── hot-game-deals-n-news/
+│       │   ├── SKILL.md
+│       │   └── references/
+│       └── exchange-rate-tracker/
+│           ├── SKILL.md
+│           ├── scripts/
+│           └── references/
+├── CLAUDE.md
 └── README.md
 ```

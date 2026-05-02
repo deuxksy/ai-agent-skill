@@ -1,0 +1,29 @@
+# API Keys Example
+
+이 파일을 `api-keys.md`로 복사하고 실제 API 키를 입력하세요.
+
+## Steam API
+- **API Key:** YOUR_STEAM_API_KEY_HERE
+- **User ID:** YOUR_STEAM_USER_ID_HERE
+- **위시리스트 API:** `https://api.steampowered.com/IWishlistService/GetWishlist/v1/?steamid={USER_ID}`
+
+## IsThereAnyDeal API
+- **Client ID:** YOUR_CLIENT_ID_HERE
+- **Client Secret:** YOUR_CLIENT_SECRET_HERE
+- **API Key:** YOUR_API_KEY_HERE
+- **Docs:** https://docs.isthereanydeal.com
+- **OpenAPI Spec:** https://docs.isthereanydeal.com/openapi.json
+
+---
+
+## API 키 발급 방법
+
+### Steam API Key
+1. https://steamcommunity.com/dev/apikey 접속
+2. 로그인 후 API 키 발급
+
+### IsThereAnyDeal API
+1. https://isthereanydeal.com/dev/app/ 접속
+2. 앱 등록 후 Client ID, Client Secret, API Key 발급
+
+⚠️ **보안:** `api-keys.md`는 절대 git에 커밋하지 마세요!

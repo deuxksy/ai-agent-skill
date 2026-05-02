@@ -7,8 +7,8 @@
     {
       "name": "ecoai",
       "source": "./",
-      "description": "EcoAI project skills for React Native development and deployment",
-      "version": "1.0.1"
+      "description": "Personal skill collection: Android deploy, security audit, Korean translation verify, OpenWrt service, game deals, exchange rate tracker",
+      "version": "1.1.0"
     }
   ]
 }

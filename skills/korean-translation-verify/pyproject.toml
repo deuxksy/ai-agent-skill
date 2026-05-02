@@ -1,0 +1,8 @@
+[project]
+name = "korean-translation-verify"
+version = "0.1.0"
+description = "GL.iNet 한국어 번역 검증 도구"
+requires-python = ">=3.14"
+dependencies = [
+    "requests>=2.32.5",
+]
