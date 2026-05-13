@@ -131,6 +131,7 @@ start() {
 | procd_status not found | Use pgrep or PID file instead |
 | `status()` ignored by rc.common | Rename to `info()` — rc.common has built-in `status` |
 | Wrong CLI flags | Run `<binary> --help` before writing script to verify flags |
+| Data lost on reboot | `/var` → `/tmp` symlink; use `/etc/<service>/` for persistent data |
 
 ## Service Script Template
 
@@ -143,9 +144,10 @@ STOP=10
 PROG="/usr/bin/service"
 LOG_FILE="/var/log/service.log"
 PID_FILE="/var/run/service.pid"
+DATA_DIR="/etc/service"
 
 start() {
-    mkdir -p /var/log /var/run || return 1
+    mkdir -p /var/log /var/run "$DATA_DIR" || return 1
 
     # Read UCI config (optional)
     local setting=$(uci get service.main.setting 2>/dev/null)
@@ -158,6 +160,7 @@ start() {
     umask 077
     touch "$LOG_FILE"
 
+    export DATA_DIR
     "$PROG" \
         --config "$setting" \
         >> "$LOG_FILE" 2>&1 &
