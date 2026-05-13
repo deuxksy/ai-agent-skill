@@ -55,7 +55,8 @@ start_service() {
 | Set executable | chmod +x /etc/init.d/service-name |
 | Enable autostart | /etc/init.d/service-name enable |
 | Start service | /etc/init.d/service-name start |
-| Check status | /etc/init.d/service-name status |
+| Check status | pgrep -f /usr/bin/service or cat /var/run/service.pid |
+| Service info | /etc/init.d/service-name info |
 | Stop service | /etc/init.d/service-name stop |
 
 ## UCI Configuration (Optional)
@@ -128,6 +129,8 @@ start() {
 | Permissions too open | Set umask: umask 077 before touch |
 | Binary not found | Copy to /usr/bin/ not /usr/local/bin |
 | procd_status not found | Use pgrep or PID file instead |
+| `status()` ignored by rc.common | Rename to `info()` — rc.common has built-in `status` |
+| Wrong CLI flags | Run `<binary> --help` before writing script to verify flags |
 
 ## Service Script Template
 
@@ -187,7 +190,7 @@ restart() {
     start
 }
 
-status() {
+info() {
     if [ -f "$PID_FILE" ]; then
         local pid=$(cat "$PID_FILE")
         if kill -0 "$pid" 2>/dev/null; then
