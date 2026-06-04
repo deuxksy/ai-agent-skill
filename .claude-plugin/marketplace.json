@@ -5,7 +5,7 @@
   },
   "plugins": [
     {
-      "name": "crong",
+      "name": "deuxksy",
       "source": "./",
       "description": "Personal skill collection: Android deploy, security audit, Korean translation verify, OpenWrt service, game deals, exchange rate tracker",
       "version": "1.1.0"
