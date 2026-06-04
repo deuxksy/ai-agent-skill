@@ -1,6 +1,6 @@
-# AI-Agent-Skill
+# AI Agent Skill
 
-Claude Code용 커스텀 Skill 플러그인. 개인 자동화 스킬 모음.
+개인 자동화 AI Agent Skill 플러그인.
 
 ## Skill 목록
 
@@ -91,21 +91,21 @@ description: Skill 설명
 │   ├── plugin.json           # 플러그인 매니페스트
 │   └── marketplace.json      # 마켓플레이스 등록 정보
 ├── skills/
-│   ├── deploy-android-wifi/
+│   ├── deploy-android-wifi/       # WiFi ADB 배포 자동화
 │   │   └── SKILL.md
-│   ├── security-audit/
+│   ├── security-audit/            # 보안 취약점 점검
 │   │   ├── SKILL.md
 │   │   └── references/
-│   ├── korean-translation-verify/
+│   ├── korean-translation-verify/ # 한국어 번역 품질 검증
 │   │   ├── SKILL.md
 │   │   ├── scripts/
 │   │   └── pyproject.toml
-│   ├── openwrt-initd/
+│   ├── openwrt-initd/             # OpenWrt init.d 서비스 설치
 │   │   └── SKILL.md
-│   ├── hot-game-deals-n-news/
+│   ├── hot-game-deals-n-news/     # 게임 할인/뉴스 트래커
 │   │   ├── SKILL.md
 │   │   └── references/
-│   └── exchange-rate-tracker/
+│   └── exchange-rate-tracker/     # 환율 추적 (USD/KRW, USD/VND)
 │       ├── SKILL.md
 │       ├── scripts/
 │       └── references/
