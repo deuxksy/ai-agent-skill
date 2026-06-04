@@ -15,100 +15,13 @@
 
 ## 설치
 
-### Marketplace 등록 (최초 1회)
-
 ```
 claude plugin marketplace add deuxksy/ai-agent-skill
-```
-
-### Plugin 설치
-
-```
 claude plugin install deuxksy@zzizily
-```
-
-### 대화형 명령어로 설치
-
-```
-/plugin install deuxksy@zzizily
 ```
 
 ## 사용
 
-Claude Code 대화에서 Skill 트리거 키워드 사용 또는 Skill 직접 호출:
-
 ```
-/zzizily:deploy-android-wifi
-/zzizily:security-audit
-/zzizily:korean-translation-verify
-/zzizily:openwrt-initd
-/zzizily:hot-game-deals-n-news
-/zzizily:exchange-rate-tracker
-```
-
-## 업그레이드
-
-```bash
-claude plugin update deuxksy@zzizily
-```
-
-## 제거
-
-```bash
-claude plugin uninstall deuxksy@zzizily
-```
-
-## Skill 개발
-
-### 새 Skill 추가
-
-1. `skills/<skill-name>/SKILL.md` 생성
-2. 아래 프론트매터 형식 준수:
-
-```markdown
----
-name: skill-name
-description: Skill 설명
----
-
-# Skill Title
-
-...
-```
-
-3. `plugin.json`의 `version` patch 업그레이드
-4. 커밋 & 푸시
-
-### 버전 관리
-
-[SemVer](https://semver.org/) 기준. `plugin.json` / `marketplace.json` 버전 동기화.
-
-## 프로젝트 구조
-
-```
-.
-├── .claude-plugin/
-│   ├── plugin.json           # 플러그인 매니페스트
-│   └── marketplace.json      # 마켓플레이스 등록 정보
-├── skills/
-│   ├── deploy-android-wifi/       # WiFi ADB 배포 자동화
-│   │   └── SKILL.md
-│   ├── security-audit/            # 보안 취약점 점검
-│   │   ├── SKILL.md
-│   │   └── references/
-│   ├── korean-translation-verify/ # 한국어 번역 품질 검증
-│   │   ├── SKILL.md
-│   │   ├── scripts/
-│   │   └── pyproject.toml
-│   ├── openwrt-initd/             # OpenWrt init.d 서비스 설치
-│   │   └── SKILL.md
-│   ├── hot-game-deals-n-news/     # 게임 할인/뉴스 트래커
-│   │   ├── SKILL.md
-│   │   └── references/
-│   └── exchange-rate-tracker/     # 환율 추적 (USD/KRW, USD/VND)
-│       ├── SKILL.md
-│       ├── scripts/
-│       └── references/
-├── CLAUDE.md
-└── README.md
+/zzizily:<skill-name>
 ```

@@ -2,7 +2,17 @@
 
 ## 프로젝트 개요
 
-**zzizily** — 개인 자동화 Skill 모음.
+**zzizily** — 개인 자동화 AI Agent Skill 플러그인.
+
+## 플러그인 메타
+
+| 항목 | 값 |
+| :--- | :--- |
+| Plugin name | `zzizily` (plugin.json) |
+| Marketplace plugin name | `deuxksy` (marketplace.json) |
+| Marketplace name | `zzizily` |
+| 호출 prefix | `/zzizily:<skill-name>` |
+| GitHub repo | `deuxksy/ai-agent-skill` |
 
 ## 구조
 
@@ -26,13 +36,9 @@
         └── references/
 ```
 
-## Skill 호출
+## SKILL.md 규격
 
-모든 스킬은 `/zzizily:<skill-name>` 형식으로 호출.
-
-## SKILL.md 구조
-
-각 스킬 디렉토리에 `SKILL.md` 파일이 필수. 최소 구조:
+각 스킬 디렉토리에 `SKILL.md` 필수. 최소 구조:
 
 ```markdown
 ---
@@ -44,11 +50,16 @@ description: <한 줄 설명>
 <스킬 실행 로직>
 ```
 
-## 개발 명령
+## 개발 워크플로우
 
-플러그인 자체는 빌드/테스트 과정이 없음. Skill 파일(SKILL.md)을 직접 편집 후 커밋.
+빌드/테스트 과정 없음. SKILL.md 직접 편집 후 커밋.
 
-새 Skill 추가 시:
+### 새 Skill 추가
+
 1. `skills/<skill-name>/SKILL.md` 생성
-2. `plugin.json`의 `skills` 경로가 `./skills/`를 가리키므로 자동 인식
-3. `/reload-plugins` 로 플러그인 리로드 후 `/zzizily:<skill-name>` 호출 테스트
+2. `plugin.json` `skills` 경로가 `./skills/` → 자동 인식
+3. `/reload-plugins` 후 `/zzizily:<skill-name>` 테스트
+
+### 버전 관리
+
+[SemVer](https://semver.org/). `plugin.json` / `marketplace.json` 버전 동기화 필수.
