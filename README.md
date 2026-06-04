@@ -38,12 +38,12 @@ claude plugin install crong@zzizily
 Claude Code 대화에서 Skill 트리거 키워드 사용 또는 Skill 직접 호출:
 
 ```
-/crong:deploy-android-wifi
-/crong:security-audit
-/crong:korean-translation-verify
-/crong:openwrt-initd
-/crong:hot-game-deals-n-news
-/crong:exchange-rate-tracker
+/zzizily:deploy-android-wifi
+/zzizily:security-audit
+/zzizily:korean-translation-verify
+/zzizily:openwrt-initd
+/zzizily:hot-game-deals-n-news
+/zzizily:exchange-rate-tracker
 ```
 
 ## 업그레이드
