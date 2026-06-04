@@ -1,13 +1,8 @@
 # CLAUDE.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
-
 ## 프로젝트 개요
 
-**crong** — Claude Code 플러그인. 개인 자동화 Skill 모음.
-
-- Author: Crong (kyolim)
-- 버전 관리: Conventional Commits (말머리 영어, 메시지 한국어)
+**zzizily** — 개인 자동화 Skill 모음.
 
 ## 구조
 
@@ -31,16 +26,23 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
         └── references/
 ```
 
-## Skills
+## Skill 호출
 
-| Skill | 설명 |
-| :--- | :--- |
-| `deploy-android-wifi` | WiFi ADB로 Android 기기에 React Native 앱 빌드/배포 자동화 |
-| `security-audit` | 크로스 플랫폼 보안 취약점 및 업데이트 점검 (brew, npm, pip, mise 등) |
-| `korean-translation-verify` | Gemma API로 한국어 기술 문서 번역 품질 검증 |
-| `openwrt-initd` | OpenWrt init.d 백그라운드 서비스 설치 (procd 감시) |
-| `hot-game-deals-n-news` | Steam/Epic/GOG 게임 할인, 무료 게임, 뉴스 체크 |
-| `exchange-rate-tracker` | USD/KRW, USD/VND 환율 수집 및 그래프 시각화 |
+모든 스킬은 `/zzizily:<skill-name>` 형식으로 호출.
+
+## SKILL.md 구조
+
+각 스킬 디렉토리에 `SKILL.md` 파일이 필수. 최소 구조:
+
+```markdown
+---
+name: <skill-name>
+description: <한 줄 설명>
+---
+
+## 지침
+<스킬 실행 로직>
+```
 
 ## 개발 명령
 
@@ -49,3 +51,4 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 새 Skill 추가 시:
 1. `skills/<skill-name>/SKILL.md` 생성
 2. `plugin.json`의 `skills` 경로가 `./skills/`를 가리키므로 자동 인식
+3. `/reload-plugins` 로 플러그인 리로드 후 `/zzizily:<skill-name>` 호출 테스트
