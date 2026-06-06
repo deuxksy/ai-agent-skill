@@ -1,6 +1,6 @@
 ---
 name: setup
-description: "Setup machine from dotfiles. Detects hostname and runs stow, brew bundle, sops decryption, and Tailscale Aperture configuration. Requires ~/git/dotfiles to exist. Use when setting up a new machine or reconfiguring."
+description: "Setup machine from dotfiles. Detects hostname and runs brew bundle, stow, sops decryption, and Tailscale Aperture configuration. Requires ~/git/dotfiles to exist. Use when setting up a new machine or reconfiguring."
 ---
 
 # Setup
@@ -16,11 +16,11 @@ description: "Setup machine from dotfiles. Detects hostname and runs stow, brew 
 
 | Hostname | OS | stow 패키지 | 추가 설정 |
 | :--- | :--- | :--- | :--- |
-| axiom | macOS | `base`, `axiom` | brew bundle, sops, Aperture |
-| eve | macOS | `base`, `eve` | brew bundle, sops, Aperture |
+| axiom | macOS | `base`, `axiom` | brew bundle, stow, sops, Aperture |
+| eve | macOS | `base`, `eve` | brew bundle, stow, sops, Aperture |
 | mo | NixOS | `base`, `mo` | nixos-rebuild, sops, Aperture |
 | girl | SteamOS | `base`, `girl` | mise |
-| walle | Debian | `base`, `walle` | sops |
+| walle | Proxmox (Debian) | `base`, `walle` | sops |
 
 ## Workflow
 
@@ -30,7 +30,7 @@ description: "Setup machine from dotfiles. Detects hostname and runs stow, brew 
 if [ ! -d "$HOME/git/dotfiles" ]; then
   echo "~/git/dotfiles를 찾을 수 없습니다. 먼저 clone 해주세요."
   echo "  git clone git@github.com:deuxksy/dotfiles.git ~/git/dotfiles"
-  # 중단
+  exit 1
 fi
 ```
 
@@ -38,14 +38,45 @@ fi
 
 ```bash
 HOSTNAME=$(hostname -s 2>/dev/null || hostname | sed 's/\..*//')
+
+case $HOSTNAME in
+  axiom|eve|mo|girl|walle) ;;
+  *)
+    echo "지원하지 않는 hostname: $HOSTNAME"
+    echo "지원 목록: axiom, eve, mo, girl, walle"
+    exit 1
+    ;;
+esac
 ```
 
-지원하지 않는 hostname이면 중단.
+### 3. 패키지 설치 (stow보다 먼저)
 
-### 3. stow 배포
+```bash
+# macOS (axiom, eve) - Brewfile이 stow를 포함하므로 먼저 실행
+cd ~ && brew bundle --file=~/git/dotfiles/$HOSTNAME/Brewfile
+
+# NixOS (mo) - flake가 모든 패키지(stow 포함)를 관리
+sudo nixos-rebuild switch --flake ~/git/dotfiles/nix/nixos#mo
+
+# SteamOS (girl) - mise로 런타임 설치
+cd ~/git/dotfiles/$HOSTNAME/scripts && ./setup.sh
+
+# Proxmox/Debian (walle) - apt + 스크립트
+apt install -y stow sops
+cd ~/git/dotfiles/$HOSTNAME/scripts && ./install_nvtools.sh
+```
+
+### 4. stow 배포
 
 ```bash
 cd ~/git/dotfiles
+
+# 충돌 사전 확인
+stow -t ~ --simulate --verbose base 2>&1
+
+# 충돌이 있으면 사용자에게 확인 후 처리
+# 옵션 1: 기존 파일 백업 후 제거
+# 옵션 2: stow --adopt -t ~ (기존 파일을 dotfiles로 이동)
 
 # 공통 (모든 호스트)
 stow -t ~ base
@@ -60,27 +91,34 @@ case $HOSTNAME in
 esac
 ```
 
-stow 충돌 시 기존 파일을 백업 후 제거하거나 `stow --adopt -t ~` 사용.
-
-### 4. 패키지 설치
-
-```bash
-# macOS (axiom, eve)
-cd ~ && brew bundle --file=~/git/dotfiles/$HOSTNAME/Brewfile
-
-# NixOS (mo)
-sudo nixos-rebuild switch --flake ~/git/dotfiles/nix/nixos#mo
-```
+stow 충돌 시 `--simulate --verbose`로 먼저 확인. 사용자 승인 후에만 `--adopt` 사용.
 
 ### 5. secrets 복호화
 
 ```bash
-# ~/.key 복호화 (sops age 키)
-eval "$(sops -d ~/.key)"
+# ~/.key 존재 확인
+if [ ! -f ~/.key ]; then
+  echo "~/.key 파일이 없습니다. sops 복호화를 스킵합니다."
+  echo "age 키를 수동으로 배치해주세요."
+else
+  # 복호화 성공 여부 확인
+  if ! sops -d ~/.key >/dev/null 2>&1; then
+    echo "~/.key 복호화 실패. age 키를 확인해주세요."
+  else
+    eval "$(sops -d ~/.key)"
+  fi
+fi
 
-# .env.sops 파일이 있는 경우
+# .env.sops 파일이 있는 경우 - 비원자적 덮어쓰기 방지
 if [ -f ~/.hermes/.env.sops ]; then
-  sops -d ~/.hermes/.env.sops > ~/.hermes/.env
+  TMPFILE=$(mktemp)
+  if sops -d ~/.hermes/.env.sops > "$TMPFILE" 2>/dev/null; then
+    install -m 600 "$TMPFILE" ~/.hermes/.env
+    rm -f "$TMPFILE"
+  else
+    rm -f "$TMPFILE"
+    echo "~/.hermes/.env.sops 복호화 실패. 스킵합니다."
+  fi
 fi
 ```
 
@@ -98,15 +136,17 @@ Tailscale Aperture을 AI 프록시로 사용. 설정은 sops로 관리되는 API
 | :--- | :--- |
 | dotfiles 확인 | OK |
 | hostname 감지 | axiom |
+| 패키지 설치 | OK (brew bundle 127 packages) |
 | stow 배포 | OK (base, axiom) |
-| brew bundle | OK (127 packages) |
 | sops 복호화 | OK |
 | Aperture | OK |
 
 ## Key Rules
 
-- **~/git/dotfiles 없으면 중단**: 복구 불가
-- **지원하지 않는 hostname이면 중단**: 수동 설정 안내
-- **stow 충돌 시 사용자 확인**: 자동 삭제 금지
+- **~/git/dotfiles 없으면 중단**: `exit 1`로 즉시 종료. 복구 불가
+- **지원하지 않는 hostname이면 중단**: `exit 1`로 즉시 종료. 수동 설정 안내
+- **패키지 설치 → stow 순서**: brew/nix/mise가 stow를 설치하므로 패키지 설치 먼저
+- **stow 충돌 시 사용자 확인**: `--simulate`로 사전 확인. `--adopt`는 승인 후만 사용
 - **sops는 age 키 필요**: 키 없으면 복호화 스킵하고 안내
+- **sops 덮어쓰기 안전**: 임시 파일에 복호화 후 `install -m 600`으로 교체
 - **한국어 리포트**: 결과는 항상 한국어로 출력
