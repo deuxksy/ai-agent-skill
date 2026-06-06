@@ -172,24 +172,20 @@ codex --version
 gemini --version
 omc --version
 omx --version
-holmes --version
+holmes version
 serena --version
-sgpt --version
 k8sgpt version
 
 # MCP Servers
 mcp-hub --version
-dbhub --version
 kubernetes-mcp-server --version
-proxmox-mcp-plus --version
-doris-mcp-server --version
-postgres-mcp --version
+pnpm list -g --depth=0 | grep -E "dbhub|sgpt"
+uv tool list | grep -E "holmesgpt|proxmox-mcp-plus|doris-mcp-server|postgres-mcp|serena-agent"
 ```
 
 > **참고**:
-> - `holmes`가 shell alias로 설정된 환경에서는 `command holmes --version`으로 우회.
-> - `proxmox-mcp-plus --version`은 서버 초기화를 시도할 수 있으므로, 실패 시 `uv tool list | grep proxmox-mcp-plus`로 대체.
-> - `k8sgpt`는 `--version` 미지원으로 `k8sgpt version` 사용.
+> - `holmes`, `k8sgpt`는 `--version` 미지원으로 하위 명령 방식 사용.
+> - `sgpt`, `dbhub`, `proxmox-mcp-plus`, `doris-mcp-server`, `postgres-mcp`는 `--version` 미지원으로 `pnpm list` / `uv tool list`로 확인.
 
 ### 4. 결과 리포트
 
