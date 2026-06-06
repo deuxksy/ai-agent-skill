@@ -1,0 +1,50 @@
+{
+  "mcpServers": {
+    "k8sgpt": {
+      "command": "k8sgpt",
+      "args": ["serve", "--mcp", "--port", "0", "--metrics-port", "0"],
+      "env": {
+        "KUBECONFIG": "${HOME}/.kube/config"
+      }
+    },
+    "kubernetes": {
+      "command": "kubernetes-mcp-server"
+    },
+    "dbhub": {
+      "command": "dbhub",
+      "args": ["--transport", "stdio", "--config", "${HOME}/.config/dbhub/dbhub.toml"]
+    },
+    "postgres": {
+      "command": "postgres-mcp",
+      "args": ["--access-mode", "restricted"],
+      "env": {
+        "DATABASE_URL": "${PG_DSN}"
+      }
+    },
+    "doris": {
+      "command": "doris-mcp-server",
+      "args": ["--transport", "stdio"],
+      "env": {
+        "DORIS_HOST": "${DORIS_HOST}",
+        "DORIS_PORT": "${DORIS_PORT}",
+        "DORIS_USER": "${DORIS_USER}",
+        "DORIS_PASSWORD": "${DORIS_PASSWORD}",
+        "DORIS_DATABASE": "${DORIS_DATABASE}"
+      }
+    },
+    "proxmox": {
+      "command": "proxmox-mcp-plus",
+      "env": {
+        "PROXMOX_MCP_CONFIG": "${HOME}/.config/proxmox-mcp/config.json"
+      }
+    },
+    "serena": {
+      "command": "serena",
+      "args": ["start-mcp-server", "--context", "desktop-app"]
+    },
+    "mcp-hub": {
+      "command": "mcp-hub",
+      "args": ["--port", "3000", "--config", "${HOME}/.config/mcp-hub/config.json"]
+    }
+  }
+}
