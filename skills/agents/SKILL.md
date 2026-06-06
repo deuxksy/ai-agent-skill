@@ -63,7 +63,6 @@ cat /etc/os-release 2>/dev/null | grep ^ID=
 | `mcp-hub` | `mcp-hub` |
 | `@bytebase/dbhub` | `dbhub` |
 | `kubernetes-mcp-server` | `kubernetes-mcp-server` |
-| `@modelcontextprotocol/server-fetch` | `server-fetch` |
 
 #### uv
 
@@ -72,7 +71,6 @@ cat /etc/os-release 2>/dev/null | grep ^ID=
 | `proxmox-mcp-plus` | `proxmox-mcp`, `proxmox-mcp-plus` |
 | `doris-mcp-server` | `doris-mcp`, `doris-mcp-server` |
 | `postgres-mcp` | `postgres-mcp` |
-| `mcp-server-git` | `mcp-server-git` |
 
 ### Cloud Plugins (Claude Code 내장)
 
@@ -130,7 +128,7 @@ pnpm, uv가 없으면 위 Prerequisites 섹션에 따라 설치.
 pnpm add -g @openai/codex @google/gemini-cli oh-my-claude-sisyphus oh-my-codex
 
 # MCP Servers
-pnpm add -g mcp-hub @bytebase/dbhub kubernetes-mcp-server @modelcontextprotocol/server-fetch
+pnpm add -g mcp-hub @bytebase/dbhub kubernetes-mcp-server
 ```
 
 #### uv (전 OS)
@@ -145,7 +143,6 @@ uv tool install shell-gpt
 uv tool install proxmox-mcp-plus
 uv tool install doris-mcp-server
 uv tool install postgres-mcp
-uv tool install mcp-server-git
 ```
 
 #### k8sgpt (OS별)
@@ -183,7 +180,6 @@ kubernetes-mcp-server --version
 proxmox-mcp-plus --version
 postgres-mcp --version
 doris-mcp-server --version
-mcp-server-git --version
 ```
 
 ### 4. 결과 리포트
@@ -222,7 +218,7 @@ k8sgpt version
 pnpm update -g --latest @openai/codex @google/gemini-cli oh-my-claude-sisyphus oh-my-codex
 
 # MCP Servers
-pnpm update -g --latest mcp-hub @bytebase/dbhub kubernetes-mcp-server @modelcontextprotocol/server-fetch
+pnpm update -g --latest mcp-hub @bytebase/dbhub kubernetes-mcp-server
 ```
 
 #### uv (전 OS)
@@ -237,7 +233,6 @@ uv tool upgrade shell-gpt
 uv tool upgrade proxmox-mcp-plus
 uv tool upgrade doris-mcp-server
 uv tool upgrade postgres-mcp
-uv tool upgrade mcp-server-git
 ```
 
 #### k8sgpt (OS별)
