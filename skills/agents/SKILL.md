@@ -1,11 +1,11 @@
 ---
-name: upgrade-agents
-description: "Upgrade all AI agents at once. Detects OS and upgrades pnpm, uv, and brew packages with platform-specific methods, then reports version changes. Use when user wants to update all AI tools or asks about agent versions."
+name: agents
+description: "Install or upgrade all AI agents. Detects OS and uses pnpm, uv, brew with platform-specific methods. Use 'install' to set up new machine, 'upgrade' to update existing agents."
 ---
 
-# Upgrade Agents
+# Agents
 
-모든 AI Agent를 한 번에 업그레이드.
+모든 AI Agent를 설치하거나 업그레이드.
 
 ## OS 감지
 
@@ -18,7 +18,7 @@ cat /etc/os-release 2>/dev/null | grep ^ID=  # debian, ubuntu, fedora
 | 감지 결과 | 분기 |
 | :--- | :--- |
 | Darwin | macOS (brew) |
-| NixOS | NixOS (nix 관리, brew/apt 스킵) |
+| NixOS | NixOS (k8sgpt만 nix 관리) |
 | Debian/Ubuntu | Linux (binary download) |
 | Fedora | Linux (binary download) |
 
@@ -49,7 +49,9 @@ cat /etc/os-release 2>/dev/null | grep ^ID=  # debian, ubuntu, fedora
 | :--- | :--- | :--- | :--- | :--- |
 | k8sgpt | brew | binary download | binary download | nix (스킵) |
 
-## Workflow
+---
+
+## Install (새 머신 셋업)
 
 ### 1. 사전 확인
 
@@ -63,6 +65,63 @@ if ! command -v uv &>/dev/null; then
   echo "uv가 설치되어 있지 않습니다. 먼저 설치해주세요."
 fi
 ```
+
+### 2. 설치 실행
+
+#### pnpm (전 OS)
+
+```bash
+pnpm add -g @openai/codex @google/gemini-cli mcp-hub oh-my-claude-sisyphus oh-my-codex
+```
+
+#### uv (전 OS)
+
+```bash
+uv tool install holmesgpt
+uv tool install proxmox-mcp-plus
+uv tool install serena-agent
+uv tool install shell-gpt
+```
+
+#### k8sgpt (OS별)
+
+```bash
+# macOS
+brew install k8sgpt-ai/k8sgpt/k8sgpt
+
+# Debian/Ubuntu/Fedora - GitHub binary
+ARCH=$(uname -m | sed 's/x86_64/amd64/' | sed 's/aarch64/arm64/')
+curl -sL "https://github.com/k8sgpt-ai/k8sgpt/releases/latest/download/k8sgpt_${ARCH}.linux.tar.gz" | tar xz -C /usr/local/bin k8sgpt
+
+# NixOS - 스킵 (nixpkgs로 관리)
+```
+
+### 3. 설치 확인
+
+```bash
+codex --version
+gemini --version
+holmes --version
+serena --version
+sgpt --version
+k8sgpt version
+mcp-hub --version
+```
+
+### 4. 결과 리포트
+
+| 패키지 | 상태 | 버전 |
+| :--- | :--- | :--- |
+| @openai/codex | OK | 1.0.0 |
+| @google/gemini-cli | FAIL | - |
+
+---
+
+## Upgrade (기존 머신 업데이트)
+
+### 1. 사전 확인
+
+pnpm, uv가 설치되어 있다고 가정. 없으면 설치 필요 메시지 출력 후 중단.
 
 ### 2. 사전 버전 수집
 
@@ -118,10 +177,13 @@ curl -sL "https://github.com/k8sgpt-ai/k8sgpt/releases/latest/download/k8sgpt_${
 
 변경 없으면 "모든 패키지가 최신 버전입니다" 출력.
 
+---
+
 ## Key Rules
 
-- **dry-run 먼저**: 버전 수집 → 사용자 확인 → 업그레이드 실행
-- **에러 무시하지 않음**: 실패한 패키지는 리포트에 명시
-- **Claude Code 제외**: native installer로 자체 업데이트하므로 건드리지 않음
+- **멱등성** (install): 이미 설치된 패키지는 스킵
+- **dry-run 먼저** (upgrade): 버전 수집 → 사용자 확인 → 실행
+- **에러 중단하지 않음**: 실패한 패키지는 리포트에 명시하고 계속 진행
+- **Claude Code 제외**: native installer로 자체 관리하므로 안내만 출력
 - **NixOS 특례**: nix로 관리되는 패키지(k8sgpt)는 스킵
 - **한국어 리포트**: 결과는 항상 한국어로 출력
