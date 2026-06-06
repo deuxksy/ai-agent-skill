@@ -31,9 +31,10 @@
     ├── openwrt-initd/             # OpenWrt init.d 서비스 설치
     ├── hot-game-deals-n-news/     # 게임 할인/뉴스 트래커
     │   └── references/
-    └── exchange-rate-tracker/     # 환율 추적 (USD/KRW, USD/VND)
-        ├── scripts/
-        └── references/
+    ├── exchange-rate-tracker/     # 환율 추적 (USD/KRW, USD/VND)
+    │   ├── scripts/
+    │   └── references/
+    └── agents/                    # AI Agent/MCP 설치 자동화
 ```
 
 ## SKILL.md 규격
@@ -63,3 +64,8 @@ description: <한 줄 설명>
 ### 버전 관리
 
 [SemVer](https://semver.org/). `plugin.json` / `marketplace.json` 버전 동기화 필수.
+
+## 환경별 패키지 관리
+
+- NixOS: `k8sgpt`만 nix 관리 (pnpm/uv 패키지 없음). 나머지는 pnpm/uv로 1원화
+- 감지: binary 경로가 `/nix/store/` 또는 `/run/current-system/sw/bin/`이면 nix 관리
