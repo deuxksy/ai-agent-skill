@@ -47,6 +47,8 @@ cat /etc/os-release 2>/dev/null | grep ^ID=
 | `proxmox-mcp-plus` | `proxmox-mcp`, `proxmox-mcp-plus` |
 | `serena-agent` | `serena`, `serena-agent`, `serena-hooks` |
 | `shell-gpt` | `sgpt` |
+| `doris-mcp-server` | `doris-mcp`, `doris-mcp-server` |
+| `postgres-mcp` | `postgres-mcp` |
 
 ### OS별 패키지
 
@@ -99,7 +101,7 @@ pnpm, uv가 없으면 위 Prerequisites 섹션에 따라 설치.
 #### pnpm (전 OS)
 
 ```bash
-pnpm add -g @openai/codex @google/gemini-cli mcp-hub oh-my-claude-sisyphus oh-my-codex
+pnpm add -g @openai/codex @google/gemini-cli mcp-hub oh-my-claude-sisyphus oh-my-codex @bytebase/dbhub
 ```
 
 #### uv (전 OS)
@@ -109,6 +111,8 @@ uv tool install holmesgpt
 uv tool install proxmox-mcp-plus
 uv tool install serena-agent
 uv tool install shell-gpt
+uv tool install doris-mcp-server
+uv tool install postgres-mcp
 ```
 
 #### k8sgpt (OS별)
@@ -173,7 +177,7 @@ k8sgpt version
 #### pnpm (전 OS)
 
 ```bash
-pnpm update -g --latest @openai/codex @google/gemini-cli mcp-hub oh-my-claude-sisyphus oh-my-codex
+pnpm update -g --latest @openai/codex @google/gemini-cli mcp-hub oh-my-claude-sisyphus oh-my-codex @bytebase/dbhub
 ```
 
 #### uv (전 OS)
@@ -183,6 +187,8 @@ uv tool upgrade holmesgpt
 uv tool upgrade proxmox-mcp-plus
 uv tool upgrade serena-agent
 uv tool upgrade shell-gpt
+uv tool upgrade doris-mcp-server
+uv tool upgrade postgres-mcp
 ```
 
 #### k8sgpt (OS별)
