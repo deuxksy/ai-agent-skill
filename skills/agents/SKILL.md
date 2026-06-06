@@ -164,35 +164,43 @@ curl -fsSL "https://github.com/k8sgpt-ai/k8sgpt/releases/latest/download/k8sgpt_
 # NixOS - 스킵 (nixpkgs로 관리)
 ```
 
-### 3. 설치 확인
+### 3. 설치 검증 (버전 출력)
+
+설치 직후 각 CLI로 직접 버전 확인하여 결과 리포트 출력. 실패한 패키지는 FAIL 표시하고 계속 진행.
 
 ```bash
-# AI Agents
+# pnpm - AI Agents
 codex --version
 gemini --version
 omc --version
 omx --version
-holmes version
-serena --version
-k8sgpt version
 
-# MCP Servers
+# pnpm - MCP Servers
 mcp-hub --version
 kubernetes-mcp-server --version
-pnpm list -g --depth=0 | grep -E "dbhub|sgpt"
-uv tool list | grep -E "holmesgpt|proxmox-mcp-plus|doris-mcp-server|postgres-mcp|serena-agent"
+
+# uv - AI Agents
+holmes version
+serena --version
+
+# uv - MCP Servers (--version 미지원)
+uv tool list | grep -E "proxmox-mcp-plus|doris-mcp-server|postgres-mcp"
+
+# pnpm - MCP Servers (--version 미지원)
+pnpm list -g --depth=0 | grep -E "dbhub|shell-gpt"
+
+# OS별
+k8sgpt version
 ```
+
+| 패키지 | 관리 | 상태 | 버전 |
+| :--- | :--- | :--- | :--- |
+| @openai/codex | pnpm | OK | 0.137.0 |
+| @google/gemini-cli | pnpm | FAIL | - |
 
 > **참고**:
 > - `holmes`, `k8sgpt`는 `--version` 미지원으로 하위 명령 방식 사용.
 > - `sgpt`, `dbhub`, `proxmox-mcp-plus`, `doris-mcp-server`, `postgres-mcp`는 `--version` 미지원으로 `pnpm list` / `uv tool list`로 확인.
-
-### 4. 결과 리포트
-
-| 패키지 | 상태 | 버전 |
-| :--- | :--- | :--- |
-| @openai/codex | OK | 1.0.0 |
-| @google/gemini-cli | FAIL | - |
 
 ---
 
@@ -204,15 +212,41 @@ pnpm, uv가 없으면 위 Prerequisites 섹션에 따라 설치.
 
 ### 2. 사전 버전 수집
 
+업그레이드 전 각 CLI로 직접 버전 확인하여 테이블로 출력.
+
 ```bash
-pnpm list -g --depth=0
-uv tool list
+# pnpm - AI Agents
+codex --version
+gemini --version
+omc --version
+omx --version
+
+# pnpm - MCP Servers
+mcp-hub --version
+kubernetes-mcp-server --version
+
+# uv - AI Agents
+holmes version
+serena --version
+
+# uv - MCP Servers (--version 미지원)
+uv tool list | grep -E "proxmox-mcp-plus|doris-mcp-server|postgres-mcp"
+
+# pnpm - MCP Servers (--version 미지원)
+pnpm list -g --depth=0 | grep -E "dbhub|shell-gpt"
+
+# OS별
 k8sgpt version
 ```
 
+| 패키지 | 관리 | 현재 버전 |
+| :--- | :--- | :--- |
+| @openai/codex | pnpm | 0.137.0 |
+| ... | ... | ... |
+
 ### 3. 사용자 확인
 
-수집한 버전과 업그레이드 대상을 보여주고 진행 확인.
+수집한 버전 테이블을 보여주고 진행 확인.
 
 ### 4. 업그레이드 실행
 
@@ -257,14 +291,20 @@ curl -fsSL "https://github.com/k8sgpt-ai/k8sgpt/releases/latest/download/k8sgpt_
 # NixOS - 스킵 (nixos-rebuild로 관리)
 ```
 
-### 5. 버전 변경 리포트
+### 5. 업그레이드 검증 + 결과 리포트
 
-업그레이드 전후 버전 비교.
+업그레이드 직후 각 CLI로 직접 버전 확인. 사전 버전(step 2)과 비교하여 리포트 출력.
+
+```bash
+# Install 섹션 3번과 동일한 CLI 버전 확인 스크립트
+```
 
 ```text
-| 패키지 | 이전 | 이후 |
-| :--- | :--- | :--- |
-| @openai/codex | 1.0.0 | 1.1.0 |
+| 패키지 | 관리 | 이전 | 이후 | 상태 |
+| :--- | :--- | :--- | :--- | :--- |
+| @openai/codex | pnpm | 0.137.0 | 0.138.0 | OK |
+| @google/gemini-cli | pnpm | 0.45.1 | 0.45.1 | — |
+| @bytebase/dbhub | pnpm | 0.21.2 | — | FAIL |
 ```
 
 변경 없으면 "모든 패키지가 최신 버전입니다" 출력.
