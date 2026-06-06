@@ -1,7 +1,7 @@
 {
   "name": "zzizily",
-  "description": "Personal skill collection: Android deploy, security audit, Korean translation verify, OpenWrt service, game deals, exchange rate tracker, install/upgrade agents",
-  "version": "1.2.0",
+  "description": "Personal skill collection: agents install/upgrade/setup, security audit, deploy, translation, game deals, exchange rate",
+  "version": "1.3.0",
   "author": {
     "name": "Crong"
   },
