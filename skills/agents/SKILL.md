@@ -181,6 +181,8 @@ k8sgpt version
 mcp-hub --version
 dbhub --version
 kubernetes-mcp-server --version
+doris-mcp-server --version
+postgres-mcp --version
 ```
 
 > **참고**: `holmes`는 shell alias가 설정되어 있을 수 있으므로 `command holmes version`으로 우회. `proxmox-mcp-plus`는 `--version` 시 서버 초기화를 시도하므로, 버전 확인은 `uv tool list | grep proxmox-mcp-plus`로 대체.
