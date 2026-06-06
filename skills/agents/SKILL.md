@@ -29,32 +29,57 @@ cat /etc/os-release 2>/dev/null | grep ^ID=
 
 ## 대상
 
-### pnpm (전 OS 공통)
+### AI Agents
+
+#### pnpm
 
 | 패키지 | CLI 명령 |
 | :--- | :--- |
 | `@openai/codex` | `codex` |
 | `@google/gemini-cli` | `gemini` |
-| `mcp-hub` | `mcp-hub` |
 | `oh-my-claude-sisyphus` | `omc`, `oh-my-claudecode` |
 | `oh-my-codex` | `omx` |
 
-### uv (전 OS 공통)
+#### uv
 
 | 패키지 | CLI 명령 |
 | :--- | :--- |
 | `holmesgpt` | `holmes` |
-| `proxmox-mcp-plus` | `proxmox-mcp`, `proxmox-mcp-plus` |
 | `serena-agent` | `serena`, `serena-agent`, `serena-hooks` |
 | `shell-gpt` | `sgpt` |
-| `doris-mcp-server` | `doris-mcp`, `doris-mcp-server` |
-| `postgres-mcp` | `postgres-mcp` |
 
-### OS별 패키지
+#### OS별
 
 | 패키지 | macOS | Debian/Ubuntu | Fedora | NixOS |
 | :--- | :--- | :--- | :--- | :--- |
 | k8sgpt | brew | binary download | binary download | nix (스킵) |
+
+### MCP Servers
+
+#### pnpm
+
+| 패키지 | CLI 명령 |
+| :--- | :--- |
+| `mcp-hub` | `mcp-hub` |
+| `@bytebase/dbhub` | `dbhub` |
+| `kubernetes-mcp-server` | `kubernetes-mcp-server` |
+| `@modelcontextprotocol/server-fetch` | `server-fetch` |
+
+#### uv
+
+| 패키지 | CLI 명령 |
+| :--- | :--- |
+| `proxmox-mcp-plus` | `proxmox-mcp`, `proxmox-mcp-plus` |
+| `doris-mcp-server` | `doris-mcp`, `doris-mcp-server` |
+| `postgres-mcp` | `postgres-mcp` |
+| `mcp-server-git` | `mcp-server-git` |
+
+### Cloud Plugins (Claude Code 내장)
+
+| 플러그인 | 용도 | 설치 방식 |
+| :--- | :--- | :--- |
+| Notion | 문서 관리 (회사 문서 DB) | Claude Code 플러그인 |
+| Figma | 디자인 (디자인 팀 협업) | Claude Code 플러그인 |
 
 ---
 
@@ -101,18 +126,26 @@ pnpm, uv가 없으면 위 Prerequisites 섹션에 따라 설치.
 #### pnpm (전 OS)
 
 ```bash
-pnpm add -g @openai/codex @google/gemini-cli mcp-hub oh-my-claude-sisyphus oh-my-codex @bytebase/dbhub
+# AI Agents
+pnpm add -g @openai/codex @google/gemini-cli oh-my-claude-sisyphus oh-my-codex
+
+# MCP Servers
+pnpm add -g mcp-hub @bytebase/dbhub kubernetes-mcp-server @modelcontextprotocol/server-fetch
 ```
 
 #### uv (전 OS)
 
 ```bash
+# AI Agents
 uv tool install holmesgpt
-uv tool install proxmox-mcp-plus
 uv tool install serena-agent
 uv tool install shell-gpt
+
+# MCP Servers
+uv tool install proxmox-mcp-plus
 uv tool install doris-mcp-server
 uv tool install postgres-mcp
+uv tool install mcp-server-git
 ```
 
 #### k8sgpt (OS별)
@@ -133,16 +166,24 @@ sudo install -m 0755 /tmp/k8sgpt /usr/local/bin/k8sgpt
 ### 3. 설치 확인
 
 ```bash
+# AI Agents
 codex --version
 gemini --version
-mcp-hub --version
 omc --version
 omx --version
 holmes --version
-proxmox-mcp-plus --version
 serena --version
 sgpt --version
 k8sgpt version
+
+# MCP Servers
+mcp-hub --version
+dbhub --version
+kubernetes-mcp-server --version
+proxmox-mcp-plus --version
+postgres-mcp --version
+doris-mcp-server --version
+mcp-server-git --version
 ```
 
 ### 4. 결과 리포트
@@ -177,18 +218,26 @@ k8sgpt version
 #### pnpm (전 OS)
 
 ```bash
-pnpm update -g --latest @openai/codex @google/gemini-cli mcp-hub oh-my-claude-sisyphus oh-my-codex @bytebase/dbhub
+# AI Agents
+pnpm update -g --latest @openai/codex @google/gemini-cli oh-my-claude-sisyphus oh-my-codex
+
+# MCP Servers
+pnpm update -g --latest mcp-hub @bytebase/dbhub kubernetes-mcp-server @modelcontextprotocol/server-fetch
 ```
 
 #### uv (전 OS)
 
 ```bash
+# AI Agents
 uv tool upgrade holmesgpt
-uv tool upgrade proxmox-mcp-plus
 uv tool upgrade serena-agent
 uv tool upgrade shell-gpt
+
+# MCP Servers
+uv tool upgrade proxmox-mcp-plus
 uv tool upgrade doris-mcp-server
 uv tool upgrade postgres-mcp
+uv tool upgrade mcp-server-git
 ```
 
 #### k8sgpt (OS별)
