@@ -46,10 +46,10 @@ export PATH="/opt/homebrew/bin:/home/linuxbrew/.linuxbrew/bin:/nix/var/nix/profi
 | pnpm | `pnpm list -g --depth=0` |
 | Homebrew | `brew list --formula --versions` |
 | Homebrew (cask) | `brew list --cask --versions` |
-| pip | `pip list --format=json` |
-| npm | `npm list -g --depth=0 --json` |
 | nix | `nix profile list` |
 | System | `dnf list installed` / `dpkg -l` / `pacman -Q` |
+
+> **pip, npm 제외**: pip는 uv tool의 전이 의존성, npm은 pnpm으로 대체. 직접 관리하지 않음.
 
 ---
 
@@ -57,14 +57,12 @@ export PATH="/opt/homebrew/bin:/home/linuxbrew/.linuxbrew/bin:/nix/var/nix/profi
 
 사용 가능한 내장 audit 도구 실행.
 
-- `npm audit` (npm, 프로젝트 lockfile만, 글로벌 아님)
-- `pip-audit` 또는 `safety check` (pip, 설치된 경우)
 - `dnf updateinfo list security` (Fedora)
 
 > **주의**: `brew audit`은 formula 스타일 검사기이지 CVE 스캐너가 아님. 사용하지 않음.
 > macOS에서 패키지 CVE 스캔이 필요하면 `trivy` 또는 `grype` 사용 (설치된 경우).
 
-**내장 audit 없는 매니저**: mise, uv tool, pnpm global, nix, pacman → Phase 3 진행.
+**내장 audit 없는 매니저**: mise, uv tool, pnpm global, Homebrew, nix, pacman → Phase 3 진행.
 
 ---
 
@@ -80,8 +78,6 @@ CVE 검색 대상 패키지 필터링. 두 그룹으로 분리:
 | uv | `uv tool list --outdated` |
 | pnpm | `pnpm outdated -g` |
 | Homebrew | `brew outdated` |
-| pip | `pip list --outdated` |
-| npm | `npm outdated -g` |
 | System | `dnf check-update 2>/dev/null \|\| [ $? -eq 100 ]` / `apt list --upgradable` / `checkupdates` |
 | nix | 수집된 버전 vs 최신 비교 |
 

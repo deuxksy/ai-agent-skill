@@ -23,6 +23,7 @@ cat /etc/os-release 2>/dev/null | grep ^ID=
 | 감지 결과 | 분기 |
 | :--- | :--- |
 | macOS | brew |
+| SteamOS | brew (Linuxbrew) |
 | NixOS | nix 패키지로 관리 (k8sgpt, pnpm, uv 모두) |
 | Debian/Ubuntu | apt/binary |
 | Fedora | dnf/binary |
@@ -50,9 +51,9 @@ cat /etc/os-release 2>/dev/null | grep ^ID=
 
 #### OS별
 
-| 패키지 | macOS | Debian/Ubuntu | Fedora | NixOS |
-| :--- | :--- | :--- | :--- | :--- |
-| k8sgpt | brew | binary download | binary download | nix (스킵) |
+| 패키지 | macOS | SteamOS | Debian/Ubuntu | Fedora | NixOS |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| k8sgpt | brew | brew (Linuxbrew) | binary download | binary download | nix (스킵) |
 
 ### MCP Servers
 
@@ -72,12 +73,19 @@ cat /etc/os-release 2>/dev/null | grep ^ID=
 | `doris-mcp-server` | `doris-mcp`, `doris-mcp-server` |
 | `postgres-mcp` | `postgres-mcp` |
 
-### Cloud Plugins (Claude Code 내장)
+### Cloud Plugins (Claude Code Marketplace)
 
 | 플러그인 | 용도 | 설치 방식 |
 | :--- | :--- | :--- |
 | Notion | 문서 관리 (회사 문서 DB) | Claude Code 플러그인 |
 | Figma | 디자인 (디자인 팀 협업) | Claude Code 플러그인 |
+| oh-my-claudecode | Claude Code 멀티 에이전트 오케스트레이션 | Marketplace |
+
+```bash
+# oh-my-claudecode 설치
+claude plugin marketplace add https://github.com/Yeachan-Heo/oh-my-claudecode
+claude plugin install oh-my-claudecode
+```
 
 ---
 
@@ -137,7 +145,8 @@ pnpm add -g mcp-hub @bytebase/dbhub kubernetes-mcp-server
 
 ```bash
 # AI Agents
-uv tool install holmesgpt
+# holmesgpt는 azure-mgmt-sql pre-release 의존성으로 --prerelease=allow 필요
+uv tool install holmesgpt --prerelease=allow
 uv tool install serena-agent
 uv tool install shell-gpt
 
@@ -153,6 +162,9 @@ uv tool install postgres-mcp
 # macOS - homebrew/core
 brew install k8sgpt
 
+# SteamOS - Linuxbrew
+brew install k8sgpt
+
 # Debian/Ubuntu/Fedora - GitHub binary
 ARCH=$(uname -m | sed 's/x86_64/x86_64/' | sed 's/aarch64/arm64/')
 TMPDIR=$(mktemp -d)
@@ -162,6 +174,14 @@ curl -fsSL "https://github.com/k8sgpt-ai/k8sgpt/releases/latest/download/k8sgpt_
   && rm -rf "${TMPDIR}"
 
 # NixOS - 스킵 (nixpkgs로 관리)
+```
+
+#### Claude Code Plugins (Marketplace)
+
+```bash
+# oh-my-claudecode
+claude plugin marketplace add https://github.com/Yeachan-Heo/oh-my-claudecode
+claude plugin install oh-my-claudecode
 ```
 
 ### 3. 설치 검증 (버전 출력)
@@ -264,7 +284,8 @@ pnpm update -g --latest mcp-hub @bytebase/dbhub kubernetes-mcp-server
 
 ```bash
 # AI Agents
-uv tool upgrade holmesgpt
+# holmesgpt는 azure-mgmt-sql pre-release 의존성으로 --prerelease=allow 필요
+uv tool upgrade holmesgpt --prerelease=allow
 uv tool upgrade serena-agent
 uv tool upgrade shell-gpt
 
@@ -277,7 +298,7 @@ uv tool upgrade postgres-mcp
 #### k8sgpt (OS별)
 
 ```bash
-# macOS
+# macOS / SteamOS
 brew upgrade k8sgpt
 
 # Debian/Ubuntu/Fedora - GitHub binary 교체
