@@ -1,0 +1,4 @@
+interface:
+  display_name: "Optimize Images 4K"
+  short_description: "Recursively clean and optimize landscape images to 3840px width"
+  default_prompt: "Optimize images under the target directory to 3840px width, delete portrait and undersized images when requested, rename resolution suffixes, and verify the result."
