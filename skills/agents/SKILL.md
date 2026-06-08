@@ -91,7 +91,7 @@ claude plugin install oh-my-claudecode
 
 ## Prerequisites (pnpm, uv 설치)
 
-Node.js(v22+)가 설치되어 있다고 가정. pnpm, uv가 없으면 OS별로 설치.
+Node.js(lts-latest)가 설치되어 있다고 가정. pnpm, uv가 없으면 OS별로 설치.
 
 | 도구 | macOS | SteamOS | Linux (Debian/Ubuntu/Fedora) | NixOS |
 | :--- | :--- | :--- | :--- | :--- |
@@ -167,11 +167,12 @@ pnpm, uv가 없으면 위 Prerequisites 섹션에 따라 설치.
 #### pnpm (전 OS)
 
 ```bash
+# @latest 지정 필수: 미지정 시 설치 시점 버전이 lockfile에 고정되어 최신으로 갱신 안 됨
 # AI Agents
-pnpm add -g @openai/codex @google/gemini-cli oh-my-claude-sisyphus oh-my-codex
+pnpm add -g @openai/codex@latest @google/gemini-cli@latest oh-my-claude-sisyphus@latest oh-my-codex@latest
 
 # MCP Servers
-pnpm add -g mcp-hub @bytebase/dbhub kubernetes-mcp-server
+pnpm add -g mcp-hub@latest @bytebase/dbhub@latest kubernetes-mcp-server@latest
 ```
 
 #### uv (전 OS)
