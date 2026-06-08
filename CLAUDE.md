@@ -4,6 +4,20 @@
 
 **zzizily** — 개인 자동화 AI Agent Skill 플러그인.
 
+## Quick Start
+
+```bash
+# 설치
+claude plugin marketplace add deuxksy/ai-agent-skill
+claude plugin install deuxksy@zzizily
+
+# 사용
+/zzizily:<skill-name>
+
+# 스킬 목록 확인
+ls skills/
+```
+
 ## 플러그인 메타
 
 | 항목 | 값 |
@@ -22,19 +36,25 @@
 │   ├── plugin.json          # 플러그인 매니페스트
 │   └── marketplace.json     # 마켓플레이스 등록 정보
 └── skills/
+    ├── agents/                    # AI Agent/MCP 설치 자동화
+    ├── code-audit/                # 보안 취약점 점검
     ├── deploy-android-wifi/       # WiFi ADB 배포 자동화
-    ├── security-audit/            # 보안 취약점 점검
+    ├── exchange-rate-tracker/     # 환율 추적 (USD/KRW, USD/VND)
+    │   ├── scripts/
+    │   └── references/
+    ├── hot-game-deals-n-news/     # 게임 할인/뉴스 트래커
     │   └── references/
     ├── korean-translation-verify/ # 한국어 번역 품질 검증
     │   ├── scripts/
     │   └── pyproject.toml
     ├── openwrt-initd/             # OpenWrt init.d 서비스 설치
-    ├── hot-game-deals-n-news/     # 게임 할인/뉴스 트래커
+    ├── optimize-images-4k/        # 4K 이미지 최적화
+    │   ├── agents/
+    │   └── scripts/
+    ├── setup/                     # 초기 설정
+    ├── system-audit/              # 시스템 감사
     │   └── references/
-    ├── exchange-rate-tracker/     # 환율 추적 (USD/KRW, USD/VND)
-    │   ├── scripts/
-    │   └── references/
-    └── agents/                    # AI Agent/MCP 설치 자동화
+    └── system-upgrade/            # 시스템 업그레이드
 ```
 
 ## SKILL.md 규격
@@ -67,5 +87,5 @@ description: <한 줄 설명>
 
 ## 환경별 패키지 관리
 
-- NixOS: `k8sgpt`만 nix 관리 (pnpm/uv 패키지 없음). 나머지는 pnpm/uv로 1원화
+- NixOS: `k8sgpt`만 nix 패키지로 관리, 나머지는 pnpm/uv 사용
 - 감지: binary 경로가 `/nix/store/` 또는 `/run/current-system/sw/bin/`이면 nix 관리
