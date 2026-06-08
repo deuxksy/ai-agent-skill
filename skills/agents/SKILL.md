@@ -178,16 +178,16 @@ pnpm add -g mcp-hub @bytebase/dbhub kubernetes-mcp-server
 
 ```bash
 # AI Agents
-# holmesgpt는 azure-mgmt-sql pre-release 의존성으로 --prerelease=allow 필요
 # @latest 지정 필수: 미지정 시 설치 시점 버전이 pin되어 upgrade 불가
+# holmesgpt는 azure-mgmt-sql pre-release 의존성으로 --prerelease=allow 필요
 uv tool install holmesgpt@latest --prerelease=allow
-uv tool install serena-agent
-uv tool install shell-gpt
+uv tool install serena-agent@latest
+uv tool install shell-gpt@latest
 
 # MCP Servers
-uv tool install proxmox-mcp-plus
-uv tool install doris-mcp-server
-uv tool install postgres-mcp
+uv tool install proxmox-mcp-plus@latest
+uv tool install doris-mcp-server@latest
+uv tool install postgres-mcp@latest
 ```
 
 #### k8sgpt (OS별)
