@@ -23,7 +23,7 @@ cat /etc/os-release 2>/dev/null | grep ^ID=
 | 감지 결과 | 분기 |
 | :--- | :--- |
 | macOS | brew |
-| SteamOS | brew (Linuxbrew) |
+| SteamOS | mise (Node.js/corepack/pnpm) + brew (Linuxbrew, k8sgpt) |
 | NixOS | nix 패키지로 관리 (k8sgpt, pnpm, uv 모두) |
 | Debian/Ubuntu | apt/binary |
 | Fedora | dnf/binary |
@@ -93,32 +93,65 @@ claude plugin install oh-my-claudecode
 
 Node.js(v22+)가 설치되어 있다고 가정. pnpm, uv가 없으면 OS별로 설치.
 
-| 도구 | macOS | Linux (Debian/Ubuntu/Fedora) | NixOS |
-| :--- | :--- | :--- | :--- |
-| pnpm | `corepack enable pnpm && pnpm setup` | `corepack enable pnpm && pnpm setup` | nix 패키지 (configuration.nix) |
-| uv | `brew install uv` | `curl -LsSf https://astral.sh/uv/install.sh \| sh` | nix 패키지 (configuration.nix) |
+| 도구 | macOS | SteamOS | Linux (Debian/Ubuntu/Fedora) | NixOS |
+| :--- | :--- | :--- | :--- | :--- |
+| Node.js | brew / 기존 설치 | mise (`mise use node@lts`) | 기존 설치 | nix 패키지 |
+| pnpm | `corepack enable pnpm && pnpm setup` | `corepack enable pnpm && corepack prepare pnpm@latest --activate` | `corepack enable pnpm && pnpm setup` | nix 패키지 (configuration.nix) |
+| uv | `brew install uv` | mise (`mise use uv@latest`) 또는 기존 설치 | `curl -LsSf https://astral.sh/uv/install.sh \| sh` | nix 패키지 (configuration.nix) |
 
 ```bash
-# pnpm (macOS/Linux, NixOS 제외)
-if ! command -v pnpm &>/dev/null; then
-  # Node.js 25+에서는 corepack이 미포함될 수 있음
-  npm install -g corepack@latest 2>/dev/null
-  corepack enable pnpm
-  # PNPM_HOME 설정 및 쉘 프로필에 등록
-  pnpm setup
+# --- OS 감지 ---
+OS=$(cat /etc/os-release 2>/dev/null | grep ^ID= | cut -d= -f2)
+KERNEL=$(uname -s)
+
+# --- pnpm ---
+
+# macOS / Linux (Debian/Ubuntu/Fedora)
+if [ "$KERNEL" = "Darwin" ] || [ "$OS" != "steamos" -a "$OS" != "nixos" ]; then
+  if ! command -v pnpm &>/dev/null; then
+    # Node.js 25+에서는 corepack이 미포함될 수 있음
+    npm install -g corepack@latest 2>/dev/null
+    corepack enable pnpm
+    pnpm setup
+  fi
 fi
 
-# uv - macOS
-if ! command -v uv &>/dev/null; then brew install uv; fi
+# SteamOS - mise로 관리되는 Node.js의 corepack 사용
+# npm install -g corepack 불필요 (mise node에 이미 포함)
+if [ "$OS" = "steamos" ]; then
+  if ! command -v pnpm &>/dev/null; then
+    corepack enable pnpm
+    corepack prepare pnpm@latest --activate
+  fi
+fi
 
-# uv - Linux (Debian/Ubuntu/Fedora)
+# NixOS - configuration.nix에 pnpm 추가 후 nixos-rebuild
+
+# --- uv ---
+
+# macOS
+if [ "$KERNEL" = "Darwin" ]; then
+  if ! command -v uv &>/dev/null; then brew install uv; fi
+fi
+
+# SteamOS - mise 또는 이미 설치된 상태
+if [ "$OS" = "steamos" ]; then
+  if ! command -v uv &>/dev/null; then
+    # mise로 설치 권장
+    mise use -g uv@latest 2>/dev/null || curl -LsSf https://astral.sh/uv/install.sh | sh
+  fi
+fi
+
+# Linux (Debian/Ubuntu/Fedora)
 # 설치 후 PATH 리프레시 필요: source ~/.local/bin/env 또는 새 쉘
-if ! command -v uv &>/dev/null; then
-  curl -LsSf https://astral.sh/uv/install.sh | sh
-  export PATH="$HOME/.local/bin:$PATH"
+if [ "$OS" != "steamos" -a "$OS" != "nixos" -a "$KERNEL" != "Darwin" ]; then
+  if ! command -v uv &>/dev/null; then
+    curl -LsSf https://astral.sh/uv/install.sh | sh
+    export PATH="$HOME/.local/bin:$PATH"
+  fi
 fi
 
-# NixOS - configuration.nix에 pnpm, uv 추가 후 nixos-rebuild
+# NixOS - configuration.nix에 uv 추가 후 nixos-rebuild
 ```
 
 ---
@@ -146,7 +179,8 @@ pnpm add -g mcp-hub @bytebase/dbhub kubernetes-mcp-server
 ```bash
 # AI Agents
 # holmesgpt는 azure-mgmt-sql pre-release 의존성으로 --prerelease=allow 필요
-uv tool install holmesgpt --prerelease=allow
+# @latest 지정 필수: 미지정 시 설치 시점 버전이 pin되어 upgrade 불가
+uv tool install holmesgpt@latest --prerelease=allow
 uv tool install serena-agent
 uv tool install shell-gpt
 
@@ -285,6 +319,7 @@ pnpm update -g --latest mcp-hub @bytebase/dbhub kubernetes-mcp-server
 ```bash
 # AI Agents
 # holmesgpt는 azure-mgmt-sql pre-release 의존성으로 --prerelease=allow 필요
+# install 시 @latest로 설치했다면 upgrade 정상 작동 (pin 해제 상태)
 uv tool upgrade holmesgpt --prerelease=allow
 uv tool upgrade serena-agent
 uv tool upgrade shell-gpt
@@ -340,4 +375,5 @@ curl -fsSL "https://github.com/k8sgpt-ai/k8sgpt/releases/latest/download/k8sgpt_
 - **에러 중단하지 않음**: 실패한 패키지는 리포트에 명시하고 계속 진행
 - **Claude Code 제외**: native installer로 자체 관리하므로 안내만 출력
 - **NixOS 특례**: 모든 패키지 매니저(pnpm, uv, k8sgpt)가 nix로 관리됨
+- **SteamOS 특례**: Node.js/corepack은 mise로 관리 → `npm install -g corepack` 불필요, `corepack prepare pnpm@latest --activate`로 활성화. uv도 mise 권장. k8sgpt는 Linuxbrew
 - **한국어 리포트**: 결과는 항상 한국어로 출력
