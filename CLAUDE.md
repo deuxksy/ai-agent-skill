@@ -51,6 +51,9 @@ ls skills/
     ├── optimize-images-4k/        # 4K 이미지 최적화
     │   ├── agents/
     │   └── scripts/
+    ├── product-planning-dr-pipeline/ # 제품 기획 Deep Research 파이프라인
+    │   ├── templates/             # 단계별 RQ/산출물 템플릿 (AGENTS/CONTEXT/ROADMAP/DESIGN)
+    │   └── examples/              # 예시 산출물
     ├── setup/                     # 초기 설정
     ├── system-audit/              # 시스템 감사
     │   └── references/
