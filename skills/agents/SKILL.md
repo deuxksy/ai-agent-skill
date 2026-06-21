@@ -207,7 +207,8 @@ pnpm add -g mcp-hub@latest @bytebase/dbhub@latest kubernetes-mcp-server@latest
 # holmesgpt는 azure-mgmt-sql pre-release 의존성으로 --prerelease=allow 필요
 uv tool install holmesgpt@latest --prerelease=allow
 uv tool install serena-agent@latest
-uv tool install shell-gpt@latest
+# shell-gpt 1.5.x는 click을 의존성으로 명시하지 않아 ModuleNotFoundError 발생 → --with click 필수
+uv tool install shell-gpt@latest --with click
 
 # MCP Servers
 uv tool install proxmox-mcp-plus@latest
@@ -284,7 +285,10 @@ serena --version
 uv tool list | grep -E "proxmox-mcp-plus|doris-mcp-server|postgres-mcp"
 
 # pnpm - MCP Servers (--version 미지원)
-pnpm list -g --depth=0 | grep -E "dbhub|shell-gpt"
+pnpm list -g --depth=0 | grep -E "dbhub"
+
+# uv - shell-gpt (click 의존성 정상 로드 확인)
+sgpt --version
 
 # OS별
 k8sgpt version
@@ -313,7 +317,8 @@ nil --version
 
 > **참고**:
 > - `holmes`, `k8sgpt`는 `--version` 미지원으로 하위 명령 방식 사용.
-> - `sgpt`, `dbhub`, `proxmox-mcp-plus`, `doris-mcp-server`, `postgres-mcp`는 `--version` 미지원으로 `pnpm list` / `uv tool list`로 확인.
+> - `sgpt`는 `--version` 지원 (`ShellGPT x.x.x`). click 의존성 누락 시 ImportError 발생하므로 반드시 `sgpt --version`으로 실행 검증.
+> - `dbhub`, `proxmox-mcp-plus`, `doris-mcp-server`, `postgres-mcp`는 `--version` 미지원으로 `pnpm list` / `uv tool list`로 확인.
 > - `vscode-langservers-extracted`는 `--version` 미지원으로 `pnpm list`로 확인. brew LSP(lua-language-server, marksman, terraform-ls)는 `brew list --versions`로 확인.
 > - `nil`은 NixOS는 nix, 타 OS는 cargo(`cargo install --git`)로 설치·갱신.
 
@@ -348,7 +353,10 @@ serena --version
 uv tool list | grep -E "proxmox-mcp-plus|doris-mcp-server|postgres-mcp"
 
 # pnpm - MCP Servers (--version 미지원)
-pnpm list -g --depth=0 | grep -E "dbhub|shell-gpt"
+pnpm list -g --depth=0 | grep -E "dbhub"
+
+# uv - shell-gpt (click 의존성 정상 로드 확인)
+sgpt --version
 
 # OS별
 k8sgpt version
