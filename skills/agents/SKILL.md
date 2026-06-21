@@ -1,6 +1,6 @@
 ---
 name: agents
-description: "Install or upgrade all AI agents. Detects OS and uses pnpm, uv, brew with platform-specific methods. Use 'install' to set up new machine, 'upgrade' to update existing agents."
+description: "Install or upgrade all AI agents, MCP servers, and LSP servers. Detects OS and uses pnpm, uv, brew, nix with platform-specific methods. Use 'install' to set up new machine, 'upgrade' to update existing agents."
 ---
 
 # Agents
@@ -72,6 +72,30 @@ cat /etc/os-release 2>/dev/null | grep ^ID=
 | `proxmox-mcp-plus` | `proxmox-mcp`, `proxmox-mcp-plus` |
 | `doris-mcp-server` | `doris-mcp`, `doris-mcp-server` |
 | `postgres-mcp` | `postgres-mcp` |
+
+### LSP Servers
+
+Serena/OMC LSP 도구(`lsp_*`)가 코드 심볼 분석에 사용. PATH에 있어야 자동 감지. `nil`은 NixOS는 nix, 타 OS는 cargo(mise rust)로 설치.
+
+#### pnpm
+
+| 패키지 | LSP | 용도 |
+| :--- | :--- | :--- |
+| `typescript-language-server` | TS/JS | TypeScript/TSX |
+| `yaml-language-server` | YAML | Ansible, CI, config |
+| `bash-language-server` | Bash/Zsh | shell script |
+| `pyright` | Python | Python |
+| `vscode-langservers-extracted` | JSON/HTML/CSS | 범용 번들 |
+| `@ansible/ansible-language-server` | Ansible | playbook |
+
+#### OS별
+
+| 패키지 | macOS/SteamOS | Debian/Ubuntu/Fedora | NixOS |
+| :--- | :--- | :--- | :--- |
+| lua-language-server | brew | binary download | nix |
+| marksman | brew | binary download | nix |
+| terraform-ls | brew | binary download | nix |
+| nil | cargo | cargo | nix |
 
 ### Cloud Plugins (Claude Code Marketplace)
 
@@ -191,6 +215,24 @@ uv tool install doris-mcp-server@latest
 uv tool install postgres-mcp@latest
 ```
 
+#### LSP Servers
+
+```bash
+# pnpm (전 OS) - @latest 지정 필수
+pnpm add -g typescript-language-server@latest yaml-language-server@latest bash-language-server@latest pyright@latest vscode-langservers-extracted@latest @ansible/ansible-language-server@latest
+
+# macOS / SteamOS (Linuxbrew)
+brew install lua-language-server marksman terraform-ls
+
+# Debian/Ubuntu/Fedora - 각 프로젝트 GitHub release binary
+
+# nil (macOS/SteamOS/Linux) - cargo (mise rust, 소스 빌드)
+cargo install --git https://github.com/oxalica/nil nil
+
+# NixOS - configuration.nix (environment.system.packages) 또는 nix profile
+nix profile install nixpkgs#lua-language-server nixpkgs#marksman nixpkgs#terraform-ls nixpkgs#nil
+```
+
 #### k8sgpt (OS별)
 
 ```bash
@@ -246,6 +288,22 @@ pnpm list -g --depth=0 | grep -E "dbhub|shell-gpt"
 
 # OS별
 k8sgpt version
+
+# pnpm - LSP Servers
+typescript-language-server --version
+yaml-language-server --version
+bash-language-server --version
+pyright --version
+ansible-language-server --version
+
+# pnpm - LSP (--version 미지원)
+pnpm list -g --depth=0 | grep vscode-langservers-extracted
+
+# brew - LSP Servers
+brew list --versions lua-language-server marksman terraform-ls
+
+# nil (cargo/nix)
+nil --version
 ```
 
 | 패키지 | 관리 | 상태 | 버전 |
@@ -256,6 +314,8 @@ k8sgpt version
 > **참고**:
 > - `holmes`, `k8sgpt`는 `--version` 미지원으로 하위 명령 방식 사용.
 > - `sgpt`, `dbhub`, `proxmox-mcp-plus`, `doris-mcp-server`, `postgres-mcp`는 `--version` 미지원으로 `pnpm list` / `uv tool list`로 확인.
+> - `vscode-langservers-extracted`는 `--version` 미지원으로 `pnpm list`로 확인. brew LSP(lua-language-server, marksman, terraform-ls)는 `brew list --versions`로 확인.
+> - `nil`은 NixOS는 nix, 타 OS는 cargo(`cargo install --git`)로 설치·갱신.
 
 ---
 
@@ -292,6 +352,22 @@ pnpm list -g --depth=0 | grep -E "dbhub|shell-gpt"
 
 # OS별
 k8sgpt version
+
+# pnpm - LSP Servers
+typescript-language-server --version
+yaml-language-server --version
+bash-language-server --version
+pyright --version
+ansible-language-server --version
+
+# pnpm - LSP (--version 미지원)
+pnpm list -g --depth=0 | grep vscode-langservers-extracted
+
+# brew - LSP Servers
+brew list --versions lua-language-server marksman terraform-ls
+
+# nil (cargo/nix)
+nil --version
 ```
 
 | 패키지 | 관리 | 현재 버전 |
@@ -329,6 +405,22 @@ uv tool upgrade shell-gpt
 uv tool upgrade proxmox-mcp-plus
 uv tool upgrade doris-mcp-server
 uv tool upgrade postgres-mcp
+```
+
+#### LSP Servers
+
+```bash
+# pnpm (전 OS)
+pnpm update -g --latest typescript-language-server yaml-language-server bash-language-server pyright vscode-langservers-extracted @ansible/ansible-language-server
+
+# macOS / SteamOS (Linuxbrew)
+brew upgrade lua-language-server marksman terraform-ls
+
+# nil (macOS/SteamOS/Linux) - cargo 재설치로 갱신
+cargo install --force --git https://github.com/oxalica/nil nil
+
+# NixOS - nix profile upgrade (configuration.nix 관리 시 flake update + nixos-rebuild)
+nix profile upgrade '.*lua-language-server.*' '.*marksman.*' '.*terraform-ls.*' '.*nil.*'
 ```
 
 #### k8sgpt (OS별)
@@ -375,6 +467,6 @@ curl -fsSL "https://github.com/k8sgpt-ai/k8sgpt/releases/latest/download/k8sgpt_
 - **dry-run 먼저** (upgrade): 버전 수집 → 사용자 확인 → 실행
 - **에러 중단하지 않음**: 실패한 패키지는 리포트에 명시하고 계속 진행
 - **Claude Code 제외**: native installer로 자체 관리하므로 안내만 출력
-- **NixOS 특례**: 모든 패키지 매니저(pnpm, uv, k8sgpt)가 nix로 관리됨
+- **NixOS 특례**: 모든 패키지 매니저(pnpm, uv, k8sgpt)와 LSP가 nix로 관리됨. `nil`은 NixOS 외 cargo(mise rust)로 설치
 - **SteamOS 특례**: Node.js/corepack은 mise로 관리 → `npm install -g corepack` 불필요, `corepack prepare pnpm@latest --activate`로 활성화. uv도 mise 권장. k8sgpt는 Linuxbrew
 - **한국어 리포트**: 결과는 항상 한국어로 출력
