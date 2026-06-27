@@ -36,7 +36,6 @@ cat /etc/os-release 2>/dev/null | grep ^ID=
 | 패키지 | CLI 명령 |
 | :--- | :--- |
 | `@openai/codex` | `codex` |
-| `@google/gemini-cli` | `gemini` |
 | `oh-my-claude-sisyphus` | `omc`, `oh-my-claudecode` |
 | `oh-my-codex` | `omx` |
 
@@ -53,6 +52,7 @@ cat /etc/os-release 2>/dev/null | grep ^ID=
 | 패키지 | macOS | Debian/Ubuntu | Fedora | NixOS |
 | :--- | :--- | :--- | :--- | :--- |
 | k8sgpt | brew | binary download | binary download | nix (스킵) |
+| Antigravity CLI | curl installer | curl installer | curl installer | nix (flake) |
 
 ### MCP Servers
 
@@ -127,7 +127,7 @@ pnpm, uv가 없으면 위 Prerequisites 섹션에 따라 설치.
 
 ```bash
 # AI Agents
-pnpm add -g @openai/codex @google/gemini-cli oh-my-claude-sisyphus oh-my-codex
+pnpm add -g @openai/codex oh-my-claude-sisyphus oh-my-codex
 
 # MCP Servers
 pnpm add -g mcp-hub @bytebase/dbhub kubernetes-mcp-server
@@ -164,6 +164,20 @@ curl -fsSL "https://github.com/k8sgpt-ai/k8sgpt/releases/latest/download/k8sgpt_
 # NixOS - 스킵 (nixpkgs로 관리)
 ```
 
+#### Antigravity CLI (공식 installer)
+
+Gemini CLI(2026-06-18 서비스 중단) 후속. Go binary로 공식 installer 스크립트 배포 (npm/pnpm 패키지 아님).
+
+```bash
+# macOS / Linux (Debian/Ubuntu/Fedora) - 공식 installer
+curl -fsSL https://antigravity.google/cli/install.sh | bash
+
+# Windows - installer 스크립트 다운로드 후 실행 (또는 winget install --id Google.Antigravity)
+curl -fsSL https://antigravity.google/cli/install.cmd -o install.cmd
+
+# NixOS - 공식 nixpkgs 미포함. flake로 관리 (예: numtide/llm-agents.nix antigravity-cli)
+```
+
 ### 3. 설치 검증 (버전 출력)
 
 설치 직후 각 CLI로 직접 버전 확인하여 결과 리포트 출력. 실패한 패키지는 FAIL 표시하고 계속 진행.
@@ -171,9 +185,11 @@ curl -fsSL "https://github.com/k8sgpt-ai/k8sgpt/releases/latest/download/k8sgpt_
 ```bash
 # pnpm - AI Agents
 codex --version
-gemini --version
 omc --version
 omx --version
+
+# installer - AI Agent
+agy --version
 
 # pnpm - MCP Servers
 mcp-hub --version
@@ -196,7 +212,7 @@ k8sgpt version
 | 패키지 | 관리 | 상태 | 버전 |
 | :--- | :--- | :--- | :--- |
 | @openai/codex | pnpm | OK | 0.137.0 |
-| @google/gemini-cli | pnpm | FAIL | - |
+| Antigravity CLI | installer | FAIL | - |
 
 > **참고**:
 > - `holmes`, `k8sgpt`는 `--version` 미지원으로 하위 명령 방식 사용.
@@ -217,9 +233,11 @@ pnpm, uv가 없으면 위 Prerequisites 섹션에 따라 설치.
 ```bash
 # pnpm - AI Agents
 codex --version
-gemini --version
 omc --version
 omx --version
+
+# installer - AI Agent
+agy --version
 
 # pnpm - MCP Servers
 mcp-hub --version
@@ -254,7 +272,7 @@ k8sgpt version
 
 ```bash
 # AI Agents
-pnpm update -g --latest @openai/codex @google/gemini-cli oh-my-claude-sisyphus oh-my-codex
+pnpm update -g --latest @openai/codex oh-my-claude-sisyphus oh-my-codex
 
 # MCP Servers
 pnpm update -g --latest mcp-hub @bytebase/dbhub kubernetes-mcp-server
@@ -291,6 +309,18 @@ curl -fsSL "https://github.com/k8sgpt-ai/k8sgpt/releases/latest/download/k8sgpt_
 # NixOS - 스킵 (nixos-rebuild로 관리)
 ```
 
+#### Antigravity CLI (공식 installer)
+
+```bash
+# 내장 셀프업데이트 (권장) - 최신 버전 확인 후 다운로드/설치
+agy update
+
+# 또는 installer 재실행 (최신 바이너리 덮어쓰기) - macOS/Linux
+curl -fsSL https://antigravity.google/cli/install.sh | bash
+
+# NixOS - flake 입력 업데이트 후 nixos-rebuild
+```
+
 ### 5. 업그레이드 검증 + 결과 리포트
 
 업그레이드 직후 각 CLI로 직접 버전 확인. 사전 버전(step 2)과 비교하여 리포트 출력.
@@ -303,7 +333,7 @@ curl -fsSL "https://github.com/k8sgpt-ai/k8sgpt/releases/latest/download/k8sgpt_
 | 패키지 | 관리 | 이전 | 이후 | 상태 |
 | :--- | :--- | :--- | :--- | :--- |
 | @openai/codex | pnpm | 0.137.0 | 0.138.0 | OK |
-| @google/gemini-cli | pnpm | 0.45.1 | 0.45.1 | — |
+| Antigravity CLI | installer | 1.0.3 | 1.1.0 | OK |
 | @bytebase/dbhub | pnpm | 0.21.2 | — | FAIL |
 ```
 
@@ -318,5 +348,5 @@ curl -fsSL "https://github.com/k8sgpt-ai/k8sgpt/releases/latest/download/k8sgpt_
 - **dry-run 먼저** (upgrade): 버전 수집 → 사용자 확인 → 실행
 - **에러 중단하지 않음**: 실패한 패키지는 리포트에 명시하고 계속 진행
 - **Claude Code 제외**: native installer로 자체 관리하므로 안내만 출력
-- **NixOS 특례**: 모든 패키지 매니저(pnpm, uv, k8sgpt)가 nix로 관리됨
+- **NixOS 특례**: pnpm, uv, k8sgpt는 nix로 관리. Antigravity CLI는 공식 nixpkgs 미포함 → flake(예: numtide/llm-agents.nix)로 관리
 - **한국어 리포트**: 결과는 항상 한국어로 출력
