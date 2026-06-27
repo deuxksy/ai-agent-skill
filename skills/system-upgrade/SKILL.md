@@ -159,3 +159,4 @@ sudo dnf autoremove -y
 - **NixOS flake update는 명시적 요청 시만**: 기본은 `nixos-rebuild`만, `flake update`는 사용자 승인 필요
 - **한국어 리포트**: 결과는 항상 한국어로 출력
 - **agents upgrade와 분리**: 이 스킬은 시스템 패키지만, AI 에이전트는 `/zzizily:agents upgrade`
+- **pip, npm 직접 사용 금지**: Python은 uv tool, Node는 pnpm으로 관리. pip/npm은 전이 의존성만 관리하므로 직접 업그레이드하지 않음

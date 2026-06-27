@@ -12,6 +12,7 @@
 | `openwrt-initd` | OpenWrt init.d 백그라운드 서비스 설치 (procd 감시) |
 | `hot-game-deals-n-news` | Steam/Epic/GOG 게임 할인, 무료 게임, 뉴스 체크 |
 | `exchange-rate-tracker` | USD/KRW, USD/VND 환율 수집 및 그래프 시각화 |
+| `proxmox-vm-create` | pvesh(REST API)로 Proxmox template 복제 VM 생성 자동화 (사양 확장 + product_uuid 방어) |
 
 ## 설치
 

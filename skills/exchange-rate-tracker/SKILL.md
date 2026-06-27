@@ -20,6 +20,7 @@ USD/KRW, USD/VND 환율을 추적하고 그래프로 시각화하는 스킬.
 - Mermaid xychart 환율 변동 그래프
 - 주간/월간 추이 그래프
 - 스파크라인 (유니코드 블록)
+- matplotlib PNG 일별/추세 그래프 (KRW/VND, 추세선 포함)
 
 ### 3. 알림
 - 큰 변동 시 알림 (예: ±50원 이상)
@@ -60,7 +61,7 @@ USD/KRW, USD/VND 환율을 추적하고 그래프로 시각화하는 스킬.
 
 ### scripts/
 - `fetch_rate.py` - 환율 수집 스크립트
-- `plot_graph.py` - 그래프 생성 스크립트
+- `plot_graph.py` - 그래프 생성 스크립트 (Mermaid xychart + matplotlib PNG)
 
 ### references/
 - `api-info.md` - 하나은행 API 정보
