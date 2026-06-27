@@ -37,7 +37,6 @@ cat /etc/os-release 2>/dev/null | grep ^ID=
 | 패키지 | CLI 명령 |
 | :--- | :--- |
 | `@openai/codex` | `codex` |
-| `@google/gemini-cli` | `gemini` |
 | `oh-my-claude-sisyphus` | `omc`, `oh-my-claudecode` |
 | `oh-my-codex` | `omx` |
 
@@ -54,6 +53,16 @@ cat /etc/os-release 2>/dev/null | grep ^ID=
 | 패키지 | macOS | SteamOS | Debian/Ubuntu | Fedora | NixOS |
 | :--- | :--- | :--- | :--- | :--- | :--- |
 | k8sgpt | brew | brew (Linuxbrew) | binary download | binary download | nix (스킵) |
+
+#### Antigravity CLI (Google Gemini CLI 후속, Go 바이너리)
+
+| 항목 | 명령 |
+| :--- | :--- |
+| 설치 (macOS/SteamOS/Linux 공통) | `curl -fsSL https://antigravity.google/cli/install.sh \| bash` |
+| 업그레이드 | `agy update` |
+| 버전 확인 | `agy --version` |
+
+> Gemini CLI는 2026-06-18 서비스 중단. npm/pnpm 패키지가 아닌 독립 Go 바이너리 (자체 `agy update`로 관리).
 
 ### MCP Servers
 
@@ -193,7 +202,7 @@ pnpm, uv가 없으면 위 Prerequisites 섹션에 따라 설치.
 ```bash
 # @latest 지정 필수: 미지정 시 설치 시점 버전이 lockfile에 고정되어 최신으로 갱신 안 됨
 # AI Agents
-pnpm add -g @openai/codex@latest @google/gemini-cli@latest oh-my-claude-sisyphus@latest oh-my-codex@latest
+pnpm add -g @openai/codex@latest oh-my-claude-sisyphus@latest oh-my-codex@latest
 
 # MCP Servers
 pnpm add -g mcp-hub@latest @bytebase/dbhub@latest kubernetes-mcp-server@latest
@@ -254,6 +263,15 @@ curl -fsSL "https://github.com/k8sgpt-ai/k8sgpt/releases/latest/download/k8sgpt_
 # NixOS - 스킵 (nixpkgs로 관리)
 ```
 
+#### Antigravity CLI (Go 바이너리, npm 아님)
+
+```bash
+# macOS/SteamOS/Linux 공통 (Gemini CLI 후속, 2026-06-18 서비스 중단)
+if ! command -v agy &>/dev/null; then
+  curl -fsSL https://antigravity.google/cli/install.sh | bash
+fi
+```
+
 #### Claude Code Plugins (Marketplace)
 
 ```bash
@@ -269,9 +287,11 @@ claude plugin install oh-my-claudecode
 ```bash
 # pnpm - AI Agents
 codex --version
-gemini --version
 omc --version
 omx --version
+
+# Antigravity CLI (Go 바이너리, 자체 관리)
+agy --version
 
 # pnpm - MCP Servers
 mcp-hub --version
@@ -313,7 +333,7 @@ nil --version
 | 패키지 | 관리 | 상태 | 버전 |
 | :--- | :--- | :--- | :--- |
 | @openai/codex | pnpm | OK | 0.137.0 |
-| @google/gemini-cli | pnpm | FAIL | - |
+| agy (Antigravity) | standalone | OK | 1.0.13 |
 
 > **참고**:
 > - `holmes`, `k8sgpt`는 `--version` 미지원으로 하위 명령 방식 사용.
@@ -337,9 +357,11 @@ pnpm, uv가 없으면 위 Prerequisites 섹션에 따라 설치.
 ```bash
 # pnpm - AI Agents
 codex --version
-gemini --version
 omc --version
 omx --version
+
+# Antigravity CLI (Go 바이너리, 자체 관리)
+agy --version
 
 # pnpm - MCP Servers
 mcp-hub --version
@@ -393,7 +415,7 @@ nil --version
 
 ```bash
 # AI Agents
-pnpm update -g --latest @openai/codex @google/gemini-cli oh-my-claude-sisyphus oh-my-codex
+pnpm update -g --latest @openai/codex oh-my-claude-sisyphus oh-my-codex
 
 # MCP Servers
 pnpm update -g --latest mcp-hub @bytebase/dbhub kubernetes-mcp-server
@@ -448,6 +470,13 @@ curl -fsSL "https://github.com/k8sgpt-ai/k8sgpt/releases/latest/download/k8sgpt_
 # NixOS - 스킵 (nixos-rebuild로 관리)
 ```
 
+#### Antigravity CLI
+
+```bash
+# 자체 update 서브커맨드 (Go 바이너리, npm 아님)
+agy update
+```
+
 ### 5. 업그레이드 검증 + 결과 리포트
 
 업그레이드 직후 각 CLI로 직접 버전 확인. 사전 버전(step 2)과 비교하여 리포트 출력.
@@ -460,7 +489,7 @@ curl -fsSL "https://github.com/k8sgpt-ai/k8sgpt/releases/latest/download/k8sgpt_
 | 패키지 | 관리 | 이전 | 이후 | 상태 |
 | :--- | :--- | :--- | :--- | :--- |
 | @openai/codex | pnpm | 0.137.0 | 0.138.0 | OK |
-| @google/gemini-cli | pnpm | 0.45.1 | 0.45.1 | — |
+| agy (Antigravity) | standalone | 1.0.11 | 1.0.13 | OK |
 | @bytebase/dbhub | pnpm | 0.21.2 | — | FAIL |
 ```
 
