@@ -62,7 +62,7 @@ cat /etc/os-release 2>/dev/null | grep ^ID=
 | 업그레이드 | `agy update` |
 | 버전 확인 | `agy --version` |
 
-> Gemini CLI는 2026-06-18 서비스 중단. npm/pnpm 패키지가 아닌 독립 Go 바이너리 (자체 `agy update`로 관리). 공식 nixpkgs 미포함 → NixOS는 flake(예: numtide/llm-agents.nix)로 관리.
+> Gemini CLI는 2026-06-18 서비스 중단. npm/pnpm 패키지가 아닌 독립 Go 바이너리 (자체 `agy update`로 관리). nixpkgs `antigravity-cli` 패키지로 제공 → NixOS는 `nix profile install nixpkgs#antigravity-cli` 또는 HM home.packages로 관리.
 
 ### MCP Servers
 
@@ -271,7 +271,8 @@ if ! command -v agy &>/dev/null; then
   curl -fsSL https://antigravity.google/cli/install.sh | bash
 fi
 
-# NixOS - 공식 nixpkgs 미포함. flake로 관리 (예: numtide/llm-agents.nix antigravity-cli)
+# NixOS - nix 패키지 (nixpkgs#antigravity-cli)
+nix profile install nixpkgs#antigravity-cli
 ```
 
 #### Claude Code Plugins (Marketplace)
@@ -478,7 +479,8 @@ agy update
 # 또는 installer 재실행 (최신 바이너리 덮어쓰기) - macOS/SteamOS/Linux
 curl -fsSL https://antigravity.google/cli/install.sh | bash
 
-# NixOS - flake 입력 업데이트 후 nixos-rebuild
+# NixOS - nix profile upgrade (configuration.nix 관리 시 flake update + nixos-rebuild)
+nix profile upgrade '.*antigravity-cli.*'
 ```
 ### 5. 업그레이드 검증 + 결과 리포트
 
@@ -507,6 +509,6 @@ curl -fsSL https://antigravity.google/cli/install.sh | bash
 - **dry-run 먼저** (upgrade): 버전 수집 → 사용자 확인 → 실행
 - **에러 중단하지 않음**: 실패한 패키지는 리포트에 명시하고 계속 진행
 - **Claude Code 제외**: native installer로 자체 관리하므로 안내만 출력
-- **NixOS 특례**: 모든 패키지 매니저(pnpm, uv, k8sgpt)와 LSP가 nix로 관리됨. `nil`은 NixOS 외 cargo(mise rust)로 설치. Antigravity CLI는 공식 nixpkgs 미포함 → flake(예: numtide/llm-agents.nix)로 관리
+- **NixOS 특례**: 모든 패키지 매니저(pnpm, uv, k8sgpt)와 LSP가 nix로 관리됨. `nil`은 NixOS 외 cargo(mise rust)로 설치. Antigravity CLI는 nixpkgs `antigravity-cli` 패키지로 관리
 - **SteamOS 특례**: Node.js/corepack은 mise로 관리 → `npm install -g corepack` 불필요, `corepack prepare pnpm@latest --activate`로 활성화. uv도 mise 권장. k8sgpt는 Linuxbrew
 - **한국어 리포트**: 결과는 항상 한국어로 출력
