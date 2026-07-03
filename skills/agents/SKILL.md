@@ -58,11 +58,13 @@ cat /etc/os-release 2>/dev/null | grep ^ID=
 
 | 항목 | 명령 |
 | :--- | :--- |
-| 설치 (macOS/SteamOS/Linux 공통) | `curl -fsSL https://antigravity.google/cli/install.sh \| bash` |
-| 업그레이드 | `agy update` |
+| 설치 (macOS) | `brew install --cask antigravity-cli` |
+| 설치 (SteamOS/Linux) | `curl -fsSL https://antigravity.google/cli/install.sh \| bash` |
+| 업그레이드 (macOS) | `brew upgrade --cask antigravity-cli` (cask `auto_updates`) |
+| 업그레이드 (SteamOS/Linux) | `agy update` |
 | 버전 확인 | `agy --version` |
 
-> Gemini CLI는 2026-06-18 서비스 중단. npm/pnpm 패키지가 아닌 독립 Go 바이너리 (자체 `agy update`로 관리). nixpkgs `antigravity-cli` 패키지로 제공 → NixOS는 `nix profile install nixpkgs#antigravity-cli` 또는 HM home.packages로 관리.
+> Gemini CLI는 2026-06-18 서비스 중단. npm/pnpm 패키지가 아닌 독립 Go 바이너리. macOS는 homebrew-cask `antigravity-cli` (`auto_updates`), NixOS는 nixpkgs `antigravity-cli` 패키지로 관리. SteamOS/Linux만 installer 스크립트 (자체 `agy update`로 갱신).
 
 ### MCP Servers
 
@@ -266,7 +268,12 @@ curl -fsSL "https://github.com/k8sgpt-ai/k8sgpt/releases/latest/download/k8sgpt_
 #### Antigravity CLI (Go 바이너리, npm 아님)
 
 ```bash
-# macOS/SteamOS/Linux 공통 (Gemini CLI 후속, 2026-06-18 서비스 중단)
+# macOS - homebrew-cask (auto_updates)
+if ! command -v agy &>/dev/null; then
+  brew install --cask antigravity-cli
+fi
+
+# SteamOS/Linux - installer 스크립트 (Gemini CLI 후속, 2026-06-18 서비스 중단)
 if ! command -v agy &>/dev/null; then
   curl -fsSL https://antigravity.google/cli/install.sh | bash
 fi
@@ -292,7 +299,7 @@ codex --version
 omc --version
 omx --version
 
-# Antigravity CLI (Go 바이너리, 자체 관리)
+# Antigravity CLI (Go 바이너리, OS별 매니저)
 agy --version
 # pnpm - MCP Servers
 mcp-hub --version
@@ -361,7 +368,7 @@ codex --version
 omc --version
 omx --version
 
-# Antigravity CLI (Go 바이너리, 자체 관리)
+# Antigravity CLI (Go 바이너리, OS별 매니저)
 agy --version
 # pnpm - MCP Servers
 mcp-hub --version
@@ -473,11 +480,11 @@ curl -fsSL "https://github.com/k8sgpt-ai/k8sgpt/releases/latest/download/k8sgpt_
 #### Antigravity CLI
 
 ```bash
-# 자체 update 서브커맨드 (Go 바이너리, npm 아님)
-agy update
+# macOS - homebrew-cask (auto_updates cask, 수동 강제 업그레이드)
+brew upgrade --cask antigravity-cli
 
-# 또는 installer 재실행 (최신 바이너리 덮어쓰기) - macOS/SteamOS/Linux
-curl -fsSL https://antigravity.google/cli/install.sh | bash
+# SteamOS/Linux - 자체 update 서브커맨드 (또는 installer 재실행)
+agy update
 
 # NixOS - nix profile upgrade (configuration.nix 관리 시 flake update + nixos-rebuild)
 nix profile upgrade '.*antigravity-cli.*'
@@ -509,6 +516,7 @@ nix profile upgrade '.*antigravity-cli.*'
 - **dry-run 먼저** (upgrade): 버전 수집 → 사용자 확인 → 실행
 - **에러 중단하지 않음**: 실패한 패키지는 리포트에 명시하고 계속 진행
 - **Claude Code 제외**: native installer로 자체 관리하므로 안내만 출력
-- **NixOS 특례**: 모든 패키지 매니저(pnpm, uv, k8sgpt)와 LSP가 nix로 관리됨. `nil`은 NixOS 외 cargo(mise rust)로 설치. Antigravity CLI는 nixpkgs `antigravity-cli` 패키지로 관리
+- **NixOS 특례**: 모든 패키지 매니저(pnpm, uv, k8sgpt)와 LSP가 nix로 관리됨. `nil`은 NixOS 외 cargo(mise rust)로 설치
+- **Antigravity CLI 특례**: macOS는 homebrew-cask (`auto_updates`), SteamOS/Linux는 installer 스크립트 (자체 `agy update`), NixOS는 nixpkgs `antigravity-cli` 패키지. 동일 Go 바이너리를 여러 매니저가 섞지 않도록 OS별 하나만 사용
 - **SteamOS 특례**: Node.js/corepack은 mise로 관리 → `npm install -g corepack` 불필요, `corepack prepare pnpm@latest --activate`로 활성화. uv도 mise 권장. k8sgpt는 Linuxbrew
 - **한국어 리포트**: 결과는 항상 한국어로 출력
