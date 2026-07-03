@@ -37,6 +37,11 @@ ls skills/
 │   └── marketplace.json     # 마켓플레이스 등록 정보
 └── skills/
     ├── agents/                    # AI Agent/MCP 설치 자동화
+    ├── backdoor-investigation/    # Linux 백도어 포렌식 진단 (read-only)
+    │   └── scripts/
+    ├── backdoor-remediation/      # 백도어 제거·복구 (파괴적, 승인 필요)
+    ├── calendar-sync/             # Notion/GCal → Hermes 일정 동기화
+    │   └── scripts/
     ├── code-audit/                # 보안 취약점 점검
     ├── deploy-android-wifi/       # WiFi ADB 배포 자동화
     ├── exchange-rate-tracker/     # 환율 추적 (USD/KRW, USD/VND)
@@ -54,11 +59,57 @@ ls skills/
     ├── product-planning-dr-pipeline/ # 제품 기획 Deep Research 파이프라인
     │   ├── templates/             # 단계별 RQ/산출물 템플릿 (AGENTS/CONTEXT/ROADMAP/DESIGN)
     │   └── examples/              # 예시 산출물
+    ├── proxmox-vm-create/         # Proxmox VE VM 프로비저닝 (qm→pvesh→REST)
     ├── setup/                     # 초기 설정
     ├── system-audit/              # 시스템 감사
     │   └── references/
     └── system-upgrade/            # 시스템 업그레이드
 ```
+
+## 스킬 카탈로그 (16)
+
+기능 도메인별 그룹핑. 신규 스킬 추가 시 해당 카테고리에 배치.
+
+### 보안 · 감사 (Security & Audit)
+
+| 스킬 | 설명 |
+| :--- | :--- |
+| code-audit | 정적 코드 보안 점검 (SAST/CWE/OWASP) |
+| system-audit | 시스템 패키지 보안 감사 (CVE/CVSS/KEV) |
+| backdoor-investigation | Linux 백도어 포렌식 진단 (read-only) |
+| backdoor-remediation | 백도어 제거·복구 (파괴적, 승인 필요) |
+
+### 인프라 · 프로비저닝 (Infra & Provisioning)
+
+| 스킬 | 설명 |
+| :--- | :--- |
+| setup | 초기 설정 (brew/stow/sops/Tailscale) |
+| system-upgrade | OS 패키지 업그레이드 (brew/apt/dnf/nix) |
+| proxmox-vm-create | Proxmox VE VM 프로비저닝 (qm→pvesh→REST) |
+| openwrt-initd | OpenWrt init.d 백그라운드 서비스 설치 |
+
+### 자동화 · 트래커 (Automation & Trackers)
+
+| 스킬 | 설명 |
+| :--- | :--- |
+| calendar-sync | Notion/GCal → Hermes 일정 동기화 |
+| exchange-rate-tracker | 환율 추적 (USD/KRW, USD/VND) |
+| hot-game-deals-n-news | 게임 할인/무료/뉴스 트래커 |
+
+### AI Agent · 배포 (Agents & Deploy)
+
+| 스킬 | 설명 |
+| :--- | :--- |
+| agents | AI Agent/MCP/LSP 설치·업그레이드 자동화 |
+| deploy-android-wifi | WiFi ADB React Native 배포 자동화 |
+
+### 콘텐츠 · 로컬라이제이션 (Content & L10n)
+
+| 스킬 | 설명 |
+| :--- | :--- |
+| optimize-images-4k | 4K 이미지 최적화 (ImageMagick) |
+| korean-translation-verify | 한국어 번역 품질 검증 |
+| product-planning-dr-pipeline | 제품 기획 Deep Research 파이프라인 |
 
 ## SKILL.md 규격
 
