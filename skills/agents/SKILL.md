@@ -36,9 +36,10 @@ cat /etc/os-release 2>/dev/null | grep ^ID=
 
 | 패키지 | CLI 명령 |
 | :--- | :--- |
-| `@openai/codex` | `codex` |
 | `oh-my-claude-sisyphus` | `omc`, `oh-my-claudecode` |
 | `oh-my-codex` | `omx` |
+
+> `codex`는 macOS에서 brew cask(`codex`) 권장 — pnpm `minimumReleaseAge`로 최신 설치가 지연됨. 아래 Brew Cask AI Agents 섹션 참조. 타 OS는 `@openai/codex` pnpm 패키지.
 
 #### uv
 
@@ -54,17 +55,20 @@ cat /etc/os-release 2>/dev/null | grep ^ID=
 | :--- | :--- | :--- | :--- | :--- | :--- |
 | k8sgpt | brew | brew (Linuxbrew) | binary download | binary download | nix (스킵) |
 
-#### Antigravity CLI (Google Gemini CLI 후속, Go 바이너리)
+#### Brew Cask AI Agents
 
-| 항목 | 명령 |
-| :--- | :--- |
-| 설치 (macOS) | `brew install --cask antigravity-cli` |
-| 설치 (SteamOS/Linux) | `curl -fsSL https://antigravity.google/cli/install.sh \| bash` |
-| 업그레이드 (macOS) | `brew upgrade --cask antigravity-cli` (cask `auto_updates`) |
-| 업그레이드 (SteamOS/Linux) | `agy update` |
-| 버전 확인 | `agy --version` |
+macOS에서 `codex`·`claude-code`·`antigravity-cli`는 brew cask로 관리. pnpm `minimumReleaseAge`·native PATH 충돌·`agy` 자체 업데이터 충돌을 모두 회피.
 
-> Gemini CLI는 2026-06-18 서비스 중단. npm/pnpm 패키지가 아닌 독립 Go 바이너리. macOS는 homebrew-cask `antigravity-cli` (`auto_updates`), NixOS는 nixpkgs `antigravity-cli` 패키지로 관리. SteamOS/Linux만 installer 스크립트 (자체 `agy update`로 갱신).
+| 패키지 | CLI | 설치 (macOS) | 업그레이드 (macOS) |
+| :--- | :--- | :--- | :--- |
+| `codex` | `codex` | `brew install --cask codex` | `brew upgrade --cask codex` |
+| `claude-code` | `claude` | `brew install --cask claude-code` | `brew upgrade --cask claude-code` |
+| `antigravity-cli` | `agy` | `brew install --cask antigravity-cli` | `brew upgrade --cask antigravity-cli` (실패 시 `agy update`) |
+
+> **antigravity-cli**: `auto_updates` cask라 `agy` 자체 업데이터가 바이너리를 덮어쓰면 `brew upgrade --cask`가 "already a Binary at .../agy" 에러로 실패. 이때 `agy update`로 갱신 (`brew info`가 Not installed로 인식하는 상태 불일치도 동일 원인).
+> **claude-code**: native installer(`~/.local/bin/claude`)와 PATH 충돌. brew 우선하려면 native 바이너리 제거 → `/opt/homebrew/bin/claude` 사용. `~/.claude/`(설정·플러그인)는 공유 유지.
+> **codex**: npm 패키지이나 macOS는 brew cask가 최신을 즉시 제공 (pnpm `minimumReleaseAge` 우회).
+> **타 OS**: SteamOS/Linux antigravity는 `curl -fsSL https://antigravity.google/cli/install.sh | bash` (자체 `agy update`). NixOS는 `nixpkgs#antigravity-cli`. codex는 타 OS에서 `@openai/codex` pnpm. claude-code는 native installer. Gemini CLI는 2026-06-18 서비스 중단.
 
 ### MCP Servers
 
@@ -203,8 +207,10 @@ pnpm, uv가 없으면 위 Prerequisites 섹션에 따라 설치.
 
 ```bash
 # @latest 지정 필수: 미지정 시 설치 시점 버전이 lockfile에 고정되어 최신으로 갱신 안 됨
-# AI Agents
-pnpm add -g @openai/codex@latest oh-my-claude-sisyphus@latest oh-my-codex@latest
+# AI Agents — macOS는 codex를 brew cask로 설치 (아래 Brew Cask AI Agents). pnpm은 타 OS만.
+pnpm add -g oh-my-claude-sisyphus@latest oh-my-codex@latest
+# codex (macOS 제외 — macOS는 brew cask)
+[ "$(uname -s)" != "Darwin" ] && pnpm add -g @openai/codex@latest
 
 # MCP Servers
 pnpm add -g mcp-hub@latest @bytebase/dbhub@latest kubernetes-mcp-server@latest
@@ -265,16 +271,20 @@ curl -fsSL "https://github.com/k8sgpt-ai/k8sgpt/releases/latest/download/k8sgpt_
 # NixOS - 스킵 (nixpkgs로 관리)
 ```
 
-#### Antigravity CLI (Go 바이너리, npm 아님)
+#### Brew Cask AI Agents (macOS 분기)
+
+macOS 감지(`uname -s = Darwin`) 시 `codex`·`claude-code`·`antigravity-cli`를 brew cask로 설치. macOS는 brew 기반.
 
 ```bash
-# macOS - homebrew-cask (auto_updates)
-if ! command -v agy &>/dev/null; then
-  brew install --cask antigravity-cli
+# macOS - brew cask로 codex / claude-code / antigravity-cli 동시 설치
+if [ "$(uname -s)" = "Darwin" ]; then
+  brew install --cask codex claude-code antigravity-cli
+  # claude-code: native installer(~/.local/bin/claude) 잔류 시 PATH 충돌 → 제거 후 brew 우선
+  # rm ~/.local/bin/claude  # 사용자 승인 후 제거
 fi
 
-# SteamOS/Linux - installer 스크립트 (Gemini CLI 후속, 2026-06-18 서비스 중단)
-if ! command -v agy &>/dev/null; then
+# SteamOS/Linux - antigravity installer (자체 agy update)
+if [ "$(uname -s)" != "Darwin" ] && ! command -v agy &>/dev/null; then
   curl -fsSL https://antigravity.google/cli/install.sh | bash
 fi
 
@@ -299,8 +309,9 @@ codex --version
 omc --version
 omx --version
 
-# Antigravity CLI (Go 바이너리, OS별 매니저)
+# Brew Cask AI Agents (macOS)
 agy --version
+claude --version
 # pnpm - MCP Servers
 mcp-hub --version
 kubernetes-mcp-server --version
@@ -368,8 +379,9 @@ codex --version
 omc --version
 omx --version
 
-# Antigravity CLI (Go 바이너리, OS별 매니저)
+# Brew Cask AI Agents (macOS)
 agy --version
+claude --version
 # pnpm - MCP Servers
 mcp-hub --version
 kubernetes-mcp-server --version
@@ -421,8 +433,10 @@ nil --version
 #### pnpm (전 OS)
 
 ```bash
-# AI Agents
-pnpm update -g --latest @openai/codex oh-my-claude-sisyphus oh-my-codex
+# AI Agents — macOS는 codex를 brew cask로 업그레이드 (아래 Brew Cask). pnpm은 타 OS만.
+pnpm update -g --latest oh-my-claude-sisyphus oh-my-codex
+# codex (macOS 제외 — minimumReleaseAge 주의)
+[ "$(uname -s)" != "Darwin" ] && pnpm update -g --latest @openai/codex
 
 # MCP Servers
 pnpm update -g --latest mcp-hub @bytebase/dbhub kubernetes-mcp-server
@@ -477,13 +491,16 @@ curl -fsSL "https://github.com/k8sgpt-ai/k8sgpt/releases/latest/download/k8sgpt_
 # NixOS - 스킵 (nixos-rebuild로 관리)
 ```
 
-#### Antigravity CLI
+#### Brew Cask AI Agents (macOS 분기)
 
 ```bash
-# macOS - homebrew-cask (auto_updates cask, 수동 강제 업그레이드)
-brew upgrade --cask antigravity-cli
+# macOS - brew cask로 codex / claude-code / antigravity-cli 업그레이드
+if [ "$(uname -s)" = "Darwin" ]; then
+  brew upgrade --cask codex claude-code antigravity-cli
+  # antigravity-cli: auto_updates cask라 agy 자체 업데이터 충돌 시 "already a Binary" 에러 → agy update로 폴백
+fi
 
-# SteamOS/Linux - 자체 update 서브커맨드 (또는 installer 재실행)
+# SteamOS/Linux - 자체 update 서브커맨드
 agy update
 
 # NixOS - nix profile upgrade (configuration.nix 관리 시 flake update + nixos-rebuild)
@@ -515,8 +532,11 @@ nix profile upgrade '.*antigravity-cli.*'
 - **멱등성** (install): 이미 설치된 패키지는 스킵
 - **dry-run 먼저** (upgrade): 버전 수집 → 사용자 확인 → 실행
 - **에러 중단하지 않음**: 실패한 패키지는 리포트에 명시하고 계속 진행
-- **Claude Code 제외**: native installer로 자체 관리하므로 안내만 출력
+- **Brew Cask 우선 (macOS)**: `codex`·`claude-code`·`antigravity-cli`는 brew cask로 관리. brew formula/cask에 존재하면 pnpm/uv/native보다 우선 (`brew search`로 확인)
+- **pnpm minimumReleaseAge 주의**: pnpm global은 supply chain 보호로 publish 후 약 24시간 동안 최신 버전 설치 차단 (`ERR_PNPM_NO_MATURE_MATCHING_VERSION`). `(x.xx.x is available)`가 떠도 강제 설치 불가 → macOS는 brew cask로 우회
+- **mise/pnpm PATH 충돌 주의**: mise node global bin이 pnpm global bin보다 PATH에서 선행하면 stale 구버전이 실행됨. 업그레이드 후 반드시 `which <cli>` + `--version` 교차 검증. mise node global 중복 패키지는 `npm uninstall -g`로 제거
+- **Claude Code**: macOS는 brew cask `claude-code`로 관리 (native installer 대체). `~/.claude/` 설정은 공유. 타 OS는 native installer 유지
 - **NixOS 특례**: 모든 패키지 매니저(pnpm, uv, k8sgpt)와 LSP가 nix로 관리됨. `nil`은 NixOS 외 cargo(mise rust)로 설치
-- **Antigravity CLI 특례**: macOS는 homebrew-cask (`auto_updates`), SteamOS/Linux는 installer 스크립트 (자체 `agy update`), NixOS는 nixpkgs `antigravity-cli` 패키지. 동일 Go 바이너리를 여러 매니저가 섞지 않도록 OS별 하나만 사용
+- **Antigravity CLI 특례**: macOS는 homebrew-cask (`auto_updates`) — `brew upgrade --cask` 실패 시 `agy update`로 폴백. SteamOS/Linux는 installer 스크립트 (자체 `agy update`), NixOS는 nixpkgs `antigravity-cli` 패키지
 - **SteamOS 특례**: Node.js/corepack은 mise로 관리 → `npm install -g corepack` 불필요, `corepack prepare pnpm@latest --activate`로 활성화. uv도 mise 권장. k8sgpt는 Linuxbrew
 - **한국어 리포트**: 결과는 항상 한국어로 출력
