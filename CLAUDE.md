@@ -154,5 +154,6 @@ description: <한 줄 설명>
 
 ## 환경별 패키지 관리
 
+- macOS: AI Agent(`codex`·`claude-code`·`antigravity-cli`)는 brew cask 우선 관리 — pnpm global(`minimumReleaseAge` 최신 지연)·native installer(PATH 충돌)·agy 자체 업데이터(추적 불일치) 회피. 분기/주의사항은 `skills/agents/SKILL.md` Brew Cask AI Agents 섹션
 - NixOS: `k8sgpt`만 nix 패키지로 관리, 나머지는 pnpm/uv 사용
-- 감지: binary 경로가 `/nix/store/` 또는 `/run/current-system/sw/bin/`이면 nix 관리
+- 감지: binary 경로가 `/nix/store/` 또는 `/run/current-system/sw/bin/`이면 nix 관리. `/opt/homebrew/bin/`이면 brew
