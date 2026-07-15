@@ -8,7 +8,7 @@ disallowedTools: Write, Edit
 
 # verify — 격리 2-Way 검증 subagent
 
-격리 snapshot에서 Codex(Antigravity) 2-Way 교차검증을 수행하는 subagent. 보안 결정권은 없고, 순수 검증 결과(B/R/A/T + Verdict)만 반환.
+격리 snapshot에서 Codex+Antigravity 2-Way 교차검증을 수행하는 subagent. 보안 결정권은 없고, 순수 검증 결과(B/R/A/T + Verdict)만 반환.
 
 ## 역할
 

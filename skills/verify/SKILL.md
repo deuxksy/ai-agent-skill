@@ -79,7 +79,7 @@ git diff --numstat                          # binary/대용량 감지 (-	- 형�
 | :--- | :--- |
 | staged + unstaged 혼합 | 양쪽 모두 포함 (작업 중인 전체 변경) |
 | untracked 신규 파일 | `git add -N --intent-to-add` 후 diff에 포함 |
-| rename | `--find-renames`로 감지,신구 모두 스캔 |
+| rename | `--find-renames`로 감지, 신·구 모두 스캔 |
 | delete | 삭제된 파일의 마지막 커밋 내용을 diff에 포함 |
 | binary | `--numstat`으로 `-` 표기 감지, text 취급 불가 → 별도 표기 |
 | 대용량 (1MB+) | diff 잘림 방지를 파일 단위 전달 |
@@ -136,12 +136,21 @@ ISOLATED_DIR=$(mktemp -d /tmp/verify-isolated-XXXXXX)
 
 # 정제 복사본 생성 (배제 패턴 + redaction 적용된 파일만)
 # 대상 snapshot 파일만 복사 (전 workspace 아님)
+# EXCLUDE_PATTERNS 전체를 rsync --exclude로 전달 (secret exfiltration 방지)
 rsync -av --files-from <(echo "$TARGET_FILES") \
   --exclude '.env*' --exclude '*.key' --exclude '*.pem' \
+  --exclude '.sops' --exclude '.gitleaks.toml' \
+  --exclude '.codex/' --exclude '.config/**' \
+  --exclude '.aws/' --exclude '.ssh/' --exclude '.gnupg/' \
   "$WORKSPACE/" "$ISOLATED_DIR/"
 
-# 확인: 격리 dir에 .env, .key 등이 없어야 함
-find "$ISOLATED_DIR" \( -name '.env*' -o -name '*.key' -o -name '*.pem' \) -print | grep -q . && {
+# 확인: 격리 dir에 민감 파일이 없어야 함 (EXCLUDE_PATTERNS 전체 검사)
+find "$ISOLATED_DIR" \( \
+  -name '.env*' -o -name '*.key' -o -name '*.pem' \
+  -o -name '.sops' -o -name '.gitleaks.toml' \
+  -o -name '.codex' -o -path '*/.config/*' \
+  -o -name '.aws' -o -name '.ssh' -o -name '.gnupg' \
+\) -print | grep -q . && {
   echo "FAIL-CLOSED: 격리 snapshot에 민감 파일 잔류"; exit 1; }
 ```
 
@@ -153,16 +162,20 @@ find "$ISOLATED_DIR" \( -name '.env*' -o -name '*.key' -o -name '*.pem' \) -prin
 
 ```bash
 # tracked 파일 hash
-git ls-files | xargs shasum -a 256 > "$(mktemp /tmp/integrity-tracked-XXXXXX.txt)"
+INTEGRITY_TRACKED_PRE=$(mktemp /tmp/verify-integrity-tracked-XXXXXX.txt)
+git ls-files | xargs shasum -a 256 > "$INTEGRITY_TRACKED_PRE"
 
 # untracked 파일 hash (무결성 감시 대상)
-git ls-files --others --exclude-standard | xargs shasum -a 256 > "$(mktemp /tmp/integrity-untracked-XXXXXX.txt)"
+INTEGRITY_UNTRACKED_PRE=$(mktemp /tmp/verify-integrity-untracked-XXXXXX.txt)
+git ls-files --others --exclude-standard | sort | xargs -r shasum -a 256 > "$INTEGRITY_UNTRACKED_PRE"
 
 # git status 스냅샷
-git status --porcelain=v1 --branch > "$(mktemp /tmp/integrity-status-XXXXXX.txt)"
+INTEGRITY_STATUS_PRE=$(mktemp /tmp/verify-integrity-status-XXXXXX.txt)
+git status --porcelain=v1 --branch > "$INTEGRITY_STATUS_PRE"
 
 # 파일 metadata (mtime, permission)
-find . -type f \( ! -path './.git/*' \) -exec stat -f '%m %Sp %N' {} \; > "$(mktemp /tmp/integrity-meta-XXXXXX.txt)"
+INTEGRITY_META_PRE=$(mktemp /tmp/verify-integrity-meta-XXXXXX.txt)
+find . -type f \( ! -path './.git/*' \) -exec stat -f '%m %Sp %N' {} \; > "$INTEGRITY_META_PRE"
 ```
 
 ## dispatch 실행 계약
@@ -235,10 +248,14 @@ done
 pgrep -f 'codex exec|agy -p' >/dev/null 2>&1 && echo "WARNING: 외부 검증 프로세스 잔존 가능"
 
 # 2. 전 workspace 무결성 재측정 (검증 전과 동일 항목)
-git ls-files | xargs shasum -a 256 > "$(mktemp /tmp/integrity-tracked-post-XXXXXX.txt)"
-git ls-files --others --exclude-standard | xargs shasum -a 256 > "$(mktemp /tmp/integrity-untracked-post-XXXXXX.txt)"
-git status --porcelain=v1 --branch > "$(mktemp /tmp/integrity-status-post-XXXXXX.txt)"
-find . -type f \( ! -path './.git/*' \) -exec stat -f '%m %Sp %N' {} \; > "$(mktemp /tmp/integrity-meta-post-XXXXXX.txt)"
+INTEGRITY_TRACKED_POST=$(mktemp /tmp/verify-integrity-tracked-post-XXXXXX.txt)
+git ls-files | xargs shasum -a 256 > "$INTEGRITY_TRACKED_POST"
+INTEGRITY_UNTRACKED_POST=$(mktemp /tmp/verify-integrity-untracked-post-XXXXXX.txt)
+git ls-files --others --exclude-standard | sort | xargs -r shasum -a 256 > "$INTEGRITY_UNTRACKED_POST"
+INTEGRITY_STATUS_POST=$(mktemp /tmp/verify-integrity-status-post-XXXXXX.txt)
+git status --porcelain=v1 --branch > "$INTEGRITY_STATUS_POST"
+INTEGRITY_META_POST=$(mktemp /tmp/verify-integrity-meta-post-XXXXXX.txt)
+find . -type f \( ! -path './.git/*' \) -exec stat -f '%m %Sp %N' {} \; > "$INTEGRITY_META_POST"
 
 # 3. 비교 (tracked/untracked/metadata/대상 외/write→restore 모두)
 diff "$INTEGRITY_TRACKED_PRE" "$INTEGRITY_TRACKED_POST"
