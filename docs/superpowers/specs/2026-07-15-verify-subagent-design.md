@@ -1,18 +1,22 @@
 # zzizily 검증 컴포넌트 설계 (skill + subagent 하이브리드)
 
 > **Date**: 2026-07-15
-> **Status**: Draft (brainstorming → spec)
+> **Status**: Draft v3 (2-Way dogfood 2라운드 반영 — 보안 책임 skill 이관, 격리 snapshot, truth table 보강)
 > **Topic**: 05-multi-agent.md 검증 체계를 zzizily 플러그인의 독립 컴포넌트로 이관
 
 ## 목차
 
 - [개요](#개요)
 - [배경 및 동기](#배경-및-동기)
-- [아키텍처](#아키텍처)
+- [아키텍처 (v3)](#아키텍처-v3)
+- [보안 책임 분리 (v3 핵심)](#보안-책임-분리-v3-핵심)
+- [dispatch 실행 계약](#dispatch-실행-계약)
 - [데이터 흐름](#데이터-흐름)
 - [subagent 상세 구성](#subagent-상세-구성)
 - [Codex Fallback (Plan B)](#codex-fallback-plan-b)
+- [병렬 orchestration](#병렬-orchestration)
 - [라우팅 매핑](#라우팅-매핑)
+- [fail-closed 판정](#fail-closed-판정)
 - [rules 이관 처리](#rules-이관-처리)
 - [파일 구조 및 plugin.json](#파일-구조-및-pluginjson)
 - [OMC 차별화](#omc-차별화)
@@ -21,84 +25,135 @@
 
 ## 개요
 
-`~/.claude/rules/05-multi-agent.md`에 정의된 multi-agent 검증 체계(3단계 티어, Codex+Antigravity 2-Way 교차검증, B/R/A/T 출력 포맷)를 zzizily 플러그인의 독립 컴포넌트로 이관한다.
+`~/.claude/rules/05-multi-agent.md`의 검증 체계(3단계 티어, Codex+Antigravity 2-Way, B/R/A/T 포맷)를 zzizily 플러그인의 독립 컴포넌트로 이관.
 
-형태는 **하이브리드**: skill(`/zzizily:verify`)이 진입점·판사 역할을 담당하고, subagent(`verify`)가 격리 컨텍스트에서 Codex+Antigravity 2-Way 검증을 자동 실행한다.
+**하이브리드**: skill(`/zzizily:verify`)이 진입점·판사·**보안 책임**(무결성·secret), subagent(`verify`)가 격리 snapshot에서 순수 2-Way 검증.
 
 검증 대상:
-1. superpowers에서 생성한 spec/plan (문서) — **메인 검증, 항상 2-Way**
-2. AI agent 생산물 (코드, PR diff) — 티어 기반 라우팅
+1. superpowers spec/plan (문서) — **메인 검증, 항상 2-Way**
+2. AI agent 생산물 (코드, PR diff) — 티어 기반
 
 ## 배경 및 동기
 
 ### rules → 독립 컴포넌트 이관
 
-기존 검증 체계는 `~/.claude/rules/05-multi-agent.md`에 전역 지침으로 존재한다. Claude가 읽고 메인 세션에서 수동으로 `agy -p`/`mcp__codex__codex`를 호출하는 절차다. 사용자는 이 검증 로직을 rules가 아닌 **독립적인 plugin 컴포넌트(subagent 또는 skill)로 분리**하길 원한다.
+기존 검증 체계는 `~/.claude/rules/05-multi-agent.md` 전역 지침. 사용자는 이 검증 로직을 **독립 plugin 컴포넌트로 분리**하길 원함. 자동 트리거를 위해 rules에는 **최소 트리거 규칙 + 인프라 포인터**만 잔류.
 
 ### skill vs subagent 결정
 
 | 기준 | Skill | Subagent | 선택 |
 | :--- | :--- | :--- | :--- |
-| 격리 / 자기편향 방지 | ✗ 메인 세션 = 작성자 컨텍스트 공유 | ✓ 독립 컨텍스트 | **subagent** |
-| 병렬 2-Way | △ Claude 순차 호출 | ✓ 동시 dispatch | **subagent** |
-| 메인 컨텍스트 절약 | ✗ 절차가 메인 점유 | ✓ 결과만 반환 | **subagent** |
-| 결과 일관성 | △ 매번 지침 해석 | ✓ 시스템 프롬프트 고정 | **subagent** |
-| 사용자 능동 호출 | ✓ `/zzizily:verify` | △ Claude 재량 dispatch | **skill** |
+| 격리 / 자기편향 방지 | ✗ 메인 세션 = 작성자 | ✓ 독립 컨텍스트 | **subagent(검증 실행)** |
+| 사용자 능동 호출 + 보안 책임 | ✓ 메인 세션 신뢰 영역 | △ | **skill(진입점+보안)** |
 
-검증의 본질적 요구인 "작성자-검증자 분리(자기 편향 방지)"를 구조적으로 보장하는 것은 subagent뿐이다. 단, 사용자 능동 호출 진입점이 필요하므로 skill을 진입점으로 두고 subagent가 실행을 담당하는 **하이브리드** 구조로 결정했다.
+하이브리드: skill(신뢰, 보안·판사) + subagent(격리, 순수 검증).
 
 ### OMC verifier/critic은 2-Way 자동화 안 함
 
-OMC plugin의 `verifier`(`model: sonnet`)와 `critic`(`model: opus`) subagent를 실제 정의 파일에서 확인한 결과, 둘 다 **Claude Code 내장 도구(Bash/LSP/Grep/Read)로 직접 검증**하며 Codex/Gemini(Antigravity)를 호출하지 않는다.
-
-- `verifier`: `npm test`, `npm run build`, `lsp_diagnostics_directory` 직접 실행 → Verification Report
-- `critic`: Read/Grep/Glob/Bash(git)/LSP로 plan/code 리뷰 → VERDICT (REJECT/REVISE/ACCEPT)
-
-즉 05-multi-agent.md의 "Codex+Antigravity 2-Way 교차검증"은 OMC subagent가 자동화하는 게 아니라 rules의 수동 절차로만 존재한다. **2-Way 교차검증 자동화는 OMC 어디에도 없는 빈 자리**이며, zzizily `verify`가 이 역할을 유일하게 담당한다.
+OMC `verifier`/`critic`은 Claude 내장 도구로만 검증, Codex/Gemini 호출 안 함. **2-Way 교차검증 자동화는 빈 자리** — zzizily `verify` 유일 담당.
 
 ### spec/plan은 항상 2-Way (메인 검증)
 
-spec/plan은 zzizily `verify`의 메인 검증 대상이다. 05-multi-agent.md 원본 라우팅(Spec/Plan→Antigravity 보조 Codex)과 달리, **spec/plan은 티어와 무관하게 항상 Codex+Antigravity 2-Way**로 검증한다. 메인 검증 대상이므로 단일 에이전트 패스로 타협하지 않는다.
+티어 무관 항상 2-Way. 단일 패스 타협 안 함.
 
-## 아키텍처
+## 아키텍처 (v3)
 
 ```mermaid
 graph TD
-    U[사용자 - zzizily verify 또는 자동 트리거] --> SK
-    SK[skill verify-SKILL.md - 메인 세션 진입점]
-    SK -->|1 대상 수집| G1[spec/plan 경로 또는 git diff]
-    SK -->|2 대상-티어 판단| D{대상 종류}
-    D -->|3 Agent 도구 dispatch| SA[verify subagent - 격리 컨텍스트]
-    SA -->|2-Way| R1[Antigravity - agy-p]
-    SA -->|2-Way| R2[Codex MCP 또는 Bash fallback]
+    U[사용자 - zzizily verify 또는 자동 트리거] --> SK[skill - 메인 세션 신뢰 영역]
+    SK -->|1 대상 snapshot 결정적 생성| S1[git diff-파일목록 staged-untracked-rename]
+    SK -->|2 secret redaction-민감파일 배제| S2[gitleaks-sops 스캔 정제]
+    SK -->|3 격리 tmp dir 정제 복사본 생성| S3[격리 snapshot]
+    SK -->|4 원본 무결성 기록| S4[전 workspace hash-git status-mtime-perm]
+    SK -->|5 dispatch cwd-격리 dir| SA[verify subagent - 격리]
+    SA -->|격리 복사본만| R1[Antigravity - agy-p]
+    SA -->|격리 복사본만| R2[Codex MCP 또는 Bash fallback]
     R1 -->|독립 결과| SA
     R2 -->|독립 결과| SA
-    SA -->|4 B-R-A-T 반환| SK
-    SK -->|5 취합 및 표시| U
+    SA -->|B-R-A-T 반환| SK
+    SK -->|6 모든 child process 종료 확인| W[TOCTOU 방지 대기]
+    W -->|7 원본 무결성 사후 광범위 검증| S5[변경 탐지 시 TAMPER]
+    S5 -->|8 취합-표시-권고| U
 ```
 
 ### 컴포넌트 분담
 
 | 컴포넌트 | 역할 | 위치 |
 | :--- | :--- | :--- |
-| **skill** `verify` | 진입점. 대상 수집 → 대상/티어 판단 → subagent dispatch → 결과 취합·표시. 판사 역할(작업 불참). `/zzizily:verify` + 자동 트리거 키워드 | `skills/verify/SKILL.md` |
-| **subagent** `verify` | 격리 컨텍스트에서 실제 검증. 05-multi-agent.md 절차(라우팅·2-Way·출력포맷) 이관. Codex/Antigravity 호출. B/R/A/T 반환 | `.claude-plugin/agents/verify.md` |
+| **skill** `verify` | 진입점 + **보안 책임**(snapshot 생성·redaction·무결성 감시) + 판사(취합). `/zzizily:verify` + 자동 트리거 | `skills/verify/SKILL.md` |
+| **subagent** `verify` | 격리 snapshot에서 **순수 2-Way 검증만**. 보안 처리 안 함(검증 대상 분리). B/R/A/T 반환 | `.claude-plugin/agents/verify.md` |
 
-### 핵심 원칙 (05-multi-agent.md 정합)
+### 핵심 원칙
 
-- skill은 판사만 — 검증 작업에 참여 안 함. 자기 편향 방지
-- subagent는 독립 컨텍스트 — 메인 세션 작업 기록 안 봄. 원본만 입력받아 판단
-- 2-Way: 각 외부 에이전트(Antigravity/Codex)는 서로 결과 안 보고 독립 작업 → subagent가 양쪽 결과를 skill에 반환 → skill이 취합
+- **보안 책임 분리**: 무결성 검증·secret 처리는 신뢰 영역(skill)이 담당. subagent는 조종 가능성이 있으므로 보안 결정권 없음
+- skill은 판사 + 보안관. subagent는 격리된 검사관
+- 2-Way: 각 외부 에이전트 서로 결과 안 보고 독립 작업 → skill이 취합
+
+## 보안 책임 분리 (v3 핵심)
+
+dogfood 2라운드에서 양 에이전트(Antigravity/Codex)가 동일 지적: **subagent가 보안 검증(무결성·secret)을 자체 수행하면 검증 대상의 prompt injection에 조종되어 무력화**. v3는 보안 책임을 skill(신뢰)로 이관.
+
+### skill 담당 (메인 세션, 신뢰)
+
+| 단계 | 조치 |
+| :--- | :--- |
+| 대상 snapshot | `git diff`(staged/unstaged/untracked/rename/delete/binary/대용량/혼합) 결정적 생성. 대상 외·대상 내 우선순위 적용 |
+| secret redaction | `gitleaks`/sops 패턴 스캔. 매칭 시 `[REDACTED]` 치환. **scanner 실패/미설치 시 fail-closed**(검증 중단). binary/base64/분할 secret/encrypted도 스캔 |
+| 민감 파일 배제 | `.env*`, `.key`, `.sops`, `~/.codex/`, `~/.config/**` 등은 snapshot에서 원천 제외 |
+| 격리 snapshot | **tmp directory**에 정제 복사본 생성. 이것만 subagent에 전달. **원본 workspace 접근 차단** |
+| 무결성 기록(전) | 전 workspace 상태 기록: tracked/untracked 파일 hash, `git status`, mtime, permission. **대상뿐 아니라 대상 외·metadata까지** |
+| 무결성 검증(후) | **모든 child process 종료 확인 후**(TOCTOU 방지) 동일 항목 재측정·비교. write→restore·대상 외 변경·untracked 생성·metadata/permission 변경 탐지. 변경 시 `Integrity: TAMPER-DETECTED`, 검증 무효(INCOMPLETE) |
+| 외부 전송 동의 | **최초 1회**(project-level 사전 동의 또는 첫 호출 확인). 동의 없으면 외부 provider 전송 금지 → 수동 검증 안내 |
+
+### subagent 담당 (격리, 순수 검증)
+
+- `cwd = 격리 tmp directory`로 제한. 원본 workspace·Codex config·`.env` 접근 불가
+- 격리 복사본만으로 2-Way 검증 (Codex/Antigravity에 복사본만 전달)
+- 보안 결정(redaction·배제·무결성 판정) **불가** — 오직 B/R/A/T 검증 결과만 반환
+- Codex `cwd`도 격리 dir + `sandbox: read-only`. Antigravity `agy -p`에 격리 복사본 경로만
+
+### 공격 표면 차단
+
+| 위협 | v3 대응 |
+| :--- | :--- |
+| prompt injection으로 subagent 조종 | subagent는 보안 결정권 없음. 격리 복사본만 보므로 원본·secret 접근 불가 |
+| subagent가 원본 수정(자기 검증 무효화) | 원본은 skill이 무결성 감시. subagent는 격리 복사본만. 사후 광범위 검증으로 탐지 |
+| Codex/Antigravity가 workspace에서 `.env` 직접 읽기 | `cwd` 격리 dir + read-only. 원본 배제 |
+| timeout process 사후 쓰기 (TOCTOU) | 모든 child process 종료 확인 후 무결성 검증 |
+| 자기 출력 '검증' 재호출 (무한 루프) | rules 트리거 제외 필터(아래) |
+
+## dispatch 실행 계약
+
+```text
+도구: Agent (Claude Code 내장)
+subagent name: verify (plugin agents 디렉토리 discovery. namespace: zzizily:verify)
+skill이 Agent 호출 시 입력(자연어 지시에 포함):
+  - isolated_cwd: 격리 tmp directory 절대경로 (subagent 작업 디렉토리)
+  - target_kind: spec-plan | code
+  - target_files: 격리 복사본 내 상대경로 목록
+  - tier: light | standard | high (코드만. spec-plan은 무시)
+  - acceptance_criteria: 선택
+  - provider_config: Codex model/sandbox, Antigravity 모델 (skill이 rules/인프라에서 읽어 전달)
+반환 (subagent 최종 메시지 = 계약 결과):
+  - Verification Report (출력 포맷). provider별 provenance 포함
+미발견 처리: verify subagent discovery 실패 시 skill은 에러 리포트(plugin 미설치/agents 필드 누락/reload-plugins 의심) 출력 후 종료
+```
+
+skill SKILL.md에 `Agent` 도구 호출 예시와 위 계약 명시.
 
 ## 데이터 흐름
 
-1. 사용자 `/zzizily:verify` 호출 또는 자동 트리거(키워드: "검증", "verify", "리뷰해줘")
-2. skill: 검증 대상 수집 (spec/plan 파일 경로, `git diff`, 대상 디렉토리)
-3. skill: 대상 종류(spec/plan vs 코드) + 티어(경량/표준/고위험) 판단
-4. skill: `Agent` 도구로 verify subagent dispatch (대상 + 대상종류 + 티어 전달)
-5. subagent(격리): 라우팅 매핑에 따라 2-Way 또는 단일 호출. Codex는 [Plan B](#codex-fallback-plan-b) fallback 적용. 각각 독립 B/R/A/T 출력
-6. subagent: 결과 반환 (텍스트)
-7. skill: 결과 취합·표시. blocker 있으면 수정 권고
+1. 사용자 `/zzizily:verify [대상]` 또는 자동 트리거(rules 최소 규칙 + 제외 필터)
+2. **skill**: 외부 전송 동의 확인(최초 1회). 미동의 시 수동 안내 종료
+3. **skill**: 대상 snapshot 결정적 생성 (staged/unstaged/untracked/rename/delete/binary/대용량/혼합 우선순위)
+4. **skill**: secret redaction + 민감 파일 배제 → 정제. scanner 실패 시 fail-closed
+5. **skill**: 격리 tmp directory에 정제 복사본 생성
+6. **skill**: 원본 무결성 기록 (전 workspace: tracked/untracked hash, git status, mtime, permission)
+7. **skill**: `Agent` 도구로 verify subagent dispatch (격리 cwd + 복사본 + config)
+8. **subagent**: 격리 복사본으로 2-Way 검증 (병렬 orchestration). B/R/A/T 반환
+9. **skill**: 모든 child process 종료 확인 (TOCTOU 방지 대기)
+10. **skill**: 원본 무결성 사후 광범위 검증. 변경 시 TAMPER-DETECTED → INCOMPLETE
+11. **skill**: 결과 취합·표시. blocker 있으면 수정 권고. 격리 tmp dir 정리
 
 ## subagent 상세 구성
 
@@ -107,33 +162,31 @@ graph TD
 ```yaml
 ---
 name: verify
-description: Codex+Antigravity 2-Way 교차검증 자동화. spec/plan·코드를 격리 컨텍스트에서 검증 후 B/R/A/T 반환.
-model: opus          # 검증은 품질 우선 (OMC model-compatibility: Review=Opus 권장)
+description: 격리 snapshot에서 Codex+Antigravity 2-Way 교차검증. 보안 결정권 없음, 순수 검증 후 B/R/A/T 반환.
+model: opus          # 검증 품질 우선
 level: 3
-disallowedTools: Write, Edit   # read-only
+disallowedTools: Write, Edit   # 편집 금지. 보안 결정(redaction/배제/무결성)도 금지 — skill 전담
 ---
 ```
 
+> subagent는 **보안 결정권 없음**. redaction·배제·무결성 판정은 모두 skill이 격리 snapshot 생성 시 완료. subagent는 받은 격리 복사본으로 검증만.
+
 ### 도구 세트
 
-`disallowedTools: Write, Edit`로 쓰기 차단, 나머지 전체 허용(All tools):
+| 도구 | 용도 | 제약 |
+| :--- | :--- | :--- |
+| `Bash` | `agy -p`, `codex exec`(fallback), `pwd`=격리 dir 확인 | **cwd=격리 dir 강제**. 원본 workspace 경로 접근 금지. 외부 전송(curl) 금지 |
+| `mcp__codex__codex` | Codex MCP | `cwd`=격리 dir, `sandbox: read-only` |
+| `Read`, `Grep`, `Glob` | 격리 복사본 확인 | 격리 dir 범위만 |
 
-| 도구 | 용도 |
-| :--- | :--- |
-| `Bash` | `agy -p` (Antigravity 호출), `codex exec` (Plan B fallback), git |
-| `mcp__codex__codex` | Codex MCP 호출 (1차) |
-| `mcp__codex__codex-reply` | Codex 대화 이어가기 |
-| `Read`, `Grep`, `Glob` | 대상 파일 확인, 검증 컨텍스트 |
+### 시스템 프롬프트 핵심
 
-### 시스템 프롬프트 핵심 (05-multi-agent.md 이관)
-
-subagent 시스템 프롬프트에 이관할 절차:
-
-1. 입력(대상 + 대상종류 + 티어) 해석
+1. 입력(격리 cwd + 복사본 + 종류 + 티어 + config) 해석
 2. [라우팅 매핑](#라우팅-매핑)에 따라 2-Way 또는 단일 결정
-3. 2-Way 시 각 외부 에이전트에 **동일 입력** 전달, 서로 결과 보지 않고 독립 작업. 가능하면 한 메시지에서 동시 호출(병렬)
-4. Codex는 [Plan B](#codex-fallback-plan-b) fallback 적용
-5. 출력 포맷: B/R/A/T (Blocker/Risk/Assumption/Test) + VERDICT
+3. 2-Way 시 [병렬 orchestration](#병렬-orchestration). 각 에이전트 격리 복사본 동일 전달, 독립 작업
+4. Codex [Plan B](#codex-fallback-plan-b). 항상 `--sandbox read-only`, `cwd`=격리 dir
+5. [fail-closed 판정](#fail-closed-판정) 적용
+6. 출력: B/R/A/T + VERDICT, **각 finding provider 출처 표기**. 보안 판정(integrity/consent)은 skill이 이미 결정 → subagent는 검증 결과만
 
 ### 출력 포맷
 
@@ -144,48 +197,65 @@ subagent 시스템 프롬프트에 이관할 절차:
 **Status**: PASS | FAIL | INCOMPLETE
 **Target**: spec-plan | code
 **Tier**: light | standard | high
-**Routes used**: Antigravity(agy), Codex(MCP | Bash-fallback)
+**Routes used**: Antigravity(agy | failed), Codex(MCP | Bash-fallback | failed)
+**Integrity**: skill이 별도 보고 (subagent는 모름)
 
-### Findings
-- [Blocker] 즉시 수정 필요 — 증거(file:line 또는 인용)
-- [Risk] 인지 필요, 수정 권장 — 증거
-- [Assumption] 검증된 가정
-- [Test] 제안 테스트 케이스
+### Findings (출처 표기)
+- [Blocker] 즉시 수정 필요 — 근거(file:line/인용) — 출처: Codex | Antigravity | both
+- [Risk] 수정 권장 — 근거 — 출처
+- [Assumption] 검증된 가정 — 출처
+- [Test] 제안 테스트 — 출처
 
 ### Cross-Check (2-Way 시)
-| 항목 | Antigravity | Codex | 일치여부 |
-| :--- | :--- | :--- | :--- |
-| ... | ... | ... | 일치/충돌 |
+| 항목 | Antigravity | Codex | 일치여부 | 충돌해결 |
+| :--- | :--- | :--- | :--- | :--- |
 
 ### Recommendation
 APPROVE | REQUEST_CHANGES | NEEDS_MORE_EVIDENCE
 [한 줄 근거]
 ```
 
-충돌 시 [rules 이관 처리](#rules-이관-처리)의 충돌 해결 규칙 적용: 보안/권한·코드정확성은 Codex 우선, 아키텍처/설계는 Antigravity 우선, 최종 결정은 skill(개발자)이 판단.
+충돌 해결: 보안/권한·코드정확성=Codex 우선, 아키텍처/설계=Antigravity 우선. **상충 시 보수적 FAIL 우선**. 최종 결정은 skill(개발자).
 
 ## Codex Fallback (Plan B)
 
-`mcp__codex__codex` MCP가 간헐적으로 불안정한 이슈에 대한 fallback:
-
 ```text
-1차: mcp__codex__codex (MCP)
-     - 구조화 응답, codex-reply로 대화 이어가기 가능
-     - 실패 감지: 도구 에러 반환 / 타임아웃(5m) / 빈·불완전 응답
-
+1차: mcp__codex__codex — cwd: 격리 dir, sandbox: read-only
+     실패 감지: 도구 에러 / 타임아웃(5m) / 빈·불완전 응답
+       (불완전: Blocker/Verdict 필드 누락, 응답 < 50자)
 2차(Plan B): codex exec (Bash)
-     - PR·코드 검증: codex exec review --uncommitted  또는  codex exec review --base <BRANCH>
-     - 일반 검증:      codex exec "<검증 프롬프트>"   (stdin로 대상 전달)
-     - 파라미터:       --sandbox workspace-write -a on-failure  (05-multi-agent.md 기본값)
+     - PR·코드: codex exec review --uncommitted  또는  --base <BRANCH>
+     - 일반:     codex exec "<검증 프롬프트>"
+     - 파라미터: --sandbox read-only --config approval-policy=never --cd <격리dir>
+                 (workspace-write 절대 금지)
+     - quoting: 인자 single-quote, -- 구분, $( ) backtick 사전 escape
 
-결과 표시: "Codex: MCP" 또는 "Codex: Bash fallback (사유: MCP <에러>)"
+결과 표시: "Codex: MCP" 또는 "Codex: Bash fallback (사유)"
+양쪽 실패 시: INCOMPLETE (fail-closed)
 ```
 
-Antigravity는 이미 Bash(`agy -p`)만 사용하므로 폴백 불필요. `agy -p` 실패 시 모델 폴백(`Gemini 3.1 Pro` → `Gemini 3.5 Flash`)은 05-multi-agent.md에 이미 정의되어 subagent 시스템 프롬프트에 동일 적용.
+**MCP-first 원칙은 라우팅 표 전체에 통일**. 경량 코드도 `mcp__codex__codex` 우선, 실패 시 `codex exec`. 모든 경로 `cwd`=격리 dir, `--sandbox read-only`.
+
+Antigravity는 `agy -p` (격리 복사본 경로만). 모델 폴백 `Gemini 3.1 Pro` → `Gemini 3.5 Flash`. **두 모델 모두 실패 시**: Codex 결과만 있으면 그것으로 진행(INCOMPLETE 플래그), 없으면 INCOMPLETE.
+
+## 병렬 orchestration
+
+```text
+dispatch: subagent가 한 assistant 메시지에서 Antigravity(agy-p Bash) + Codex(mcp__codex__codex)
+          동시 호출 → 진짜 병렬 (서로 결과 안 봄). 격리 복사본만 전달
+
+per-call timeout: 5m. agy --print-timeout 10m, MCP 자체 timeout
+join: 양쪽 완료 대기.
+  - 양쪽 성공 → Cross-Check 취합
+  - 한쪽 성공 → 성공 쪽 + INCOMPLETE 플래그 (부분 성공)
+  - 양쪽 실패 → INCOMPLETE
+cancellation: 한쪽 timeout 시 다른 쪽 결과만 사용. **단, skill은 모든 child process 종료 확인 후 무결성 검증** (timeout process 잔존 TOCTOU 방지)
+
+순차 영역 (병렬 아님):
+  - Codex Fallback(MCP→Bash)은 Codex 라인 내부 순차. Antigravity와는 병렬 유지
+```
 
 ## 라우팅 매핑
-
-skill이 대상 종류(spec/plan vs 코드) + 티어 판단. spec/plan은 메인 검증이므로 항상 2-Way.
 
 ```mermaid
 graph TD
@@ -193,11 +263,11 @@ graph TD
     D -->|spec-plan| SP[항상 2-Way - 메인 검증]
     D -->|코드| CD{티어}
     SP --> A1[Antigravity - agy-p]
-    SP --> C1[Codex MCP]
-    CD -->|경량-표준| C2[Codex 단일]
+    SP --> C1[Codex MCP 우선]
+    CD -->|경량-표준| C2[Codex MCP 우선 - 단일]
     CD -->|고위험| HW[2-Way 병렬]
     HW --> A2[Antigravity - agy-p]
-    HW --> C3[Codex MCP]
+    HW --> C3[Codex MCP 우선]
     A1 --> R[B-R-A-T + VERDICT]
     C1 --> R
     C2 --> R
@@ -208,45 +278,58 @@ graph TD
 
 | 대상 | 조건 | 라우팅 | 종료 조건 |
 | :--- | :--- | :--- | :--- |
-| spec/plan | (항상 — 메인 검증) | Codex + Antigravity **2-Way 병렬** | 양쪽 blocker 0, 충돌 해결 |
-| 코드 | 경량 (문서/설정/minor 의존성) | Codex 단일 (`codex exec review --uncommitted`) | blocker 0 |
-| 코드 | 표준 (일반 기능/버그/리팩토링) | Codex 단일 (승격조건 충족 시 2-Way) | blocker 0, non-blocker 확인 |
-| 코드 | 고위험 (아래 승격조건) | Codex + Antigravity **2-Way 병렬** | 양쪽 blocker 0, 충돌 해결 |
+| spec/plan | (항상) | Antigravity + Codex MCP **2-Way** | 양쪽 blocker 0, 충돌 해결 |
+| 코드 | 경량 | Codex MCP 우선, 실패 시 `codex exec` **단일** | blocker 0 |
+| 코드 | 표준 | Codex MCP 우선 단일 (승격 시 2-Way) | blocker 0, non-blocker 확인 |
+| 코드 | 고위험 | Antigravity + Codex MCP **2-Way** | 양쪽 blocker 0, 충돌 해결 |
 
-고위험 승격조건 (05-multi-agent.md 기반):
-- 인증/권한/비밀값/네트워크 경계 변경
-- 데이터 모델/마이그레이션 변경
-- 배포 파이프라인/infra 변경
-- public API/CLI 호환성 변경
-- 대규모 삭제/리팩토링 (100줄+)
-- 롤백이 어려운 변경
+모든 Codex 경로 MCP-first, `cwd`=격리 dir, `--sandbox read-only`.
+
+티어 판정: **고위험 승격조건 최우선**. 설정/minor도 보안·호환성 영향 시 고위험. "100줄+"은 보조 신호(99줄 인증 변경 > 100줄 generated). content 기반 판정.
+
+## fail-closed 판정
+
+APPROVE truth table (단일 route + 전체 gate):
+
+| Antigravity | Codex | Blocker | Integrity | Consent/Redaction | Verdict | Recommendation |
+| :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+| 성공 | 성공 | 0 | verified | OK | PASS | APPROVE |
+| N/A(단일) | 성공 | 0 | verified | OK | PASS | APPROVE |
+| 성공 | 성공 | ≥1 | verified | OK | FAIL | REQUEST_CHANGES |
+| N/A | 성공 | ≥1 | verified | OK | FAIL | REQUEST_CHANGES |
+| (임의) | (임의) | — | TAMPER | — | INCOMPLETE | NEEDS_MORE_EVIDENCE |
+| (임의) | (임의) | — | — | 동의거부/scanner실패 | INCOMPLETE | NEEDS_MORE_EVIDENCE |
+| 성공 | 실패 | 0 | verified | OK | INCOMPLETE | NEEDS_MORE_EVIDENCE |
+| 실패 | 성공 | 0 | verified | OK | INCOMPLETE | NEEDS_MORE_EVIDENCE |
+| 실패 | 실패 | — | verified | OK | INCOMPLETE | NEEDS_MORE_EVIDENCE |
+| 한쪽 빈 응답/필드누락 | — | — | — | — | INCOMPLETE | NEEDS_MORE_EVIDENCE |
+
+**APPROVE 조건**: (양쪽 성공 **또는** 단일 route 성공) + blocker 0 + Integrity verified + Consent/Redaction OK. Antigravity 빈 응답/필드 누락 = 실패(fail-closed). INCOMPLETE는 CI/merge에서 FAIL 동급 차단.
 
 ## rules 이관 처리
 
-`~/.claude/rules/05-multi-agent.md`에서 검증 절차만 zzizily로 이관, 인프라 설정은 rules에 잔류.
+검증 절차는 zzizily로 이관. rules에는 **자동 트리거 최소 규칙 + 인프라 포인터** 잔류.
 
 | rules 섹션 | 처리 |
 | :--- | :--- |
-| Verification Workflow ~ 충돌 해결 규칙 (3단계 티어, 2-Way, 라우팅, B/R/A/T, 충돌해결) | **zzizily `verify` subagent 시스템 프롬프트로 이관. rules에서 해당 섹션 삭제** (참조 한 줄도 남기지 않음 — 검증은 `/zzizily:verify`로만) |
-| Provider Models, Codex MCP 설정/파라미터, Antigravity CLI 사용법, K8sGPT/Holmes/Serena 도메인 에이전트 | **rules에 유지** (도구 설정, 검증 절차 아님) |
+| Verification Workflow ~ 충돌 해결 규칙 | **zzizily `verify`로 이관. rules에서 절차 섹션 삭제** |
+| **자동 트리거 최소 규칙** (잔류) | "사용자 **명시적 입력**에서 '검증'/'verify'/'리뷰해줘' + 검증 대상 감지 시 `/zzizily:verify` 호출. **제외**: 이미 verify 실행 중/리포트 출력 중/opt-out 플래그 세션" (무한 루프 방지) |
+| **인프라 설정 포인터** (잔류) | Codex MCP 설정·Antigravity CLI 사용법은 아래 각 섹션. 검증 시 zzizily verify가 소비(skill이 dispatch 입력으로 전달) |
+| Provider Models, Codex config.toml, Antigravity CLI, K8sGPT/Holmes/Serena | **rules 유지** (Source of Truth) |
 
-rules 전체 삭제가 아닌 이유: 인프라 설정(모델 목록, Codex config.toml, Antigravity 호출 방식, K8sGPT/Holmes/Serena 역할)은 검증 절차가 아닌 도구 설정이므로 rules가 Source of Truth로 유지. 역할 분리: 에이전트 설치는 zzizily `agents` 스킬, 설정은 rules, 검증 실행은 zzizily `verify`.
-
-spec/plan 항상 2-Way 변경은 05-multi-agent.md 원본 라우팅(Spec/Plan→Antigravity 보조 Codex)에서 의도적 강화. subagent 시스템 프롬프트에 이 변경을 반영하여 이관.
+subagent 설정 접근: skill이 rules 읽어 `provider_config`(model/sandbox) dispatch 입력으로 전달. subagent는 직접 rules 읽지 않음(격리).
 
 ## 파일 구조 및 plugin.json
 
 ```
 .claude-plugin/
-  plugin.json                    # "agents" 필드 추가 (zzizily 최초 agent 도입)
+  plugin.json                    # "agents" 필드 추가
   agents/
     verify.md                    # 신규 subagent
 skills/
   verify/
-    SKILL.md                     # 신규 skill (진입점)
+    SKILL.md                     # 신규 skill (진입점 + 보안 책임)
 ```
-
-`plugin.json` 변경:
 
 ```json
 {
@@ -258,41 +341,45 @@ skills/
 }
 ```
 
-버전은 minor 업그레이드(1.6.0 → 1.7.0): 신규 기능(검증 컴포넌트) 추가, 기존 스킬 영향 없음. plugin.json과 marketplace.json 버전 동기화 필수.
+minor 업그레이드(1.6.0 → 1.7.0). plugin.json/marketplace.json 동기화 필수.
 
 CLAUDE.md 업데이트:
 - 구조 다이어그램에 `.claude-plugin/agents/` 추가
-- 스킬 카탈로그에 `verify` 행 추가 — [분류 원칙](#범위-외-yagni)상 **AI Agent·배포 그룹**에 배치 (개발 워크플로우 검증 도구. 보안 탐지/대응이 아닌 품질 검증이므로 보안·감사 그룹 제외)
-- 환경별 패키지 관리 섹션에 agents 컴포넌트 언급
+- 스킬 카탈로그 `verify` 행 — **AI Agent·배포 그룹**
+- 환경별 패키지 관리에 agents 컴포넌트 언급
+- 성공 기준에 **plugin compatibility 검증** 추가(frontmatter schema, 설치 후 agent discovery)
 
 ## OMC 차별화
 
-zzizily `verify`는 OMC의 verifier/critic과 역할이 다르다:
-
 | 항목 | OMC verifier/critic | zzizily verify |
 | :--- | :--- | :--- |
-| 검증 방식 | Claude 내장 도구(Bash/LSP/Grep) 직접 실행 | Codex+Antigravity 외부 에이전트 2-Way |
-| 교차검증 | 단일 에이전트 | 2-Way 병렬 + 취합 |
-| 라우팅 | 없음 (단일 패스) | 대상종류(spec/plan vs 코드) + 3단계 티어 |
-| spec/plan | 단일 패스 | 항상 2-Way (메인 검증) |
-| 출력 | Verification Report / VERDICT | B/R/A/T + VERDICT + Cross-Check |
-| model | sonnet(verifier) / opus(critic) | opus |
-
-차별화 핵심: **Codex+Antigravity 2-Way 교차검증 자동화 + spec/plan 항상 2-Way + 3단계 티어 라우팅**. 시스템 프롬프트에 이 차이 명시하여 OMC subagent와 중복 인식 방지.
+| 검증 방식 | Claude 내장 도구 직접 | Codex+Antigravity 외부 2-Way |
+| 교차검증 | 단일 | 2-Way 병렬 + 취합 |
+| 라우팅 | 없음 | 대상종류 + 티어 |
+| spec/plan | 단일 패스 | 항상 2-Way |
+| 보안 | — | 격리 snapshot + 무결성 감시 + secret redaction (skill 담당) |
+| model | sonnet/opus | opus |
 
 ## 성공 기준
 
-1. `/zzizily:verify` 호출 시 skill이 대상 식별 → subagent dispatch → 결과 표시
-2. **spec/plan 대상은 항상 Codex+Antigravity 2-Way 병렬 실행**, Cross-Check 표 출력 (티어 무관)
-3. 코드 대상은 티어(경량/표준/고위험)에 따라 정확히 분기, 고위험 시 2-Way
-4. `mcp__codex__codex` 실패 시 `codex exec` Bash fallback 자동 전환, 결과에 경로 표시
-5. 05-multi-agent.md 검증 절차가 zzizily subagent 시스템 프롬프트로 이관, rules에는 인프라 설정만 잔류
-6. blocker 0개일 때만 APPROVE, 아니면 REQUEST_CHANGES
+1. `/zzizily:verify` 호출 시 skill이 대상 식별 → snapshot·redaction·격리 → subagent dispatch → 결과. **plugin 설치 후 `verify` discovery 검증 포함**
+2. spec/plan은 항상 2-Way (티어 무관), Cross-Check + finding 출처 표기
+3. 코드는 티어 분기, 고위험 시 2-Way
+4. Codex MCP 실패 시 `codex exec --sandbox read-only --cd <격리dir>` fallback (workspace-write 절대 금지)
+5. **무결성**: skill이 검증 전후 전 workspace 광범위 비교. 모든 child process 종료 후. 변경 시 INCOMPLETE (TAMPER)
+6. **secret**: skill이 gitleaks/sops 스캔 → `[REDACTED]` 치환 + 민감 파일 배제 → 격리 snapshot. scanner 실패 시 fail-closed
+7. **격리**: subagent `cwd`=격리 dir, 원본 workspace 접근 차단
+8. **fail-closed**: APPROVE는 (양쪽 또는 단일 성공) + blocker 0 + Integrity + Consent. timeout/빈/양쪽실패 → INCOMPLETE (CI/merge 차단)
+9. **외부 전송 동의**: 최초 1회. 미동의 시 수동 안내
+10. **무한 루프 방지**: 자기 출력/실행 중 재트리거 안 됨
+11. rules: 절차는 zzizily 이관, 트리거 최소 규칙(제외 필터) + 인프라 포인터 잔류
 
 ## 범위 외 (YAGNI)
 
-- **subagent 다중 분할** (verifier-spec, verifier-code 분리): 단일 subagent가 라우팅으로 충분. 복잡도 증가 불필요
-- **rules 전체 삭제**: 인프라 설정은 rules 유지
-- **자동 수정(autofix)**: 검증만 수행, 수정은 개발자 판단. skill은 권고만
-- **K8sGPT/Holmes/Serena 통합**: 인프라/런타임 검증은 별개 도메인. zzizily verify는 spec/plan·코드에 한정. 향후 필요시 확장
-- **cron 기반 정기 검증**: 수동/트리거 기반만. 자동화는 별도 스킬(exchange-rate-tracker 패턴) 고려 시점에 논의
+- **subagent 다중 분할**: 단일 subagent 라우팅으로 충분
+- **rules 전체 삭제**: 인프라 설정 + 트리거 규칙은 rules 유지
+- **자동 수정(autofix)**: 검증만. 수정은 개발자 판단
+- **K8sGPT/Holmes/Serena 통합**: 인프라/런타임 검증은 별개. 향후 확장
+- **cron 정기 검증**: 수동/트리거 기반만
+- **코드 test/build/lint 실행**: 코드 검증은 LLM review 중심. 실행 기반 검증은 별개 (향후)
+- **container 수준 격리**(Dizer 등): tmp directory + cwd 제한으로 충분. container는 오버엔지니어링. 단, 고위험 secret 환경에서는 향후 검토
