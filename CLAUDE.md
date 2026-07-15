@@ -34,7 +34,9 @@ ls skills/
 .
 ├── .claude-plugin/
 │   ├── plugin.json          # 플러그인 매니페스트
-│   └── marketplace.json     # 마켓플레이스 등록 정보
+│   ├── marketplace.json     # 마켓플레이스 등록 정보
+│   └── agents/
+│       └── verify.md        # 검증 subagent (격리 2-Way 교차검증)
 └── skills/
     ├── agents/                    # AI Agent/MCP 설치 자동화
     ├── backdoor-investigation/    # Linux 백도어 포렌식 진단 (read-only)
@@ -60,6 +62,7 @@ ls skills/
     │   ├── templates/             # 단계별 RQ/산출물 템플릿 (AGENTS/CONTEXT/ROADMAP/DESIGN)
     │   └── examples/              # 예시 산출물
     ├── proxmox-vm-create/         # Proxmox VE VM 프로비저닝 (qm→pvesh→REST)
+    ├── verify/                    # 검증 (Codex+Antigravity 2-Way 교차검증 진입점)
     ├── setup/                     # 초기 설정
     ├── system-audit/              # 시스템 감사
     │   └── references/
@@ -78,7 +81,7 @@ ls skills/
 
 그룹 내 정렬: 읽기전용 → 파괴적 → 생성 순 (안전한 것부터).
 
-## 스킬 카탈로그 (16)
+## 스킬 카탈로그 (17)
 
 기능 도메인별 그룹핑. 신규 스킬 추가 시 [분류 원칙](#분류-원칙)에 따라 배치.
 
@@ -113,6 +116,7 @@ ls skills/
 | 스킬 | 설명 |
 | :--- | :--- |
 | agents | AI Agent/MCP/LSP 설치·업그레이드 자동화 |
+| verify | Codex+Antigravity 2-Way 교차검증 (spec/plan 항상 2-Way, 코드 3단계 티어) |
 | deploy-android-wifi | WiFi ADB React Native 배포 자동화 |
 
 ### 콘텐츠 · 로컬라이제이션 (Content & L10n)
@@ -155,5 +159,6 @@ description: <한 줄 설명>
 ## 환경별 패키지 관리
 
 - macOS: AI Agent(`codex`·`claude-code`·`antigravity-cli`)는 brew cask 우선 관리 — pnpm global(`minimumReleaseAge` 최신 지연)·native installer(PATH 충돌)·agy 자체 업데이터(추적 불일치) 회피. 분기/주의사항은 `skills/agents/SKILL.md` Brew Cask AI Agents 섹션
+- zzizily verify: Codex MCP + Antigravity(agy) + gitleaks/sops 의존 — Codex/agy는 `agents` 스킬로 설치, gitleaks/sops는 `setup` 스킬로 관리
 - NixOS: `k8sgpt`만 nix 패키지로 관리, 나머지는 pnpm/uv 사용
 - 감지: binary 경로가 `/nix/store/` 또는 `/run/current-system/sw/bin/`이면 nix 관리. `/opt/homebrew/bin/`이면 brew
