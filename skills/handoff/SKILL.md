@@ -12,7 +12,7 @@ description: "현재 세션 작업을 .zzizily/handoff/에 구조화 저장. /cl
 1. repo root 결정: `git rev-parse --show-toplevel`. 실패(비-Git) 시 cwd를 root로 사용하고 frontmatter의 `git_*` 필드를 생략
 2. handoff dir: `<root>/.zzizily/handoff/`. 미존재 시 생성
 3. `<root>/.zzizily/.gitignore` 가 없으면 생성(내용은 `*` 한 줄). `git check-ignore <root>/.zzizily/handoff/probe` 로 추적 제외 확인(출력되면 무시됨 = OK)
-4. handoff 경로가 symlink면 **fail-closed**: 저장 중단하고 사용자에게 symlink임을 통보
+4. handoff 경로가 symlink면 **fail-closed**: `test -L "<root>/.zzizily/handoff"` 로 확인, 참이면 저장 중단하고 사용자에게 symlink임을 통보
 
 ### 2. 메타데이터 수집
 
@@ -22,7 +22,7 @@ bash로 수집:
 - `saved_at`: `date -u +%Y-%m-%dT%H:%M:%SZ`
 - `git_branch`: `git rev-parse --abbrev-ref HEAD 2>/dev/null`
 - `git_head`: `git rev-parse --short HEAD 2>/dev/null`
-- `git_dirty`: `git diff --quiet HEAD 2>/dev/null || echo true`
+- `git_dirty`: `git diff --quiet HEAD 2>/dev/null && echo false || echo true`
 
 ### 3. handoff 본문 작성
 
