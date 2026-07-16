@@ -47,7 +47,7 @@ graph TD
 | 컴포넌트 | 역할 | 위치 |
 | :--- | :--- | :--- |
 | **skill** `verify` | 진입점 + **보안 책임**(snapshot/redaction/무결성 감시) + 판사(취합) | `skills/verify/SKILL.md` |
-| **subagent** `verify` | 격리 snapshot에서 **순수 2-Way 검증만**. 보안 결정권 없음. B/R/A/T 반환 | `.claude-plugin/agents/verify.md` |
+| **subagent** `verify` | 격리 snapshot에서 **순수 2-Way 검증만**. 보안 결정권 없음. B/R/A/T 반환 | `agents/verify.md` |
 
 ## 외부 전송 동의
 
@@ -226,9 +226,8 @@ subagent `verify`가 발견되지 않으면 에러 리포트 출력 후 종료 (
 [ERROR] verify subagent discovery 실패
 확인 사항:
   1. plugin 설치 상태 (claude plugin list | grep zzizily)
-  2. plugin.json "agents" 필드 존재 (".claude-plugin/agents/")
+  2. agents/verify.md 존재 확인 (플러그인 루트 자동 발견, plugin.json 필드 불필요)
   3. /reload-plugins 실행 후 재시도
-  4. .claude-plugin/agents/verify.md 존재 확인
 ```
 
 ## 무결성 사후 검증 (TOCTOU 방지)

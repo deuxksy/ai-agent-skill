@@ -34,9 +34,9 @@ ls skills/
 .
 ├── .claude-plugin/
 │   ├── plugin.json          # 플러그인 매니페스트
-│   ├── marketplace.json     # 마켓플레이스 등록 정보
-│   └── agents/
-│       └── verify.md        # 검증 subagent (격리 2-Way 교차검증)
+│   └── marketplace.json     # 마켓플레이스 등록 정보
+├── agents/
+│   └── verify.md            # 검증 subagent (격리 2-Way 교차검증, 루트 자동 발견)
 └── skills/
     ├── agents/                    # AI Agent/MCP 설치 자동화
     ├── backdoor-investigation/    # Linux 백도어 포렌식 진단 (read-only)

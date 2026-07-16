@@ -1,10 +1,9 @@
 {
   "name": "zzizily",
   "description": "Personal skill collection: agents install/upgrade/setup, security audit, deploy, translation, game deals, exchange rate",
-  "version": "1.8.0",
+  "version": "1.8.1",
   "author": {
     "name": "Crong"
   },
-  "skills": "./skills/",
-  "agents": "./.claude-plugin/agents/"
+  "skills": "./skills/"
 }
