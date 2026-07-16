@@ -1,6 +1,6 @@
 ---
 name: system-upgrade
-description: "Upgrade system packages via OS package manager. Detects OS and runs brew upgrade, apt upgrade, dnf upgrade, or nixos-rebuild. Use /zzizily:system-audit for security checks."
+description: "OS 패키지 매니저로 시스템 패키지 업그레이드. OS 감지해 brew upgrade, apt upgrade, dnf upgrade, 또는 nixos-rebuild 실행. 보안 점검은 /zzizily:system-audit 사용."
 ---
 
 # System Upgrade

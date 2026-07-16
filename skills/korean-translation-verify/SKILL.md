@@ -1,6 +1,6 @@
 ---
 name: korean-translation-verify
-description: Use when translating or verifying Korean documentation for GL.iNet router firmware, especially when checking translation quality, naturalness, and technical terminology accuracy. Use before marking translations as complete or committing translation changes.
+description: Use when GL.iNet router firmware 한국어 문서를 번역하거나 검증. 특히 번역 품질, 자연스러움, 기술 용어 정확도 점검 시. 번역 완료 처리나 변경 사항 커밋 전에 사용.
 ---
 
 # Korean Translation Verification

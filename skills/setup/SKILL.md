@@ -1,6 +1,6 @@
 ---
 name: setup
-description: "Setup machine from dotfiles. Detects hostname and runs brew bundle, stow, sops decryption, and Tailscale Aperture configuration. Requires ~/git/dotfiles to exist. Use when setting up a new machine or reconfiguring."
+description: "dotfiles 기반 머신 설정. hostname 감지해 brew bundle, stow, sops 복호화, Tailscale Aperture 설정 실행. ~/git/dotfiles 존재 필수. Use when 신규 머신 설정이나 재구성 시."
 ---
 
 # Setup

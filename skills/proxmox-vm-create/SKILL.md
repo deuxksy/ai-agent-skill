@@ -1,6 +1,6 @@
 ---
 name: proxmox-vm-create
-description: "Create Proxmox VE VMs from a template + guest OS setup. Clones template, expands spec (sockets/cores/memory/net/disk), defends product_uuid + machine-id, verifies config, and configures guest OS (netplan/hostname/disk/swap/sysctl/limits/machine-id). Provisioning layers: qm(learn)→pvesh(test)→HTTP REST API(final, VM lifecycle only). Guest exec layers: qm guest exec / MCP execute_vm_command (HTTP /agent = exec 불가, 정보명령만). Use for repeating VM provisioning across Proxmox cluster nodes."
+description: "Template 복제 + guest OS 설정으로 Proxmox VE VM 생성. template 복제, 사양 확장(sockets/cores/memory/net/disk), product_uuid + machine-id 방어, config 검증, guest OS 설정(netplan/hostname/disk/swap/sysctl/limits/machine-id). Provisioning 계층: qm(학습)→pvesh(테스트)→HTTP REST API(최종, VM lifecycle만). Guest exec 계층: qm guest exec / MCP execute_vm_command(HTTP /agent = exec 불가, 정보 명령만). Use when Proxmox cluster 노드 전체에 반복 VM provisioning이 필요할 때."
 ---
 
 # Proxmox VM 생성 (pvesh 기반)

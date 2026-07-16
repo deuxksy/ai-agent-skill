@@ -1,6 +1,6 @@
 ---
 name: product-planning-dr-pipeline
-description: "Turn a GUI, web, or app product idea or early planning material into staged Deep Research artifacts: benchmark research, scoped feature extraction, screen design, technology selection, and execution-ready AI agent documentation. Use when planning a screen-based digital product, converting exploratory research into an MVP plan, or generating AGENTS.md, CONTEXT.md, ROADMAP.md, and DESIGN.md from validated planning outputs."
+description: "GUI, web, app 제품 아이디어나 초기 기획 자료를 단계별 Deep Research 산출물(benchmark research, feature 추출, screen design, 기술 선정, 실행 가능 AI agent 문서)로 발전. Use when screen 기반 디지털 제품 기획, 탐색적 research를 MVP 계획으로 전환, 또는 검증된 기획 결과에서 AGENTS.md, CONTEXT.md, ROADMAP.md, DESIGN.md 생성 시."
 ---
 
 # Product Planning Deep Research Pipeline

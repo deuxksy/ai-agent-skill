@@ -1,6 +1,6 @@
 ---
 name: agents
-description: "Install or upgrade all AI agents, MCP servers, and LSP servers. Detects OS and uses pnpm, uv, brew, nix with platform-specific methods. Use 'install' to set up new machine, 'upgrade' to update existing agents."
+description: "모든 AI Agent, MCP server, LSP server를 설치하거나 업그레이드. OS를 감지해 pnpm, uv, brew, nix를 플랫폼별 방식으로 실행. 'install'로 신규 머신 설정, 'upgrade'로 기존 agent 업데이트."
 ---
 
 # Agents

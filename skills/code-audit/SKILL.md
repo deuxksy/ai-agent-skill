@@ -1,6 +1,6 @@
 ---
 name: code-audit
-description: "Static code security analysis. SAST scan → CWE classification → OWASP Top 10 mapping → fix suggestions. Defaults to current project directory. Specify path to scan a different target. Use /zzizily:system-audit for package-level CVE checks."
+description: "정적 코드 보안 분석. SAST scan → CWE 분류 → OWASP Top 10 매핑 → 수정 제안. 기본값은 현재 프로젝트 디렉토리. 다른 대상 스캔 시 경로 지정. 패키지 수준 CVE 점검은 /zzizily:system-audit 사용."
 ---
 
 # Code Audit

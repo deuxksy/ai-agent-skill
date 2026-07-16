@@ -1,6 +1,6 @@
 ---
 name: system-audit
-description: "Security vulnerability audit with CVE → NVD/NIST → CVSS → CISA KEV → upgrade flow. Cross-platform support for macOS, Linux, and language-specific package managers. Use /zzizily:system-upgrade for package upgrades."
+description: "보안 취약점 감사. CVE → NVD/NIST → CVSS → CISA KEV → upgrade 흐름. macOS, Linux, 언어별 패키지 매니저 크로스 플랫폼 지원. 패키지 업그레이드는 /zzizily:system-upgrade 사용."
 ---
 
 # System Audit

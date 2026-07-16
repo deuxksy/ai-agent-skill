@@ -1,6 +1,6 @@
 ---
 name: deploy-android-wifi
-description: Use when deploying a React Native app to an Android device connected via WiFi ADB. Handles Metro server, gradle build, install, and adb reverse port forwarding automatically.
+description: Use when WiFi ADB로 연결된 Android 기기에 React Native 앱을 배포. Metro server 실행, gradle 빌드, 설치, adb reverse port forwarding을 자동 처리.
 ---
 
 # Deploy Android WiFi

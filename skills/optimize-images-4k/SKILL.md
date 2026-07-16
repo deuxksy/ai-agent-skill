@@ -1,6 +1,6 @@
 ---
 name: optimize-images-4k
-description: Recursively clean and optimize image collections for 4K landscape output with ImageMagick. Use when Codex needs to delete portrait images, delete images narrower than a required width, resize wider JPEGs to exactly 3840px while preserving aspect ratio, rename resolution suffixes such as -6000px.jpg to -3840px.jpg, remove known cover files, or verify an image collection.
+description: ImageMagick으로 image 모음을 정리·최적화해 4K landscape 출력 생성. Use when 세로 이미지 삭제, 최소 너비 미만 이미지 삭제, wider JPEG를 3840px로 resize(aspect ratio 유지), 해상도 suffix rename(-6000px.jpg→-3840px.jpg), cover 파일 제거, 또는 image 모음 검증이 필요할 때.
 ---
 
 # Optimize Images 4K

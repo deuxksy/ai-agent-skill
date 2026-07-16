@@ -1,6 +1,6 @@
 ---
 name: openwrt-initd-service
-description: Use when installing background services on OpenWrt with automatic startup on boot and process supervision. Use for agents, monitoring tools, or any long-running background processes that need persistent logging and respawn on crash.
+description: Use when OpenWrt에 boot 시 자동 시작과 프로세스 감시(supervision)가 포함된 background service를 설치. agent, 모니터링 도구, crash 시 respawn과 persistent logging이 필요한 장기 실행 background 프로세스에 사용.
 ---
 
 # OpenWrt Init.d Service Installation
