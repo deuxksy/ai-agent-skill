@@ -11,8 +11,8 @@ description: "현재 세션 작업을 .zzizily/handoff/에 구조화 저장. /cl
 
 1. repo root 결정: `git rev-parse --show-toplevel`. 실패(비-Git) 시 cwd를 root로 사용하고 frontmatter의 `git_*` 필드를 생략
 2. handoff dir: `<root>/.zzizily/handoff/`. 미존재 시 생성
-3. `<root>/.zzizily/.gitignore` 가 없으면 생성(내용은 `*` 한 줄). `git check-ignore <root>/.zzizily/handoff/probe` 로 추적 제외 확인(출력되면 무시됨 = OK). **check-ignore가 추적 제외로 보고하지 않으면**(= git에 추적될 위험) 저장 **중단**하고 사용자에게 .gitignore 문제 통보
-4. symlink fail-closed (spec §9): `<root>/.zzizily` 와 `<root>/.zzizily/handoff` 각각 `test -L` 로 검사. 또한 모든 write target(임시 파일 `.tmp-*`, `latest.md.new`, archive)의 canonical path(`readlink -f`)가 `<root>/.zzizily/handoff/` 하위인지 확인. 하나라도 위반 시 저장 중단하고 사용자에게 통보
+3. `<root>/.zzizily/.gitignore` 가 없으면 생성(내용은 `*` 한 줄). **Git repository인 경우에만** `git check-ignore <root>/.zzizily/handoff/probe` 로 추적 제외 확인(출력되면 무시됨 = OK). check-ignore가 추적 제외로 보고하지 않으면 저장 **중단**. **non-Git cwd**(`git rev-parse --show-toplevel` 실패)에서는 check-ignore를 건너뛰고 .gitignore 생성만 수행
+4. symlink fail-closed (spec §9): `<root>/.zzizily`, `<root>/.zzizily/handoff`, 그리고 모든 write target(임시 파일 `.tmp-*`, `latest.md.new`, archive 파일) 각각을 `test -L` 로 검사. 하나라도 symlink면 저장 중단하고 사용자에게 통보 (참고: `readlink -f` 는 macOS BSD에서 미지원하므로 `test -L` 기반으로 검사)
 
 ### 2. 메타데이터 수집
 
