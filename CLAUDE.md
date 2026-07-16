@@ -49,6 +49,7 @@ ls skills/
     ├── exchange-rate-tracker/     # 환율 추적 (USD/KRW, USD/VND)
     │   ├── scripts/
     │   └── references/
+    ├── handoff/                   # 세션 작업 저장 (/clear 전 수동)
     ├── hot-game-deals-n-news/     # 게임 할인/뉴스 트래커
     │   └── references/
     ├── korean-translation-verify/ # 한국어 번역 품질 검증
@@ -62,6 +63,7 @@ ls skills/
     │   ├── templates/             # 단계별 RQ/산출물 템플릿 (AGENTS/CONTEXT/ROADMAP/DESIGN)
     │   └── examples/              # 예시 산출물
     ├── proxmox-vm-create/         # Proxmox VE VM 프로비저닝 (qm→pvesh→REST)
+    ├── resume/                    # 이전 handoff 복원 (승인 후 TaskCreate)
     ├── verify/                    # 검증 (Codex+Antigravity 2-Way 교차검증 진입점)
     ├── setup/                     # 초기 설정
     ├── system-audit/              # 시스템 감사
@@ -81,7 +83,7 @@ ls skills/
 
 그룹 내 정렬: 읽기전용 → 파괴적 → 생성 순 (안전한 것부터).
 
-## 스킬 카탈로그 (17)
+## 스킬 카탈로그 (19)
 
 기능 도메인별 그룹핑. 신규 스킬 추가 시 [분류 원칙](#분류-원칙)에 따라 배치.
 
@@ -118,6 +120,13 @@ ls skills/
 | agents | AI Agent/MCP/LSP 설치·업그레이드 자동화 |
 | verify | Codex+Antigravity 2-Way 교차검증 (spec/plan 항상 2-Way, 코드 3단계 티어) |
 | deploy-android-wifi | WiFi ADB React Native 배포 자동화 |
+
+### 워크플로우 · 세션 (Workflow & Session)
+
+| 스킬 | 설명 |
+| :--- | :--- |
+| handoff | 현재 세션 작업을 .zzizily/handoff/에 구조화 저장 (/clear 전 수동) |
+| resume | 이전 handoff 읽어 task preview → 승인 → TaskCreate 복원 (injection 차단) |
 
 ### 콘텐츠 · 로컬라이제이션 (Content & L10n)
 
