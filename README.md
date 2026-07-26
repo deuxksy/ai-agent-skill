@@ -24,7 +24,13 @@ ls skills/
 | Marketplace plugin name | `deuxksy` (marketplace.json) |
 | 호출 prefix | `/zzizily:<skill-name>` |
 | GitHub repo | `deuxksy/ai-agent-skill` |
-| 버전 | 1.8.2 |
+| 버전 | 1.8.3 |
+
+## 버전 정책
+
+- 새 skill 추가: `1.x.y` → `1.(x+1).0`
+- 기존 skill 개선/수정: `1.x.y` → `1.x.(y+1)`
+- `.claude-plugin/plugin.json`, `.claude-plugin/marketplace.json`, `README.md` 버전은 항상 동기화
 
 ## 스킬 카탈로그 (19)
 

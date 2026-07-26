@@ -163,7 +163,12 @@ description: <한 줄 설명>
 
 ### 버전 관리
 
-[SemVer](https://semver.org/). `plugin.json` / `marketplace.json` 버전 동기화 필수.
+[SemVer](https://semver.org/) 기반으로 관리한다. `plugin.json` / `marketplace.json` / `README.md` 버전 동기화 필수.
+
+- 새 skill 추가: `1.x.y` → `1.(x+1).0` (minor bump, patch reset)
+- 기존 skill 개선/수정: `1.x.y` → `1.x.(y+1)` (patch bump)
+- 여러 변경이 섞이면 가장 큰 영향 기준 적용. 예: 새 skill + 기존 skill 개선 = minor bump
+- version bump commit은 관련 skill/doc 변경과 함께 묶거나, 누락 시 즉시 별도 commit으로 보정
 
 ## 환경별 패키지 관리
 
