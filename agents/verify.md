@@ -32,7 +32,7 @@ skill이 dispatch 시 전달하는 입력:
 | `acceptance_criteria` | 선택 |
 | `runner` | `claude` 또는 `auto` |
 | `reviewers` | `codex`, `agy`, `sgpt` 조합. Claude runner에서는 `codex,agy` 필수, `sgpt` 선택 |
-| `provider_config` | Codex model/sandbox, Antigravity 모델, shell-gpt Aperture model/profile. `sgpt_model`은 `kimi-for-coding`, `k3`, `k3-256k`, `glm-5.2`, `deepseek-v4-pro-260425`, `seed-2-0-pro-260328` 중 하나 |
+| `provider_config` | Codex model/sandbox, Antigravity 모델, shell-gpt Aperture model/profile. `codex_model`은 `gpt-5.6-sol`, `gpt-5.6-terra`, `gpt-5.6-luna` 중 하나. `agy_model`은 기본 `gemini-3.6-flash`, 고위험/충돌 시 `gemini-pro`. `sgpt_model`은 `kimi-for-coding`, `k3`, `k3-256k`, `glm-5.2`, `deepseek-v4-pro-260425`, `seed-2-0-pro-260328` 중 하나 |
 
 ## 도구 세트
 
@@ -92,6 +92,18 @@ Codex MCP 실패 시 순차 fallback. 항상 `--sandbox read-only`, `cwd`=격리
 Antigravity는 `agy -p` (격리 복사본 경로만). 모델 폴백은 `provider_config.agy_model` 기준으로 적용한다.
 
 shell-gpt는 `sgpt` CLI로 호출하고 Tailscale Aperture(AI Gateway)에 연결된 profile/model만 사용한다. 명시 지원 모델은 `kimi-for-coding`, `k3`, `k3-256k`, `glm-5.2`, `deepseek-v4-pro-260425`, `seed-2-0-pro-260328`다. API key, endpoint URL, gateway secret은 출력하거나 저장하지 않는다. `sgpt` reviewer 실패는 요구 reviewer에 포함된 경우 INCOMPLETE로 처리한다.
+
+### Codex/Antigravity 모델 선택
+
+| Provider | 모델 | 우선 사용 |
+| :--- | :--- | :--- |
+| Codex | `gpt-5.6-sol` | 기본값, high-risk code review, architecture, 보안/권한, 충돌 resolution |
+| Codex | `gpt-5.6-terra` | 공식 docs/reference, dependency/API 동작 검증, 외부 근거 기반 비교 |
+| Codex | `gpt-5.6-luna` | 빠른 triage, small diff sanity check, 파일/심볼 mapping, 저위험 문서 변경 |
+| Antigravity | `gemini-3.6-flash` | 기본 fast lane, low/medium-risk diff, 실행 계획 sanity check, 낮은 latency 외부검증 |
+| Antigravity | `gemini-pro` | high-risk design/code review, multi-file consistency, Flash 결과가 애매하거나 Codex와 충돌할 때 |
+
+불확실하면 Codex는 `gpt-5.6-sol`, Antigravity는 `gemini-3.6-flash`로 시작한다. 보안/권한/데이터/배포 영향이 있거나 reviewer 간 충돌이 있으면 각각 `gpt-5.6-sol`, `gemini-pro`로 승격한다.
 
 ### shell-gpt 모델 선택
 

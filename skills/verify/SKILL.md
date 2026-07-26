@@ -85,7 +85,7 @@ graph TD
 | :--- | :--- | :--- |
 | `runner` | `auto` \| `claude` \| `codex` \| `agy` | snapshot 이후 fanout을 실제로 실행하는 주체. 기본 `auto` |
 | `reviewers` | `codex`, `agy`, `sgpt` 조합 | 독립 검증 결과를 내는 provider. `runner=claude`에서는 `codex,agy` 필수, `runner=codex`에서는 `agy` 필수, `runner=agy`에서는 `codex` 필수, `sgpt` 선택 |
-| `model_profile` | provider별 모델 지정 | `codex:gpt-5.6-sol`, `agy:gemini-pro`, `sgpt:kimi-for-coding`, `sgpt:k3`, `sgpt:k3-256k`, `sgpt:glm-5.2`, `sgpt:deepseek-v4-pro-260425`, `sgpt:seed-2-0-pro-260328` 형태 |
+| `model_profile` | provider별 모델 지정 | `codex:gpt-5.6-sol`, `codex:gpt-5.6-terra`, `codex:gpt-5.6-luna`, `agy:gemini-3.6-flash`, `sgpt:kimi-for-coding`, `sgpt:k3`, `sgpt:k3-256k`, `sgpt:glm-5.2`, `sgpt:deepseek-v4-pro-260425`, `sgpt:seed-2-0-pro-260328` 형태 |
 
 `runner`는 orchestration 위치만 바꾼다. 보안 책임(snapshot/redaction/integrity)은 항상 skill이 먼저 수행하고, reviewer는 격리 복사본만 본다.
 
@@ -139,6 +139,34 @@ Antigravity runner에서 사용자가 `--reviewers agy`만 지정해도 `codex`�
 | `codex` | Codex MCP 우선, 실패 시 `codex exec` | `provider_config.codex_model` |
 | `agy` | `agy -p` | `provider_config.agy_model` |
 | `sgpt` | `sgpt` CLI | `provider_config.sgpt_model`, Tailscale Aperture endpoint/profile. 연결 모델: `kimi-for-coding`, `k3`, `k3-256k`, `glm-5.2`, `deepseek-v4-pro-260425`, `seed-2-0-pro-260328` |
+
+### Codex 모델 선택
+
+| 모델 | 선택 상황 | 피할 상황 |
+| :--- | :--- | :--- |
+| `gpt-5.6-sol` | 기본값. high-risk code review, architecture, 보안/권한 경계, 충돌 resolution, 최종 verdict처럼 reasoning 품질이 중요한 검증 | 단순 typo/doc 변경, 빠른 존재 확인 |
+| `gpt-5.6-terra` | 공식 docs/reference 확인, dependency/API 동작 검증, 외부 근거 기반 비교처럼 research 성격이 강한 검증 | 순수 local diff patch review만 필요한 경우 |
+| `gpt-5.6-luna` | 빠른 triage, small diff sanity check, 파일/심볼 mapping, 저위험 문서 변경 검증 | security/auth/data migration, 복잡한 cross-file reasoning |
+
+기본 선택:
+
+1. 불확실하면 `codex:gpt-5.6-sol`.
+2. 외부 문서·API·dependency 근거가 핵심이면 `codex:gpt-5.6-terra`.
+3. 빠른 저위험 확인이면 `codex:gpt-5.6-luna`.
+4. blocker 여부나 reviewer 간 충돌 판단은 `gpt-5.6-sol`로 승격한다.
+
+### Antigravity 모델 선택
+
+| 모델 | 선택 상황 | 피할 상황 |
+| :--- | :--- | :--- |
+| `gemini-3.6-flash` | 기본 fast lane. low/medium-risk diff, 실행 계획 sanity check, agent workflow 빠른 검토, Codex runner의 필수 외부검증을 낮은 latency로 붙일 때 | high-risk security/auth/data migration, 복잡한 architecture verdict |
+| `gemini-pro` | high-risk design/code review, multi-file consistency, 긴 계획 검증, Flash 결과가 애매하거나 Codex와 충돌할 때 | 단순 small diff 검증 |
+
+기본 선택:
+
+1. Codex runner의 필수 `agy` reviewer는 기본 `agy:gemini-3.6-flash`.
+2. 보안/권한/데이터/배포 영향이 있거나 reviewer 충돌이 있으면 `agy:gemini-pro`로 승격한다.
+3. latency가 더 중요하고 변경이 저위험이면 `gemini-3.6-flash`를 유지한다.
 
 `sgpt`는 shell-gpt가 Tailscale Aperture(AI Gateway)에 연결된 상태를 전제한다. 현재 명시 모델은 `kimi-for-coding`, `k3`, `k3-256k`, `glm-5.2`, `deepseek-v4-pro-260425`, `seed-2-0-pro-260328`다. skill은 API key·gateway URL을 출력하거나 평문 저장하지 않는다. 모델명/profile만 `provider_config`에 전달한다.
 
@@ -329,7 +357,7 @@ provider_config:
   reviewers: codex,agy
   codex_model: gpt-5.6-sol
   codex_sandbox: read-only
-  agy_model: Gemini 3.1 Pro (High)
+  agy_model: gemini-3.6-flash
   sgpt_model: glm-5.2
   sgpt_gateway: tailscale-aperture
 
