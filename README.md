@@ -61,7 +61,7 @@ ls skills/
 | 스킬 | 설명 |
 | :--- | :--- |
 | `agents` | AI Agent/MCP/LSP 설치·업그레이드 자동화 |
-| `verify` | Codex+Antigravity 2-Way 교차검증 (격리 snapshot) |
+| `verify` | runtime-neutral 교차검증 (Claude/Codex/agy runner + Codex/agy/shell-gpt reviewer, 격리 snapshot) |
 | `deploy-android-wifi` | WiFi ADB React Native 배포 자동화 |
 
 ### 워크플로우 · 세션 (Workflow & Session)

@@ -36,7 +36,7 @@ ls skills/
 │   ├── plugin.json          # 플러그인 매니페스트
 │   └── marketplace.json     # 마켓플레이스 등록 정보
 ├── agents/
-│   └── verify.md            # 검증 subagent (격리 2-Way 교차검증, 루트 자동 발견)
+│   └── verify.md            # Claude runner adapter (격리 reviewer fanout, 루트 자동 발견)
 └── skills/
     ├── agents/                    # AI Agent/MCP 설치 자동화
     ├── backdoor-investigation/    # Linux 백도어 포렌식 진단 (read-only)
@@ -64,7 +64,7 @@ ls skills/
     │   └── examples/              # 예시 산출물
     ├── proxmox-vm-create/         # Proxmox VE VM 프로비저닝 (qm→pvesh→REST)
     ├── resume/                    # 이전 handoff 복원 (승인 후 TaskCreate)
-    ├── verify/                    # 검증 (Codex+Antigravity 2-Way 교차검증 진입점)
+    ├── verify/                    # 검증 (runtime-neutral 교차검증 진입점)
     ├── setup/                     # 초기 설정
     ├── system-audit/              # 시스템 감사
     │   └── references/
@@ -118,7 +118,7 @@ ls skills/
 | 스킬 | 설명 |
 | :--- | :--- |
 | agents | AI Agent/MCP/LSP 설치·업그레이드 자동화 |
-| verify | Codex+Antigravity 2-Way 교차검증 (spec/plan 항상 2-Way, 코드 3단계 티어) |
+| verify | runtime-neutral 교차검증 (Claude/Codex/agy runner + Codex/agy/shell-gpt reviewer, spec/plan 최소 2-Way) |
 | deploy-android-wifi | WiFi ADB React Native 배포 자동화 |
 
 ### 워크플로우 · 세션 (Workflow & Session)
@@ -168,6 +168,6 @@ description: <한 줄 설명>
 ## 환경별 패키지 관리
 
 - macOS: AI Agent(`codex`·`claude-code`·`antigravity-cli`)는 brew cask 우선 관리 — pnpm global(`minimumReleaseAge` 최신 지연)·native installer(PATH 충돌)·agy 자체 업데이터(추적 불일치) 회피. 분기/주의사항은 `skills/agents/SKILL.md` Brew Cask AI Agents 섹션
-- zzizily verify: Codex MCP + Antigravity(agy) + gitleaks/sops 의존 — Codex/agy는 `agents` 스킬로 설치, gitleaks/sops는 `setup` 스킬로 관리
+- zzizily verify: Codex MCP/CLI + Antigravity(agy) + shell-gpt(Aperture profile) + gitleaks/sops 의존 — Codex/agy/sgpt는 `agents` 스킬로 설치, gitleaks/sops는 `setup` 스킬로 관리
 - NixOS: `k8sgpt`만 nix 패키지로 관리, 나머지는 pnpm/uv 사용
 - 감지: binary 경로가 `/nix/store/` 또는 `/run/current-system/sw/bin/`이면 nix 관리. `/opt/homebrew/bin/`이면 brew

@@ -1,7 +1,7 @@
 # zzizily 검증 컴포넌트 설계 (skill + subagent 하이브리드)
 
 > **Date**: 2026-07-15
-> **Status**: Draft v3 (2-Way dogfood 2라운드 반영 — 보안 책임 skill 이관, 격리 snapshot, truth table 보강)
+> **Status**: Draft v4 override (runner/reviewer/model profile 분리 — v3 보안 책임 skill 이관, 격리 snapshot, truth table 유지)
 > **Topic**: 05-multi-agent.md 검증 체계를 zzizily 플러그인의 독립 컴포넌트로 이관
 
 ## 목차
@@ -25,9 +25,26 @@
 
 ## 개요
 
-`~/.claude/rules/05-multi-agent.md`의 검증 체계(3단계 티어, Codex+Antigravity 2-Way, B/R/A/T 포맷)를 zzizily 플러그인의 독립 컴포넌트로 이관.
+`~/.claude/rules/05-multi-agent.md`의 검증 체계(3단계 티어, 2-Way 이상 교차검증, B/R/A/T 포맷)를 zzizily 플러그인의 독립 컴포넌트로 이관.
 
-**하이브리드**: skill(`/zzizily:verify`)이 진입점·판사·**보안 책임**(무결성·secret), subagent(`verify`)가 격리 snapshot에서 순수 2-Way 검증.
+**하이브리드 v4**: skill(`/zzizily:verify`)이 진입점·판사·**보안 책임**(무결성·secret)을 유지하고, `runner`(Claude Code/Codex/agy)와 `reviewer`(Codex/agy/shell-gpt)를 분리한다. Claude Code subagent(`verify`)는 여러 runner 중 하나일 뿐이다.
+
+v4 기준 선택지:
+1. `runner=claude` — Claude Code subagent가 reviewer fanout을 수행. `codex(MCP 우선, CLI 차선)` + `agy CLI`는 필수, `shell-gpt`는 선택
+2. `runner=codex` — Codex 세션 또는 `codex exec`가 reviewer fanout을 수행. 최소 검증 경로는 `agy CLI` 필수 + `shell-gpt` 선택
+3. `runner=agy` — Antigravity CLI가 reviewer fanout을 수행. 최소 검증 경로는 `codex(MCP 우선, CLI 차선)` 필수 + `shell-gpt` 선택
+
+shell-gpt reviewer는 Tailscale Aperture(AI Gateway)에 연결된 profile/model만 사용한다. 현재 명시 모델은 `kimi-for-coding`, `k3`, `k3-256k`, `glm-5.2`, `deepseek-v4-pro-260425`, `seed-2-0-pro-260328`다. API key, endpoint URL, gateway secret은 평문 출력·저장하지 않는다.
+
+모델 선택 기준:
+1. `kimi-for-coding` — 작은 코드 diff와 구현 품질 검토
+2. `k3-256k` — 중대형 diff, 256k 안에 들어오는 repo 문맥 검증
+3. `k3` — 긴 spec/plan, 대형 diff, cross-file consistency
+4. `glm-5.2` — agent workflow, tool-use, 권한 경계, 실행 계획 검증
+5. `deepseek-v4-pro-260425` — 복잡한 bug 추론, 알고리즘/동시성/성능 리스크 검증
+6. `seed-2-0-pro-260328` — 넓은 대안 검토, spec/architecture trade-off sanity check
+
+아래 v3 상세 섹션은 보안 경계와 기존 이관 근거를 보존하기 위한 historical context다. 현재 operative contract는 `skills/verify/SKILL.md`와 `agents/verify.md`의 v4 runner/reviewer 계약을 우선한다.
 
 검증 대상:
 1. superpowers spec/plan (문서) — **메인 검증, 항상 2-Way**
