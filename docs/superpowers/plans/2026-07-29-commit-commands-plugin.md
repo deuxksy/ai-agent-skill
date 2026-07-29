@@ -150,6 +150,7 @@ The Markdown body must contain these exact sections and executable contract:
 3. 최근 commit 10개의 style과 적용 가능한 project instruction을 확인한다.
 4. 현재 task에 직접 관련된 파일만 `포함`으로 분류하고 나머지는 `제외`한다.
 5. partial staging 또는 기존 index 상태를 안전하게 분리할 수 없으면 index를 변경하지 않고 범위를 질문한다.
+6. Pathspec을 받는 Git command는 `git diff -- <paths>`처럼 option terminator를 사용하고 path를 active shell의 개별 argv로 전달한다.
 
 ## 2. Security check
 
@@ -164,7 +165,7 @@ The Markdown body must contain these exact sections and executable contract:
 - 포함 파일과 선택 이유
 - 제외 파일과 제외 이유
 - security scan 결과와 한계
-- exact staging command
+- active shell에 맞게 각 path를 quote/escape한 exact staging argv (`git add -- <paths>`)
 - proposed commit message
 
 사용자의 명시적 승인 전에는 stage 또는 commit하지 않는다.
@@ -173,7 +174,7 @@ The Markdown body must contain these exact sections and executable contract:
 
 1. 승인 직후 HEAD와 working tree 상태를 다시 확인한다.
 2. 승인 시점과 달라졌으면 중단하고 preview를 갱신한다.
-3. 포함 파일을 path별로 명시해 stage한다. Working tree 전체 shorthand는 사용하지 않는다.
+3. 포함 파일을 active shell의 개별 argv로 전달해 `git add -- <paths>`로 stage한다. Working tree 전체 shorthand는 사용하지 않는다.
 4. staged diff가 승인 범위와 일치하는지 확인한다.
 5. Project instruction, 최근 repository style, Conventional Commits 순으로 message 규칙을 적용한다. 별도 규칙이 없으면 type은 영어, subject는 한국어로 작성한다.
 6. Empty commit을 만들지 않는다.
@@ -189,6 +190,7 @@ Commit SHA, message, 포함 파일, 남아 있는 staged/unstaged 변경을 보�
 - 기존 staged 변경을 자동 unstage하지 않는다.
 - File content를 수정하지 않는다.
 - Secret 의심 변경을 commit하지 않는다.
+- Path를 command 문자열로 조합하거나 eval하지 않는다.
 - 강제 또는 history rewrite Git option을 사용하지 않는다.
 
 ## Attribution
@@ -269,6 +271,11 @@ if ($skill -notmatch '(?m)^name: commit$' -or $skill -notmatch '(?m)^description
 $untrackedFixture = [PSCustomObject]@{ Path = 'notes.txt'; Content = 'access_token = token_like_value' }
 if ($untrackedFixture.Path -match '(?i)(\.env|\.pem|credential|token)' -or $untrackedFixture.Content -notmatch '(?i)(api[_-]?key|access[_-]?token|password)\s*[:=]\s*[^\s`]+') { throw 'invalid untracked fixture' }
 if ($skill -notmatch '승인 대상 untracked 파일의 실제 content를 read-only로 검사한다\.' -or $skill -notmatch 'Binary 또는 읽을 수 없는 승인 대상 untracked 파일이면 중단하고' -or $skill -notmatch 'deterministic scanner 부재 한계를 preview에 명시한다\.') { throw 'untracked token-like content fallback mismatch' }
+$pathFixture = @('-leading.txt', 'space name.txt', 'meta&pipe.txt')
+if ($pathFixture[0] -notmatch '^-' -or $pathFixture[1] -notmatch ' ' -or $pathFixture[2] -notmatch '[&|;]') { throw 'invalid path-safety fixture' }
+foreach ($requirement in @('git add -- <paths>', 'git diff -- <paths>', 'active shell의 개별 argv', 'Path를 command 문자열로 조합하거나 eval하지 않는다.')) {
+  if (-not $skill.Contains($requirement)) { throw "path argument safety mismatch: $requirement" }
+}
 git diff --check
 ```
 
@@ -287,8 +294,22 @@ Expected: secret assignment scan returns no findings; status contains only Task 
 
 Commit:
 
-```bash
-git add .claude-plugin/marketplace.json README.md plugins/commit-commands/.claude-plugin/plugin.json plugins/commit-commands/LICENSE plugins/commit-commands/README.md plugins/commit-commands/skills/commit/SKILL.md
+```powershell
+$task1Files = @(
+  '.agents/plugins/marketplace.json',
+  '.claude-plugin/marketplace.json',
+  'README.md',
+  'plugins/commit-commands/.claude-plugin/plugin.json',
+  'plugins/commit-commands/.codex-plugin/plugin.json',
+  'plugins/commit-commands/LICENSE',
+  'plugins/commit-commands/README.md',
+  'plugins/commit-commands/skills/commit/SKILL.md'
+)
+git add -- $task1Files
+$stagedTask1Files = @(git diff --cached --name-only)
+if (Compare-Object ($task1Files | Sort-Object) ($stagedTask1Files | Sort-Object)) {
+  throw 'Task 1 staged file scope mismatch'
+}
 git commit -m "feat(commit): 안전한 commit skill 추가"
 ```
 
