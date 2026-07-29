@@ -177,7 +177,7 @@ Create `plugins/agents-md-management/skills/agents-md-management/SKILL.md` with 
 ```yaml
 ---
 name: agents-md-management
-description: "Repository의 root·nested AGENTS.md, CLAUDE.md, GEMINI.md와 공통 .ai/RULES.md를 discovery하고 codebase 정합성, hierarchy, reference, 중복, 충돌을 audit한 뒤 승인된 targeted update만 적용한다."
+description: "Use when repository AI agent instruction files need hierarchy, reference, duplication, conflict, or codebase-consistency review."
 ---
 ```
 
@@ -390,7 +390,7 @@ Create `plugins/agents-md-management/skills/revise-agents-md/SKILL.md` with this
 ```yaml
 ---
 name: revise-agents-md
-description: "현재 session에서 반복 사용할 가치가 있는 learning을 추출해 공통 .ai/RULES.md 또는 vendor·subtree별 AGENTS.md, CLAUDE.md, GEMINI.md에 분류하고 승인된 최소 diff만 반영한다."
+description: "Use when reusable learning from the current session should be added to common, vendor-specific, or subtree AI agent instructions."
 ---
 ```
 

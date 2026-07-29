@@ -132,7 +132,7 @@ Create `plugins/commit-commands/skills/commit/SKILL.md` with this frontmatter:
 ```yaml
 ---
 name: commit
-description: "현재 task와 관련된 Git 변경만 선별해 security 검사, preview, 승인 후 단일 commit을 생성한다. Use when the user asks to commit changes while preserving unrelated or pre-staged work."
+description: "Use when the user asks to commit task-related Git changes while preserving unrelated or pre-staged work."
 ---
 ```
 
@@ -360,7 +360,7 @@ Create `plugins/commit-commands/skills/commit-push-pr/SKILL.md` with this frontm
 ```yaml
 ---
 name: commit-push-pr
-description: "현재 task 변경을 안전하게 commit하고 normal push한 뒤 GitHub PR, GitLab MR 또는 Gitea PR을 생성한다. Use when the user asks to commit, push, and open a review request across major Git providers."
+description: "Use when the user asks to commit, push, and open a GitHub PR, GitLab MR, or Gitea PR."
 ---
 ```
 
@@ -503,7 +503,7 @@ Create `plugins/commit-commands/skills/clean-gone/SKILL.md` with this frontmatte
 ```yaml
 ---
 name: clean-gone
-description: "Remote에서 사라진 local Git branch와 연결 worktree를 read-only로 조사하고, merged·clean 대상만 preview와 승인 후 안전하게 제거한다. Use when the user asks to clean stale or gone branches without force deletion."
+description: "Use when the user asks to clean stale or gone Git branches without force deletion."
 ---
 ```
 
