@@ -23,7 +23,7 @@ Commit → normal push → PR/MR 생성 workflow. 세 단계 전체의 mutation 
 - 생성할 branch와 base branch
 - exact commit, normal push, PR/MR 명령
 - provider와 authentication 상태
-- CLI 부재 시 fallback
+- CLI/인증 부재 시 exact manual review URL 또는 URL을 안전하게 구성할 수 없을 때의 project web URL·source/base branch·사용자 실행 UI 절차
 
 사용자의 명시적 승인 전에는 branch 생성, stage, commit, push, PR/MR 생성을 하지 않는다.
 
@@ -41,7 +41,7 @@ Commit → normal push → PR/MR 생성 workflow. 세 단계 전체의 mutation 
 - Branch 또는 commit 실패: 이후 단계 중단.
 - Push 실패: PR/MR 생성 금지.
 - PR/MR 실패: commit·push를 rollback하지 않고 재시도 방법 안내.
-- Unknown provider 또는 CLI/인증 부재: push까지만 수행하고 수동 생성 명령 또는 compare URL을 안내한다.
+- Unknown provider 또는 CLI/인증 부재: push까지만 수행하고 `references/providers.md`에 따른 exact manual review URL 또는 fail-safe manual UI 절차를 안내한다.
 
 ## Safety
 
