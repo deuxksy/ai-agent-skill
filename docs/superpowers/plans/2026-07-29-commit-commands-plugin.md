@@ -335,25 +335,28 @@ Create `plugins/commit-commands/skills/commit-push-pr/references/providers.md` w
 
 ## Review request adapters
 
-| Provider | Probe | Create |
+명령과 flags는 installed CLI의 `--help` 또는 공식 CLI 문서로 먼저 검증한다. Probe는 read-only이며 selected hostname/repository를 explicit argument로 사용한다. Create는 승인된 hostname, repository, source/base branch, title/body를 모두 고정한다. Argument를 생략한 bare auth/repository probe 또는 bare create는 사용하지 않는다. 검증할 수 없는 command나 flag는 추측하지 않고 unavailable로 처리한다.
+
+| Provider | Read-only probe | Create |
 | :--- | :--- | :--- |
-| GitHub | `gh auth status` | `gh pr create` |
-| GitLab | `glab auth status` | `glab mr create` |
-| Gitea | `tea login list` | `tea pr create` (`pulls` alias 허용) |
+| GitHub | `gh auth status --active --hostname <host>`; `gh repo view <host>/<owner>/<repo> --json nameWithOwner,url,defaultBranchRef` | `gh pr create --repo <host>/<owner>/<repo> --head <source> --base <base> --title <title> --body <body>` |
+| GitLab | `glab auth status --hostname <host>`; `glab repo view <verified-project-url> --output json` | `glab mr create --repo <verified-project-url> --source-branch <source> --target-branch <base> --title <title> --description <body> --yes` |
+| Gitea | Installed `tea --help`와 subcommand help가 explicit host/repository를 받는 read-only auth/login-status와 repository probe를 확인해야 한다. `tea login list`만으로는 불충분하다. | `tea pr create` 또는 `tea pulls create`와 explicit host/repository/source/base/title/body flags를 installed help가 모두 확인한 경우만 사용한다. 아니면 unavailable이다. |
 
 ## Default branch
 
-1. `<remote>/HEAD`
-2. Provider CLI가 반환하는 default branch
-3. 실제 존재하는 `main`
-4. 실제 존재하는 `master`
-5. 결정 불가 시 중단
+1. `refs/remotes/<selected-remote>/HEAD`가 가리키는 실제 remote-tracking ref
+2. Selected hostname/repository에 고정된 read-only provider probe가 반환한 actual default branch ref
+3. 두 값이 다르거나 실제 ref를 확인할 수 없으면 중단
+
+`main` 또는 `master`를 추측하지 않는다.
 
 ## Fallback
 
 - Unknown provider 또는 CLI/인증 부재 시 normal push까지만 수행한다.
-- GitLab CLI/인증 부재 시 선택된 GitLab HTTPS/SSH remote URL에서 scheme, host, port, 전체 project path(subgroup 포함)를 보존하고 terminal `.git`만 제거해 project web URL을 얻는다. source와 base branch를 URL-encode하여 `<project-web-url>/-/merge_requests/new?merge_request[source_branch]=<encoded-source>&merge_request[target_branch]=<encoded-base>` exact manual MR URL을 preview한다.
-- GitLab remote URL 또는 branch를 신뢰성 있게 parse/encode할 수 없으면 URL을 임의로 만들지 않는다. 사용자에게 exact project web URL을 요청하고, preview에 project web URL, source branch, base branch와 함께 해당 project의 UI에서 **New merge request**를 선택해 source와 target을 지정하는 절차를 제시한다.
+- GitLab verified HTTPS remote는 scheme, host, port, 전체 project path(subgroup 포함)를 보존하고 terminal `.git`만 제거해 project web URL을 얻는다. source와 base branch를 URL-encode하여 `<project-web-url>/-/merge_requests/new?merge_request[source_branch]=<encoded-source>&merge_request[target_branch]=<encoded-base>` exact manual MR URL을 preview한다.
+- GitLab SSH remote에서 web scheme 또는 web port를 자동 도출하지 않는다. Selected repository에 고정된 authenticated CLI/config의 read-only 결과로 web URL을 확인하거나 사용자에게 exact project web URL을 요청한다. 확인된 web URL이 없으면 URL을 만들지 않고 project web URL 요청, source/base branch, **New merge request** UI 절차를 preview한다.
+- GitLab HTTPS remote URL 또는 branch를 신뢰성 있게 parse/encode할 수 없으면 URL을 임의로 만들지 않는다. 사용자에게 exact project web URL을 요청하고, preview에 project web URL, source branch, base branch와 함께 해당 project의 UI에서 **New merge request**를 선택해 source와 target을 지정하는 절차를 제시한다.
 - GitHub/Gitea CLI/인증 부재 시 provider가 확인한 exact compare/create URL이 있으면 preview한다. 없으면 endpoint 형식을 추측하지 않고 project web URL, source branch, base branch와 해당 provider UI에서 Pull Request를 생성하는 절차를 preview한다.
 - API를 직접 호출하거나 credential을 요청·출력하지 않는다.
 ```
@@ -379,31 +382,36 @@ Commit → normal push → PR/MR 생성 workflow. 세 단계 전체의 mutation 
 ## 1. Preflight
 
 1. Git root, HEAD, current branch, status, upstream, remote URL을 확인한다.
-2. 변경이 있으면 `commit` Skill과 동일하게 task 관련 파일만 분류하고 security 검사한다.
-3. `references/providers.md`에 따라 provider, remote, default branch, CLI/인증 상태를 확인한다.
-4. Detached HEAD, 선택 불가능한 remote, 결정 불가능한 default branch에서는 중단한다.
-5. Current branch가 default branch이면 새 feature branch 이름을 제안한다.
+2. Candidate tracked working-tree diff, index diff, untracked file의 실제 content와 file type을 읽고 task 관련 `포함`과 `제외`로 분류한다.
+3. Candidate별 cryptographic content hash 또는 byte-identical diff snapshot을 만든다. `git status`는 content identity가 아니다.
+4. 기존 staged와 unrelated 변경은 보존한다. Partial staged 상태나 동일 path의 index/working-tree 내용을 승인 범위와 안전하게 분리할 수 없으면 index를 변경하지 않고 중단한다.
+5. Repository scanner가 있으면 candidate content를 검사한다. 없으면 tracked/index diff와 untracked 실제 content를 read-only로 검사하고, binary/unreadable content 또는 secret·token·credential·private key 의심 항목이 있으면 중단한다.
+6. `references/providers.md`에 따라 selected provider, remote, hostname, repository, 실제 default branch ref, CLI/인증 상태를 확인한다.
+7. Detached HEAD, 선택 불가능한 remote, 확인되지 않은 default branch ref에서는 중단한다.
+8. Current branch가 default branch이면 새 feature branch 이름을 제안한다.
 
 ## 2. Preview and approval
 
 다음을 한 번에 제시한다.
 
 - 포함·제외 파일과 commit message
+- Candidate tracked/index/untracked content identity와 security scan 결과·한계
 - 생성할 branch와 base branch
-- exact commit, normal push, PR/MR 명령
-- provider와 authentication 상태
+- exact staging, commit, normal push 명령
+- provider와 authentication 상태 및 hostname, repository, source/base branch, title/body에 고정된 exact PR/MR 명령
 - CLI/인증 부재 시 exact manual review URL 또는 URL을 안전하게 구성할 수 없을 때의 project web URL·source/base branch·사용자 실행 UI 절차
 
 승인 전에는 branch 생성, stage, commit, push, PR/MR 생성을 하지 않는다.
 
 ## 3. Execute
 
-1. 승인 직후 HEAD, status, remote를 다시 확인한다. Drift가 있으면 중단한다.
+1. 승인 직후 HEAD, branch, upstream, selected remote URL/default ref와 모든 tracked/index/untracked content identity를 같은 방식으로 다시 확인한다. Hash 또는 byte-identical diff가 다르면 status가 같아도 중단한다.
 2. 필요한 경우 승인된 이름으로 branch를 생성한다.
-3. 변경이 있으면 승인된 범위만 commit한다.
-4. 승인된 remote/current branch로 normal push한다.
-5. Push 성공 후에만 provider CLI로 PR/MR을 생성한다.
-6. PR/MR title, summary, test plan은 전체 branch diff와 repository template을 반영한다. 별도 언어 규칙이 없으면 한국어로 작성한다.
+3. 승인된 path만 명시해 stage하고, 해당 path의 cached diff와 commit 예정 diff가 approved diff와 byte-identical인지 확인한다. 기존 unrelated staged content는 commit 대상에서 제외하고 보존한다. 일치와 분리를 증명할 수 없으면 commit하지 않는다.
+4. 승인된 content와 message만 commit한다.
+5. 승인된 remote/current branch로 normal push한다.
+6. Push 성공 후에만 provider CLI로 PR/MR을 생성한다. Probe와 create 명령은 승인된 hostname, repository, source/base branch, title/body를 explicit argument로 사용한다.
+7. PR/MR title, summary, test plan은 전체 branch diff와 repository template을 반영한다. 별도 언어 규칙이 없으면 한국어로 작성한다.
 
 ## 4. Failure handling
 
@@ -465,6 +473,13 @@ foreach ($required in @('GitHub', 'GitLab', 'Gitea', 'gh pr create', 'glab mr cr
 foreach ($required in @('승인', 'Push 실패', 'rollback')) {
   if ($skill -notmatch $required) { throw "Missing safety contract: $required" }
 }
+foreach ($required in @('cryptographic content hash', 'byte-identical diff', 'Partial staged', 'untracked file의 실제 content', 'cached diff', 'approved diff', 'status가 같아도')) {
+  if ($skill -notmatch [regex]::Escape($required)) { throw "Missing content-drift contract: $required" }
+}
+foreach ($required in @('gh auth status --active --hostname <host>', 'gh pr create --repo <host>/<owner>/<repo>', 'glab auth status --hostname <host>', 'glab mr create --repo <verified-project-url>', 'refs/remotes/<selected-remote>/HEAD', 'GitLab verified HTTPS remote', 'GitLab SSH remote에서 web scheme 또는 web port를 자동 도출하지 않는다')) {
+  if ($providers -notmatch [regex]::Escape($required)) { throw "Missing provider binding: $required" }
+}
+if ($providers -match '실제 존재하는 `main`|실제 존재하는 `master`') { throw 'Default branch guessing is forbidden' }
 git diff --check
 ```
 
