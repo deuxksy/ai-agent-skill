@@ -9,6 +9,7 @@
 claude plugin marketplace add deuxksy/ai-agent-skill
 claude plugin install deuxksy@zzizily
 claude plugin install commit-commands@zzizily
+claude plugin install agents-md-management@zzizily
 
 # 사용
 /zzizily:<skill-name>
@@ -40,6 +41,7 @@ ls skills/
 | Plugin | Version | Skills | 설치 |
 | :--- | :--- | :--- | :--- |
 | `commit-commands` | 1.0.0 | `commit`, `commit-push-pr`, `clean-gone` | `commit-commands@zzizily` |
+| `agents-md-management` | 1.0.0 | `agents-md-management`, `revise-agents-md` | `agents-md-management@zzizily` |
 
 ## 스킬 카탈로그 (19)
 

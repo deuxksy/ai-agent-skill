@@ -15,6 +15,12 @@
       "source": "./plugins/commit-commands",
       "description": "Safe runtime-neutral Git commit, PR/MR, and stale branch cleanup workflows",
       "version": "1.0.0"
+    },
+    {
+      "name": "agents-md-management",
+      "source": "./plugins/agents-md-management",
+      "description": "Audit and revise AGENTS.md, CLAUDE.md, GEMINI.md, and shared .ai/RULES.md",
+      "version": "1.0.0"
     }
   ]
 }

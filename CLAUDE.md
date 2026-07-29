@@ -38,7 +38,8 @@ ls skills/
 ├── agents/
 │   └── verify.md            # Claude runner adapter (격리 reviewer fanout, 루트 자동 발견)
 ├── plugins/
-│   └── commit-commands/     # 독립 Git workflow plugin (canonical skills/ 공유)
+│   ├── commit-commands/       # 독립 Git workflow plugin (canonical skills/ 공유)
+│   └── agents-md-management/ # 독립 instruction 관리 plugin (canonical skills/ 공유)
 └── skills/
     ├── agents/                    # AI Agent/MCP 설치 자동화
     ├── backdoor-investigation/    # Linux 백도어 포렌식 진단 (read-only)
@@ -90,6 +91,7 @@ ls skills/
 | Plugin | Version | Skills | 설치 |
 | :--- | :--- | :--- | :--- |
 | `commit-commands` | 1.0.0 | `commit`, `commit-push-pr`, `clean-gone` | `commit-commands@zzizily` |
+| `agents-md-management` | 1.0.0 | `agents-md-management`, `revise-agents-md` | `agents-md-management@zzizily` |
 
 ## 스킬 카탈로그 (19)
 
