@@ -10,6 +10,7 @@
 | :--- | :--- |
 | `commit` | 현재 task 관련 변경만 preview·승인 후 commit |
 | `commit-push-pr` | 관련 변경 commit → normal push → GitHub PR/GitLab MR/Gitea PR 생성 |
+| `clean-gone` | merged·clean `[gone]` branch/worktree만 preview·승인 후 안전하게 제거 |
 
 ## Claude Code
 
@@ -22,6 +23,7 @@ claude plugin install commit-commands@zzizily
 ```text
 /commit-commands:commit
 /commit-commands:commit-push-pr
+/commit-commands:clean-gone
 ```
 
 ## Provider CLI
@@ -40,6 +42,8 @@ CLI가 없거나 인증되지 않았으면 push까지만 수행하고 수동 생
 - Mutation plan 승인 필수
 - Unrelated/staged 변경 보존
 - Force/history rewrite 금지
+
+`clean-gone`은 미병합 branch, dirty/locked worktree, current branch를 제거하지 않으며 force option을 제공하지 않는다.
 
 ## Attribution
 
