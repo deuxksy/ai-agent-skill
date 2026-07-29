@@ -1,7 +1,8 @@
 # commit-commands 및 agents-md-management Plugin 분리 이식 — Design Spec
 
-**날짜**: 2026-07-29  
-**상태**: 설계 승인, 문서 review 대기  
+**날짜**: 2026-07-29
+
+**상태**: 설계 승인, 문서 review 대기
 **접근법**: Prompt-first 독립 Skill + marketplace monorepo
 
 ## 1. 배경
