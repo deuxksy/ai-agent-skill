@@ -18,7 +18,7 @@ description: "Use when the user asks to commit task-related Git changes while pr
 ## 2. Security check
 
 1. Repository가 제공하는 gitleaks 또는 동등 scanner가 있으면 사용한다.
-2. Scanner가 없으면 포함 대상의 diff와 민감 파일명을 검사하고 deterministic 보장이 아님을 명시한다.
+2. Scanner가 없으면 승인 대상의 tracked diff와 승인 대상 untracked 파일의 실제 content를 read-only로 검사한다. Binary 또는 읽을 수 없는 승인 대상 untracked 파일이면 중단하고, deterministic scanner 부재 한계를 preview에 명시한다.
 3. Secret, token, credential, private key 의심 항목이 있으면 중단한다.
 
 ## 3. Preview and approval

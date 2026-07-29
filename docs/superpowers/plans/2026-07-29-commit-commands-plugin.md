@@ -154,7 +154,7 @@ The Markdown body must contain these exact sections and executable contract:
 ## 2. Security check
 
 1. Repository가 제공하는 gitleaks 또는 동등 scanner가 있으면 사용한다.
-2. Scanner가 없으면 포함 대상의 diff와 민감 파일명을 검사하고 deterministic 보장이 아님을 명시한다.
+2. Scanner가 없으면 승인 대상의 tracked diff와 승인 대상 untracked 파일의 실제 content를 read-only로 검사한다. Binary 또는 읽을 수 없는 승인 대상 untracked 파일이면 중단하고, deterministic scanner 부재 한계를 preview에 명시한다.
 3. Secret, token, credential, private key 의심 항목이 있으면 중단한다.
 
 ## 3. Preview and approval
@@ -266,6 +266,9 @@ $skill = Get-Content -Raw 'plugins/commit-commands/skills/commit/SKILL.md'
 if ($manifest.name -ne 'commit-commands' -or $manifest.version -ne '1.0.0') { throw 'manifest mismatch' }
 if (($marketplace.plugins | Where-Object name -eq 'commit-commands').Count -ne 1) { throw 'marketplace mismatch' }
 if ($skill -notmatch '(?m)^name: commit$' -or $skill -notmatch '(?m)^description:') { throw 'frontmatter mismatch' }
+$untrackedFixture = [PSCustomObject]@{ Path = 'notes.txt'; Content = 'access_token = token_like_value' }
+if ($untrackedFixture.Path -match '(?i)(\.env|\.pem|credential|token)' -or $untrackedFixture.Content -notmatch '(?i)(api[_-]?key|access[_-]?token|password)\s*[:=]\s*[^\s`]+') { throw 'invalid untracked fixture' }
+if ($skill -notmatch '승인 대상 untracked 파일의 실제 content를 read-only로 검사한다\.' -or $skill -notmatch 'Binary 또는 읽을 수 없는 승인 대상 untracked 파일이면 중단하고' -or $skill -notmatch 'deterministic scanner 부재 한계를 preview에 명시한다\.') { throw 'untracked token-like content fallback mismatch' }
 git diff --check
 ```
 
