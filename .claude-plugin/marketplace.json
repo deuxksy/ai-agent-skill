@@ -9,6 +9,12 @@
       "source": "./",
       "description": "Personal skill collection: agents install/upgrade/setup, security audit, deploy, translation, game deals, exchange rate",
       "version": "1.8.4"
+    },
+    {
+      "name": "commit-commands",
+      "source": "./plugins/commit-commands",
+      "description": "Safe runtime-neutral Git commit, PR/MR, and stale branch cleanup workflows",
+      "version": "1.0.0"
     }
   ]
 }

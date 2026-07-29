@@ -1,0 +1,20 @@
+{
+  "name": "zzizily",
+  "interface": {
+    "displayName": "zzizily"
+  },
+  "plugins": [
+    {
+      "name": "commit-commands",
+      "source": {
+        "source": "local",
+        "path": "./plugins/commit-commands"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Productivity"
+    }
+  ]
+}

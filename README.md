@@ -8,6 +8,7 @@
 # 설치
 claude plugin marketplace add deuxksy/ai-agent-skill
 claude plugin install deuxksy@zzizily
+claude plugin install commit-commands@zzizily
 
 # 사용
 /zzizily:<skill-name>
@@ -31,6 +32,14 @@ ls skills/
 - 새 skill 추가: `1.x.y` → `1.(x+1).0`
 - 기존 skill 개선/수정: `1.x.y` → `1.x.(y+1)`
 - `.claude-plugin/plugin.json`, `.claude-plugin/marketplace.json`, `README.md` 버전은 항상 동기화
+
+## 독립 Plugin
+
+기존 `zzizily`와 별도로 설치하는 domain plugin.
+
+| Plugin | Version | Skills |
+| :--- | :--- | :--- |
+| `commit-commands` | 1.0.0 | `commit`, `commit-push-pr`, `clean-gone` |
 
 ## 스킬 카탈로그 (19)
 
