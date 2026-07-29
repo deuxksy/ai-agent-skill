@@ -9,6 +9,7 @@
 | Skill | 설명 |
 | :--- | :--- |
 | `commit` | 현재 task 관련 변경만 preview·승인 후 commit |
+| `commit-push-pr` | 관련 변경 commit → normal push → GitHub PR/GitLab MR/Gitea PR 생성 |
 
 ## Claude Code
 
@@ -16,7 +17,22 @@
 claude plugin install commit-commands@zzizily
 ```
 
-호출: `/commit-commands:commit`
+호출:
+
+```text
+/commit-commands:commit
+/commit-commands:commit-push-pr
+```
+
+## Provider CLI
+
+| Provider | CLI | Review request |
+| :--- | :--- | :--- |
+| GitHub | `gh` | Pull Request |
+| GitLab | `glab` | Merge Request |
+| Gitea | `tea` | Pull Request |
+
+CLI가 없거나 인증되지 않았으면 push까지만 수행하고 수동 생성 절차를 안내한다.
 
 ## Safety
 
