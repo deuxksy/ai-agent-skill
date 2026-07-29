@@ -1,5 +1,6 @@
 {
   "name": "zzizily",
+  "description": "Runtime-neutral AI agent skills and focused workflow plugins",
   "owner": {
     "name": "Crong"
   },
