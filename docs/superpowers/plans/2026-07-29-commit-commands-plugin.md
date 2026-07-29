@@ -4,9 +4,9 @@
 
 **Goal:** GitHub, GitLab, Gitea에서 안전하게 commit·push·PR/MR·stale branch 정리를 수행하는 runtime-neutral Agent Skills plugin을 추가한다.
 
-**Architecture:** `plugins/commit-commands`를 self-contained Claude marketplace plugin으로 만들고 `commit`, `commit-push-pr`, `clean-gone` Skill을 독립 제공한다. Skill은 prompt-first 방식으로 작성하며 Claude Code, Codex, Antigravity의 native file/shell tool을 사용하고 mutation 전에 preview와 승인을 강제한다.
+**Architecture:** `plugins/commit-commands`를 self-contained Claude/Codex marketplace plugin으로 만들고 `commit`, `commit-push-pr`, `clean-gone` Skill을 독립 제공한다. 두 runtime manifest는 canonical `skills/` 한 벌을 공유한다. Skill은 prompt-first 방식으로 작성하며 Claude Code, Codex, Antigravity의 native file/shell tool을 사용하고 mutation 전에 preview와 승인을 강제한다.
 
-**Tech Stack:** Markdown Agent Skills, YAML frontmatter, Claude plugin JSON manifest, Git, GitHub CLI (`gh`), GitLab CLI (`glab`), Gitea CLI (`tea`), PowerShell validation
+**Tech Stack:** Markdown Agent Skills, YAML frontmatter, Claude/Codex plugin JSON manifest, Git, GitHub CLI (`gh`), GitLab CLI (`glab`), Gitea CLI (`tea`), PowerShell validation
 
 ## Global Constraints
 
@@ -14,6 +14,8 @@
 - Plugin name과 version은 `commit-commands` / `1.0.0`으로 고정한다.
 - 기존 root `zzizily` plugin version `1.8.4`와 기존 19개 Skill을 변경하지 않는다.
 - `SKILL.md`는 Claude Code, Codex, Antigravity 공통본 한 벌만 유지한다.
+- Claude manifest는 `.claude-plugin/plugin.json`, Codex manifest는 `.codex-plugin/plugin.json`에 두고 둘 다 동일한 `./skills/`를 가리킨다.
+- Claude marketplace는 `.claude-plugin/marketplace.json`, Codex marketplace는 `.agents/plugins/marketplace.json`에서 관리한다.
 - Vendor 전용 `allowed-tools`, Claude shell interpolation, runtime 고유 tool 이름을 사용하지 않는다.
 - 모든 mutation은 대상·명령·영향 preview와 명시적 승인 후 실행한다.
 - `git add .`, `git add -A`, force push, rebase, `git branch -D`, 강제 worktree 제거를 실행하지 않는다.
@@ -28,10 +30,12 @@
 
 **Files:**
 - Create: `plugins/commit-commands/.claude-plugin/plugin.json`
+- Create: `plugins/commit-commands/.codex-plugin/plugin.json`
 - Create: `plugins/commit-commands/LICENSE`
 - Create: `plugins/commit-commands/README.md`
 - Create: `plugins/commit-commands/skills/commit/SKILL.md`
 - Modify: `.claude-plugin/marketplace.json:6-13`
+- Create: `.agents/plugins/marketplace.json`
 - Modify: `README.md:5-33`
 
 **Interfaces:**
@@ -45,6 +49,7 @@ Run:
 ```powershell
 $paths = @(
   'plugins/commit-commands/.claude-plugin/plugin.json',
+  'plugins/commit-commands/.codex-plugin/plugin.json',
   'plugins/commit-commands/skills/commit/SKILL.md'
 )
 if (($paths | Where-Object { -not (Test-Path -LiteralPath $_) }).Count -eq 0) {
@@ -70,6 +75,10 @@ Create `plugins/commit-commands/.claude-plugin/plugin.json` with:
 }
 ```
 
+- [ ] **Step 2a: Create the Codex plugin manifest**
+
+Create `plugins/commit-commands/.codex-plugin/plugin.json` with the same name, version, description, author, and `skills: "./skills/"` as the Claude manifest. Add the Codex-required `interface` fields with `Productivity` category, a concise Korean-facing description, `Write` capability, and at most three task-specific default prompts.
+
 - [ ] **Step 3: Add the marketplace entry without changing existing entries**
 
 Add this object to `.claude-plugin/marketplace.json` `plugins` array. Preserve the `deuxksy` entry and any independently-added plugin entries.
@@ -94,6 +103,10 @@ if ($entry.Count -ne 1 -or $entry.version -ne '1.0.0' -or $entry.source -ne './p
 ```
 
 Expected: no output, exit code `0`.
+
+- [ ] **Step 3a: Create the Codex marketplace**
+
+Create `.agents/plugins/marketplace.json` with marketplace name/display name `zzizily`. Add `commit-commands` using local source path `./plugins/commit-commands`, `AVAILABLE` installation policy, `ON_INSTALL` authentication policy, and `Productivity` category. Preserve any independently-added entries.
 
 - [ ] **Step 4: Add Apache 2.0 license**
 

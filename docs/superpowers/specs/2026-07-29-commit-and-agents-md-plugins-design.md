@@ -77,10 +77,15 @@ Marketplace plugin은 cache에 plugin directory 단위로 복사되며 상위 �
 ├── .claude-plugin/
 │   ├── marketplace.json
 │   └── plugin.json
+├── .agents/
+│   └── plugins/
+│       └── marketplace.json
 ├── skills/                              # 기존 zzizily Skill 19개, 변경 없음
 └── plugins/
     ├── commit-commands/
     │   ├── .claude-plugin/
+    │   │   └── plugin.json
+    │   ├── .codex-plugin/
     │   │   └── plugin.json
     │   ├── README.md
     │   ├── LICENSE
@@ -96,6 +101,8 @@ Marketplace plugin은 cache에 plugin directory 단위로 복사되며 상위 �
     └── agents-md-management/
         ├── .claude-plugin/
         │   └── plugin.json
+        ├── .codex-plugin/
+        │   └── plugin.json
         ├── README.md
         ├── LICENSE
         └── skills/
@@ -109,7 +116,7 @@ Marketplace plugin은 cache에 plugin directory 단위로 복사되며 상위 �
 
 ### 5.2 Marketplace
 
-Root `.claude-plugin/marketplace.json`은 다음 installable plugin을 제공한다.
+Root `.claude-plugin/marketplace.json`과 `.agents/plugins/marketplace.json`은 동일한 두 신규 plugin을 각 runtime의 manifest schema로 제공한다. 기존 `deuxksy` entry는 Claude marketplace에서만 유지한다.
 
 | Plugin | Source | Version |
 | :--- | :--- | :--- |
@@ -124,7 +131,7 @@ commit-commands@zzizily
 agents-md-management@zzizily
 ```
 
-신규 plugin의 `plugin.json`, marketplace entry, plugin README version은 `1.0.0`으로 동기화한다. 기존 root plugin version은 신규 plugin 추가로 변경하지 않는다.
+신규 plugin의 Claude/Codex `plugin.json`, marketplace entry, plugin README version은 `1.0.0`으로 동기화한다. 두 manifest는 동일한 canonical `skills/`를 가리킨다. 기존 root plugin version은 신규 plugin 추가로 변경하지 않는다.
 
 ### 5.3 Self-contained boundary
 
@@ -140,7 +147,7 @@ Canonical source는 `plugins/<plugin>/skills/<skill>/` 한 벌이다.
 | Runtime | 등록 방식 |
 | :--- | :--- |
 | Claude Code | Marketplace plugin 설치 후 namespaced Skill 사용 |
-| Codex | repository 또는 user `.agents/skills/<skill>/`에 Skill directory 등록 |
+| Codex | `.agents/plugins/marketplace.json`에서 plugin 설치 또는 Skill directory 직접 등록 |
 | Antigravity | workspace `.agents/skills/<skill>/` 또는 global `~/.gemini/config/skills/<skill>/`에 등록 |
 
 README는 runtime별 등록·호출 방법을 설명하지만 copy/link를 자동화하지 않는다. Windows symlink 권한 문제 때문에 symlink만을 유일한 설치 방식으로 요구하지 않는다.
@@ -422,8 +429,8 @@ Scope가 불명확하면 한 번에 하나의 질문으로 확인한다. 기존 
 
 ### 9.1 Structural validation
 
-- Marketplace에 기존 plugin과 신규 plugin 2개가 등록된다.
-- 신규 `plugin.json`, marketplace entry, README version이 일치한다.
+- Claude marketplace에 기존 plugin과 신규 plugin 2개가 등록되고 Codex marketplace에 신규 plugin 2개가 등록된다.
+- 신규 Claude/Codex `plugin.json`, marketplace entry, README version이 일치한다.
 - JSON과 YAML frontmatter가 parse된다.
 - 모든 Skill name이 directory name과 일치한다.
 - reference가 plugin directory 밖을 참조하지 않는다.
@@ -485,7 +492,7 @@ Claude Code, Codex, Antigravity에서 다음을 확인한다.
 
 ## 11. 완료 기준
 
-1. `commit-commands@zzizily`와 `agents-md-management@zzizily`를 독립 설치할 수 있다.
+1. Claude와 Codex marketplace에서 `commit-commands`와 `agents-md-management`를 독립 설치할 수 있다.
 2. 5개 Skill이 각 책임 밖의 기능을 수행하지 않는다.
 3. `.ai/RULES.md` 공통 규칙과 vendor instruction 경계가 유지된다.
 4. 모든 mutation이 preview와 승인 후 실행된다.

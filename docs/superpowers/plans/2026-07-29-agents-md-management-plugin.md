@@ -4,9 +4,9 @@
 
 **Goal:** `.ai/RULES.md` 공통 규칙과 `AGENTS.md`, `CLAUDE.md`, `GEMINI.md` vendor 규칙을 계층적으로 audit하고 session learning을 안전하게 반영하는 runtime-neutral Agent Skills plugin을 추가한다.
 
-**Architecture:** `plugins/agents-md-management`를 self-contained marketplace plugin으로 만들고 repository audit용 `agents-md-management`와 session learning 반영용 `revise-agents-md`를 분리한다. Root `.ai/RULES.md`를 common Single Source of Truth로 사용하며 root vendor 파일은 reference만 가지고 nested vendor 파일은 subtree override만 보유한다.
+**Architecture:** `plugins/agents-md-management`를 self-contained Claude/Codex marketplace plugin으로 만들고 repository audit용 `agents-md-management`와 session learning 반영용 `revise-agents-md`를 분리한다. 두 runtime manifest는 canonical `skills/` 한 벌을 공유한다. Root `.ai/RULES.md`를 common Single Source of Truth로 사용하며 root vendor 파일은 reference만 가지고 nested vendor 파일은 subtree override만 보유한다.
 
-**Tech Stack:** Markdown Agent Skills, YAML frontmatter, Claude plugin JSON manifest, AGENTS.md open standard, Claude Code `@file` import, Gemini `@file` import, PowerShell validation
+**Tech Stack:** Markdown Agent Skills, YAML frontmatter, Claude/Codex plugin JSON manifest, AGENTS.md open standard, Claude Code `@file` import, Gemini `@file` import, PowerShell validation
 
 ## Global Constraints
 
@@ -14,6 +14,8 @@
 - Plugin name과 version은 `agents-md-management` / `1.0.0`으로 고정한다.
 - 기존 root `zzizily` plugin version `1.8.4`와 기존 19개 Skill을 변경하지 않는다.
 - `agents-md-management`와 `revise-agents-md`는 별도 Skill로 구현한다.
+- Claude manifest는 `.claude-plugin/plugin.json`, Codex manifest는 `.codex-plugin/plugin.json`에 두고 둘 다 동일한 `./skills/`를 가리킨다.
+- Claude marketplace는 `.claude-plugin/marketplace.json`, Codex marketplace는 `.agents/plugins/marketplace.json`에서 관리한다.
 - 공통 규칙은 repository root `.ai/RULES.md`에서만 관리한다.
 - Root `CLAUDE.md`와 `GEMINI.md`는 `@./.ai/RULES.md`를 native import한다.
 - Root `AGENTS.md`는 `.ai/RULES.md`를 작업 전에 읽도록 명시한다. Native import로 가장하지 않는다.
@@ -31,11 +33,13 @@
 
 **Files:**
 - Create: `plugins/agents-md-management/.claude-plugin/plugin.json`
+- Create: `plugins/agents-md-management/.codex-plugin/plugin.json`
 - Create: `plugins/agents-md-management/LICENSE`
 - Create: `plugins/agents-md-management/README.md`
 - Create: `plugins/agents-md-management/skills/agents-md-management/SKILL.md`
 - Create: `plugins/agents-md-management/skills/agents-md-management/references/quality-criteria.md`
 - Modify: `.claude-plugin/marketplace.json:6-13`
+- Modify: `.agents/plugins/marketplace.json`
 - Modify: `README.md:5-33`
 
 **Interfaces:**
@@ -49,6 +53,7 @@ Run:
 ```powershell
 $paths = @(
   'plugins/agents-md-management/.claude-plugin/plugin.json',
+  'plugins/agents-md-management/.codex-plugin/plugin.json',
   'plugins/agents-md-management/skills/agents-md-management/SKILL.md',
   'plugins/agents-md-management/skills/agents-md-management/references/quality-criteria.md'
 )
@@ -75,6 +80,10 @@ Create `plugins/agents-md-management/.claude-plugin/plugin.json` with:
 }
 ```
 
+- [ ] **Step 2a: Create the Codex plugin manifest**
+
+Create `plugins/agents-md-management/.codex-plugin/plugin.json` with the same name, version, description, author, and `skills: "./skills/"` as the Claude manifest. Add the Codex-required `interface` fields with `Productivity` category, a concise Korean-facing description, `Write` capability, and at most three task-specific default prompts.
+
 - [ ] **Step 3: Add the marketplace entry without changing existing entries**
 
 Add this object to `.claude-plugin/marketplace.json` `plugins` array. Preserve the `deuxksy` entry and any independently-added plugin entries.
@@ -99,6 +108,10 @@ if ($entry.Count -ne 1 -or $entry.version -ne '1.0.0' -or $entry.source -ne './p
 ```
 
 Expected: no output, exit code `0`.
+
+- [ ] **Step 3a: Add the Codex marketplace entry**
+
+Add `agents-md-management` to `.agents/plugins/marketplace.json` using local source path `./plugins/agents-md-management`, `AVAILABLE` installation policy, `ON_INSTALL` authentication policy, and `Productivity` category. Preserve `commit-commands` and any independently-added entries.
 
 - [ ] **Step 4: Add Apache 2.0 license**
 
