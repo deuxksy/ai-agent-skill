@@ -37,6 +37,8 @@ ls skills/
 │   └── marketplace.json     # 마켓플레이스 등록 정보
 ├── agents/
 │   └── verify.md            # Claude runner adapter (격리 reviewer fanout, 루트 자동 발견)
+├── plugins/
+│   └── commit-commands/     # 독립 Git workflow plugin (canonical skills/ 공유)
 └── skills/
     ├── agents/                    # AI Agent/MCP 설치 자동화
     ├── backdoor-investigation/    # Linux 백도어 포렌식 진단 (read-only)
@@ -82,6 +84,12 @@ ls skills/
 5. **파일/문서/번역 콘텐츠 처리** → 콘텐츠·로컬라이제이션
 
 그룹 내 정렬: 읽기전용 → 파괴적 → 생성 순 (안전한 것부터).
+
+## 독립 Plugin
+
+| Plugin | Version | Skills | 설치 |
+| :--- | :--- | :--- | :--- |
+| `commit-commands` | 1.0.0 | `commit`, `commit-push-pr`, `clean-gone` | `commit-commands@zzizily` |
 
 ## 스킬 카탈로그 (19)
 

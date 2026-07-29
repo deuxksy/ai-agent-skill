@@ -37,9 +37,9 @@ ls skills/
 
 기존 `zzizily`와 별도로 설치하는 domain plugin.
 
-| Plugin | Version | Skills |
-| :--- | :--- | :--- |
-| `commit-commands` | 1.0.0 | `commit`, `commit-push-pr`, `clean-gone` |
+| Plugin | Version | Skills | 설치 |
+| :--- | :--- | :--- | :--- |
+| `commit-commands` | 1.0.0 | `commit`, `commit-push-pr`, `clean-gone` | `commit-commands@zzizily` |
 
 ## 스킬 카탈로그 (19)
 
