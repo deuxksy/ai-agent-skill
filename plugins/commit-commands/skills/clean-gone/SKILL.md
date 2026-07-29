@@ -48,6 +48,7 @@ Branch별 SHA와 제외 사유를 기록한다.
 ## Safety
 
 - Force option을 사용하지 않는다.
+- `git rebase`를 포함한 history-rewriting command를 사용하지 않는다.
 - Dirty, locked, current worktree를 제거하지 않는다.
 - 미병합 branch를 삭제하지 않는다.
 - 안전 검사를 우회하는 대체 명령을 실행하지 않는다.
