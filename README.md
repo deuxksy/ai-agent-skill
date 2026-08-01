@@ -2,21 +2,96 @@
 
 개인 자동화 AI Agent Skill 플러그인. 보안 감사, 인프라 프로비저닝, 일상 자동화, AI Agent 검증까지 19개 스킬을 한 번에.
 
-## Quick Start
+## 설치 및 사용 가이드 (Quick Start)
+
+런타임 환경(`claude`, `code`, `agy`)별 플러그인 및 스킬 설치 방법입니다.
+
+### 1. Claude Mode (`claude`)
+
+Claude Code CLI 환경에서 마켓플레이스를 추가하고 플러그인을 설치합니다.
 
 ```bash
-# 설치
+# 마켓플레이스 등록
 claude plugin marketplace add deuxksy/ai-agent-skill
+
+# 메인 플러그인 설치
 claude plugin install deuxksy@zzizily
+
+# 독립 도메인 플러그인 설치
 claude plugin install commit-commands@zzizily
 claude plugin install agents-md-management@zzizily
-
-# 사용
-/zzizily:<skill-name>
-
-# 스킬 목록 확인
-ls skills/
 ```
+
+**사용 방법:**
+```bash
+/zzizily:<skill-name>                     # 메인 스킬 호출 (예: /zzizily:verify)
+/commit-commands:commit                    # commit-commands 스킬 호출
+/agents-md-management:agents-md-management # agents-md-management 스킬 호출
+```
+
+### 2. Code Mode (`code` / Codex / Cursor / VS Code)
+
+Codex CLI 및 VS Code / Cursor AI 환경에서 마켓플레이스를 등록하거나 스킬 디렉토리를 연동합니다.
+
+#### Marketplace 설치 (Codex)
+```bash
+# 마켓플레이스 등록 (GitHub 또는 로컬 .agents/plugins)
+codex plugin marketplace add deuxksy/ai-agent-skill
+
+# 플러그인 설치
+codex plugin add deuxksy@zzizily
+codex plugin add commit-commands@zzizily
+codex plugin add agents-md-management@zzizily
+```
+
+#### 스킬 디렉토리 연동 (Copy / Symlink)
+마켓플레이스 미사용 시, `$HOME/.agents/skills/` (User scope) 또는 프로젝트 경로 `.agents/skills/` / `.codex/skills/` (Repository scope)에 스킬 디렉토리를 복사 또는 링크합니다.
+
+```bash
+# User scope (전역)
+mkdir -p ~/.agents/skills
+cp -r skills/* ~/.agents/skills/
+
+# Repository scope (프로젝트)
+mkdir -p .agents/skills
+cp -r skills/* .agents/skills/
+```
+
+**사용 방법:**
+- CLI / Agent 명령: `$<skill-name>` 또는 작업 맥락 감지 시 자동(implicit) 실행
+
+### 3. AGY Mode (`agy` / Antigravity)
+
+Antigravity CLI(`agy`) 환경에서 `agy plugin` CLI 명령어 또는 스킬 경로 연동으로 설치합니다.
+
+#### CLI 명령어 설치 (추천)
+```bash
+# 메인 플러그인 설치 (현재 리포지토리 기준)
+agy plugin install .
+
+# 독립 도메인 플러그인 설치
+agy plugin install plugins/commit-commands
+agy plugin install plugins/agents-md-management
+
+# 설치된 플러그인 및 스킬 확인
+agy plugin list
+```
+
+#### Global / Workspace Scope 수동 연동
+`~/.gemini/config/skills/` (User scope) 또는 프로젝트 경로 `<workspace>/.agents/skills/` (Workspace scope)에 스킬을 복사 또는 링크합니다.
+
+```bash
+# Global scope (전역)
+mkdir -p ~/.gemini/config/skills
+cp -r skills/* ~/.gemini/config/skills/
+
+# Workspace scope (작업공간)
+mkdir -p .agents/skills
+cp -r skills/* .agents/skills/
+```
+
+**사용 방법:**
+- Skill 이름 직접 지시 (예: `/zzizily:<skill-name>` 또는 `<skill-name>`), 작업 맥락 감지 시 자동(implicit) 실행
 
 ## 플러그인 메타
 
