@@ -1,6 +1,22 @@
 # zzizily
 
-개인 자동화 AI Agent Skill 플러그인. 보안 감사, 인프라 프로비저닝, 일상 자동화, AI Agent 검증까지 19개 스킬을 한 번에.
+zzizily는 Claude Code, Codex, Antigravity(Gemini) 등 멀티 Agent 런타임을 지원하는 개인 자동화 AI Agent Skill 플러그인 모음입니다. 보안 감사, 인프라 프로비저닝, 일상 자동화, 런타임 교차 검증부터 Git 워크플로우 및 문서 관리까지 19개 핵심 스킬과 3개 독립 도메인 플러그인을 통합 제공합니다.
+
+## 문서 체계 및 Diátaxis 인덱스
+
+본 프로젝트의 모든 사용 목적 및 형태에 따른 주요 문서는 Diátaxis 프레임워크 기반으로 체계적으로 관리됩니다.
+
+| 영역 (Quadrant) | 대상 문서 | 설명 |
+| :--- | :--- | :--- |
+| **Tutorials** (학습 / 입문) | [Quick Start](#설치-및-사용-가이드-quick-start) | 런타임별(`claude`, `code`, `agy`) 빠른 설치 및 시작 가이드 |
+| **How-To Guides** (실무 / 절차) | [commit-commands](./plugins/commit-commands/README.md) | Git 커밋, PR 생성 및 스태일 브랜치 정리 절차 |
+| | [agents-md-management](./plugins/agents-md-management/README.md) | 에이전트 지침 파일 구조 감사 및 세션 러닝 반영 |
+| | [readme-md-management](./plugins/readme-md-management/README.md) | README 요약 감사, Diátaxis 인덱싱 및 고아 문서 관리 |
+| **Reference** (참조 / 규격) | [docs/README.md](./docs/README.md) | 서브 문서 디렉토리 역할 및 체계 정의 |
+| | [docs/okf/README.md](./docs/okf/README.md) | OKF(Open Knowledge Framework) 명세 허브 및 작성 가이드 |
+| | [CLAUDE.md](./CLAUDE.md) | 프로젝트 구조, 분류 원칙, SKILL.md 규격 및 패키지 관리 명세 |
+| | [agents/verify.md](./agents/verify.md) | Claude Code runner adapter 및 교차 검증 라우팅 명세 |
+| **Explanation** (원리 / 설계) | [분류 원칙](./CLAUDE.md#분류-원칙) | 스킬 분류 배치 원칙 및 아키텍처 배경 설명 |
 
 ## 설치 및 사용 가이드 (Quick Start)
 
