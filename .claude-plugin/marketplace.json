@@ -22,6 +22,12 @@
       "source": "./plugins/agents-md-management",
       "description": "Audit and revise AGENTS.md, CLAUDE.md, GEMINI.md, and shared .ai/RULES.md",
       "version": "1.0.0"
+    },
+    {
+      "name": "readme-md-management",
+      "source": "./plugins/readme-md-management",
+      "description": "Audit and revise README.md, document hubs, Diátaxis indexes, and orphan docs",
+      "version": "1.0.0"
     }
   ]
 }
