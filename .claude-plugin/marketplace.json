@@ -9,7 +9,7 @@
       "name": "deuxksy",
       "source": "./",
       "description": "Personal skill collection: agents install/upgrade/setup, security audit, deploy, translation, game deals, exchange rate",
-      "version": "1.8.4"
+      "version": "1.9.0"
     },
     {
       "name": "commit-commands",

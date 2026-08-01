@@ -101,7 +101,7 @@ cp -r skills/* .agents/skills/
 | Marketplace plugin name | `deuxksy` (marketplace.json) |
 | 호출 prefix | `/zzizily:<skill-name>` |
 | GitHub repo | `deuxksy/ai-agent-skill` |
-| 버전 | 1.8.4 |
+| 버전 | 1.9.0 |
 
 ## 버전 정책
 
@@ -117,6 +117,7 @@ cp -r skills/* .agents/skills/
 | :--- | :--- | :--- | :--- |
 | `commit-commands` | 1.0.0 | `commit`, `commit-push-pr`, `clean-gone` | `commit-commands@zzizily` |
 | `agents-md-management` | 1.0.0 | `agents-md-management`, `revise-agents-md` | `agents-md-management@zzizily` |
+| `readme-md-management` | 1.0.0 | `readme-md-management`, `revise-readme-md` | `readme-md-management@zzizily` |
 
 ## 스킬 카탈로그 (19)
 
