@@ -9,25 +9,25 @@
       "name": "deuxksy",
       "source": "./",
       "description": "Personal skill collection: agents install/upgrade/setup, security audit, deploy, translation, game deals, exchange rate",
-      "version": "1.9.0"
+      "version": "1.9.1"
     },
     {
       "name": "commit-commands",
       "source": "./plugins/commit-commands",
       "description": "Safe runtime-neutral Git commit, PR/MR, and stale branch cleanup workflows",
-      "version": "1.0.0"
+      "version": "1.9.1"
     },
     {
       "name": "agents-md-management",
       "source": "./plugins/agents-md-management",
       "description": "Audit and revise AGENTS.md, CLAUDE.md, GEMINI.md, and shared .ai/RULES.md",
-      "version": "1.0.0"
+      "version": "1.9.1"
     },
     {
       "name": "readme-md-management",
       "source": "./plugins/readme-md-management",
       "description": "Audit and revise README.md, document hubs, Diátaxis indexes, and orphan docs",
-      "version": "1.1.0"
+      "version": "1.9.1"
     }
   ]
 }
