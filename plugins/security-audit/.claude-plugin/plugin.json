@@ -1,0 +1,9 @@
+{
+  "name": "security-audit",
+  "description": "Code SAST, system vulnerability, and backdoor investigation/remediation security skills",
+  "version": "1.9.1",
+  "author": {
+    "name": "Crong"
+  },
+  "skills": "./skills/"
+}

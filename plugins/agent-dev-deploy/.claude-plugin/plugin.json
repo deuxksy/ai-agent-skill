@@ -1,0 +1,9 @@
+{
+  "name": "agent-dev-deploy",
+  "description": "AI agents/MCP/LSP installer, runtime-neutral cross verification, and Android WiFi deployment skills",
+  "version": "1.9.1",
+  "author": {
+    "name": "Crong"
+  },
+  "skills": "./skills/"
+}

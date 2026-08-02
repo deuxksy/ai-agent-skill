@@ -1,0 +1,21 @@
+{
+  "name": "infra-provisioning",
+  "description": "Dotfiles setup, system package upgrade, Proxmox VM, and OpenWrt service provisioning skills",
+  "version": "1.9.1",
+  "author": {
+    "name": "Crong"
+  },
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Infra Provisioning",
+    "shortDescription": "인프라 프로비저닝 및 인프라 자동화 스킬 모음",
+    "longDescription": "머신 초기 설정(dotfiles/Tailscale), 시스템 패키지 업그레이드, Proxmox VM 생성 및 OpenWrt 백그라운드 서비스 구축 스킬을 제공합니다.",
+    "developerName": "Crong",
+    "category": "Infrastructure",
+    "capabilities": ["Write"],
+    "defaultPrompt": [
+      "신규 머신 초기 설정을 진행해줘.",
+      "시스템 패키지를 일괄 업그레이드해줘."
+    ]
+  }
+}

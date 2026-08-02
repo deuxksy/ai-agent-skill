@@ -1,0 +1,9 @@
+{
+  "name": "session-workflow",
+  "description": "Session context handoff and task resume workflow skills",
+  "version": "1.9.1",
+  "author": {
+    "name": "Crong"
+  },
+  "skills": "./skills/"
+}

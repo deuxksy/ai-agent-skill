@@ -1,0 +1,21 @@
+{
+  "name": "trackers-automation",
+  "description": "Calendar sync, USD/KRW/VND exchange rates, and hot game deals/news tracker skills",
+  "version": "1.9.1",
+  "author": {
+    "name": "Crong"
+  },
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Trackers & Automation",
+    "shortDescription": "일상 자동화 및 정보 트래커 스킬 모음",
+    "longDescription": "Notion/GCal 일정 동기화, 달러/원화/동화 환율 추적, 게임 핫딜 및 뉴스 조회 스킬을 제공합니다.",
+    "developerName": "Crong",
+    "category": "Productivity",
+    "capabilities": ["Write"],
+    "defaultPrompt": [
+      "오늘의 환율 동향을 알려줘.",
+      "최신 게임 세일 정보와 할인을 확인해줘."
+    ]
+  }
+}

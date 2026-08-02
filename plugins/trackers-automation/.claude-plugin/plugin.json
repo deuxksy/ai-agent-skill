@@ -1,0 +1,9 @@
+{
+  "name": "trackers-automation",
+  "description": "Calendar sync, USD/KRW/VND exchange rates, and hot game deals/news tracker skills",
+  "version": "1.9.1",
+  "author": {
+    "name": "Crong"
+  },
+  "skills": "./skills/"
+}

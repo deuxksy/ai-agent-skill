@@ -1,0 +1,21 @@
+{
+  "name": "content-l10n",
+  "description": "4K image optimization, Korean translation verification, and product planning deep research pipeline skills",
+  "version": "1.9.1",
+  "author": {
+    "name": "Crong"
+  },
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Content & Localization",
+    "shortDescription": "콘텐츠 최적화, 번역 검증 및 제품 기획 스킬 모음",
+    "longDescription": "ImageMagick 이미지 4K 최적화, 기술 문서 한국어 번역 품질 검증 및 딥리서치 제품 기획 파이프라인 스킬을 제공합니다.",
+    "developerName": "Crong",
+    "category": "Content",
+    "capabilities": ["Write"],
+    "defaultPrompt": [
+      "한국어 번역 문서의 용어 정확도와 품질을 검증해줘.",
+      "초기 아이디어를 Deep Research 제품 기획 파이프라인으로 발전시켜줘."
+    ]
+  }
+}

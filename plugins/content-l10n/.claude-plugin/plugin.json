@@ -1,0 +1,9 @@
+{
+  "name": "content-l10n",
+  "description": "4K image optimization, Korean translation verification, and product planning deep research pipeline skills",
+  "version": "1.9.1",
+  "author": {
+    "name": "Crong"
+  },
+  "skills": "./skills/"
+}

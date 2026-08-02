@@ -1,0 +1,21 @@
+{
+  "name": "agent-dev-deploy",
+  "description": "AI agents/MCP/LSP installer, runtime-neutral cross verification, and Android WiFi deployment skills",
+  "version": "1.9.1",
+  "author": {
+    "name": "Crong"
+  },
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Agent Dev & Deploy",
+    "shortDescription": "에이전트 개발, 교차 검증 및 앱 배포 스킬 모음",
+    "longDescription": "AI 에이전트/MCP/LSP 서버 도구 설치, 런타임 교차검증(verify) 및 WiFi ADB 기반 React Native 앱 배포 스킬을 제공합니다.",
+    "developerName": "Crong",
+    "category": "Development",
+    "capabilities": ["Write"],
+    "defaultPrompt": [
+      "현재 작성된 코드를 verify 스킬로 교차 검증해줘.",
+      "필요한 MCP 서버 및 AI 에이전트를 업데이트해줘."
+    ]
+  }
+}
