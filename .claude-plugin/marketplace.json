@@ -6,9 +6,39 @@
   },
   "plugins": [
     {
-      "name": "deuxksy",
-      "source": "./",
-      "description": "Personal skill collection: agents install/upgrade/setup, security audit, deploy, translation, game deals, exchange rate",
+      "name": "security-audit",
+      "source": "./plugins/security-audit",
+      "description": "Code SAST, system vulnerability, and backdoor investigation/remediation security skills",
+      "version": "1.9.1"
+    },
+    {
+      "name": "infra-provisioning",
+      "source": "./plugins/infra-provisioning",
+      "description": "Dotfiles setup, system package upgrade, Proxmox VM, and OpenWrt service provisioning skills",
+      "version": "1.9.1"
+    },
+    {
+      "name": "trackers-automation",
+      "source": "./plugins/trackers-automation",
+      "description": "Calendar sync, USD/KRW/VND exchange rates, and hot game deals/news tracker skills",
+      "version": "1.9.1"
+    },
+    {
+      "name": "agent-dev-deploy",
+      "source": "./plugins/agent-dev-deploy",
+      "description": "AI agents/MCP/LSP installer, runtime-neutral cross verification, and Android WiFi deployment skills",
+      "version": "1.9.1"
+    },
+    {
+      "name": "session-workflow",
+      "source": "./plugins/session-workflow",
+      "description": "Session context handoff and task resume workflow skills",
+      "version": "1.9.1"
+    },
+    {
+      "name": "content-l10n",
+      "source": "./plugins/content-l10n",
+      "description": "4K image optimization, Korean translation verification, and product planning deep research pipeline skills",
       "version": "1.9.1"
     },
     {
