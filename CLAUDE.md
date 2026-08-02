@@ -2,150 +2,77 @@
 
 ## 프로젝트 개요
 
-**zzizily** — 개인 자동화 AI Agent Skill 플러그인.
+**zzizily** — 9개 독립 도메인 플러그인을 통합 제공하는 개인 자동화 AI Agent Skill 마켓플레이스.
 
 ## Quick Start
 
 ```bash
-# 설치
+# 마켓플레이스 등록
 claude plugin marketplace add deuxksy/ai-agent-skill
-claude plugin install deuxksy@zzizily
 
-# 사용
-/zzizily:<skill-name>
-
-# 스킬 목록 확인
-ls skills/
+# 원하는 도메인 플러그인 설치
+claude plugin install security-audit@zzizily
+claude plugin install infra-provisioning@zzizily
+claude plugin install trackers-automation@zzizily
+claude plugin install agent-dev-deploy@zzizily
+claude plugin install session-workflow@zzizily
+claude plugin install content-l10n@zzizily
+claude plugin install commit-commands@zzizily
+claude plugin install agents-md-management@zzizily
+claude plugin install readme-md-management@zzizily
 ```
 
-## 플러그인 메타
+## 플러그인 메타 & 버전 정책
 
-| 항목 | 값 |
-| :--- | :--- |
-| Plugin name | `zzizily` (plugin.json) |
-| Marketplace plugin name | `deuxksy` (marketplace.json) |
-| Marketplace name | `zzizily` |
-| 호출 prefix | `/zzizily:<skill-name>` |
-| GitHub repo | `deuxksy/ai-agent-skill` |
+- **통합 단일 버전**: `1.9.1`
+- **마켓플레이스 매니페스트**: `.claude-plugin/marketplace.json`
+- **GitHub repo**: `deuxksy/ai-agent-skill`
 
 ## 구조
 
 ```
 .
 ├── .claude-plugin/
-│   ├── plugin.json          # 플러그인 매니페스트
-│   └── marketplace.json     # 마켓플레이스 등록 정보
+│   ├── plugin.json          # 루트 래퍼 매니페스트 (v1.9.1)
+│   └── marketplace.json     # 9개 전체 도메인 플러그인 등록 마켓플레이스 (v1.9.1)
 ├── agents/
-│   └── verify.md            # Claude runner adapter (격리 reviewer fanout, 루트 자동 발견)
-├── plugins/
-│   ├── commit-commands/       # 독립 Git workflow plugin (canonical skills/ 공유)
-│   └── agents-md-management/ # 독립 instruction 관리 plugin (canonical skills/ 공유)
-└── skills/
-    ├── agents/                    # AI Agent/MCP 설치 자동화
-    ├── backdoor-investigation/    # Linux 백도어 포렌식 진단 (read-only)
-    │   └── scripts/
-    ├── backdoor-remediation/      # 백도어 제거·복구 (파괴적, 승인 필요)
-    ├── calendar-sync/             # Notion/GCal → Hermes 일정 동기화
-    │   └── scripts/
-    ├── code-audit/                # 보안 취약점 점검
-    ├── deploy-android-wifi/       # WiFi ADB 배포 자동화
-    ├── exchange-rate-tracker/     # 환율 추적 (USD/KRW, USD/VND)
-    │   ├── scripts/
-    │   └── references/
-    ├── handoff/                   # 세션 작업 저장 (/clear 전 수동)
-    ├── hot-game-deals-n-news/     # 게임 할인/뉴스 트래커
-    │   └── references/
-    ├── korean-translation-verify/ # 한국어 번역 품질 검증
-    │   ├── scripts/
-    │   └── pyproject.toml
-    ├── openwrt-initd/             # OpenWrt init.d 서비스 설치
-    ├── optimize-images-4k/        # 4K 이미지 최적화
-    │   ├── agents/
-    │   └── scripts/
-    ├── product-planning-dr-pipeline/ # 제품 기획 Deep Research 파이프라인
-    │   ├── templates/             # 단계별 RQ/산출물 템플릿 (AGENTS/CONTEXT/ROADMAP/DESIGN)
-    │   └── examples/              # 예시 산출물
-    ├── proxmox-vm-create/         # Proxmox VE VM 프로비저닝 (qm→pvesh→REST)
-    ├── resume/                    # 이전 handoff 복원 (승인 후 TaskCreate)
-    ├── verify/                    # 검증 (runtime-neutral 교차검증 진입점)
-    ├── setup/                     # 초기 설정
-    ├── system-audit/              # 시스템 감사
-    │   └── references/
-    └── system-upgrade/            # 시스템 업그레이드
+│   └── verify.md            # Claude runner adapter (격리 reviewer fanout)
+└── plugins/
+    ├── security-audit/      # 코드/시스템 보안 감사 (code-audit, system-audit, backdoor-*)
+    ├── infra-provisioning/  # 인프라 프로비저닝 (setup, system-upgrade, proxmox-vm-create, openwrt-initd)
+    ├── trackers-automation/ # 자동화/트래커 (calendar-sync, exchange-rate-tracker, hot-game-deals-n-news)
+    ├── agent-dev-deploy/    # 에이전트/배포 (agents, verify, deploy-android-wifi)
+    ├── session-workflow/    # 세션 워크플로우 (handoff, resume)
+    ├── content-l10n/        # 콘텐츠/번역 (optimize-images-4k, korean-translation-verify, product-planning-dr-pipeline)
+    ├── commit-commands/     # Git 워크플로우 (commit, commit-push-pr, clean-gone)
+    ├── agents-md-management/# 에이전트 지침 관리 (agents-md-management, revise-agents-md)
+    └── readme-md-management/# README 문서 관리 (readme-md-management, revise-readme-md)
 ```
 
 ## 분류 원칙
 
 신규 스킬은 아래 기준으로 카테고리를 배치한다. 충돌 시 위 번호가 우선.
 
-1. **보안 목적** (탐지/대응) → 보안·감사. 서버 변경이 겹쳐도 보안이 우선 (`backdoor-remediation` 참조)
-2. **호스트/OS/VM 상태 변경** → 인프라·프로비저닝
-3. **주기적 데이터 수집/동기화** (cron 전제) → 자동화·트래커
-4. **빌드/배포/개발 도구** → AI Agent·배포. 단 OS 범용 패키지는 2번이 우선 (`agents`=AI 특화→4번, `system-upgrade`=OS 범용→2번)
-5. **파일/문서/번역 콘텐츠 처리** → 콘텐츠·로컬라이제이션
+1. **보안 목적** (탐지/대응) → `security-audit`
+2. **호스트/OS/VM 상태 변경** → `infra-provisioning`
+3. **주기적 데이터 수집/동기화** → `trackers-automation`
+4. **빌드/배포/개발 도구** → `agent-dev-deploy`
+5. **파일/문서/번역 콘텐츠 처리** → `content-l10n`
+6. **세션/작업 보존** → `session-workflow`
 
-그룹 내 정렬: 읽기전용 → 파괴적 → 생성 순 (안전한 것부터).
-
-## 독립 Plugin
+## 독립 도메인 플러그인 카탈로그 (9)
 
 | Plugin | Version | Skills | 설치 |
 | :--- | :--- | :--- | :--- |
+| `security-audit` | 1.9.1 | `code-audit`, `system-audit`, `backdoor-investigation`, `backdoor-remediation` | `security-audit@zzizily` |
+| `infra-provisioning` | 1.9.1 | `setup`, `system-upgrade`, `proxmox-vm-create`, `openwrt-initd` | `infra-provisioning@zzizily` |
+| `trackers-automation` | 1.9.1 | `calendar-sync`, `exchange-rate-tracker`, `hot-game-deals-n-news` | `trackers-automation@zzizily` |
+| `agent-dev-deploy` | 1.9.1 | `agents`, `verify`, `deploy-android-wifi` | `agent-dev-deploy@zzizily` |
+| `session-workflow` | 1.9.1 | `handoff`, `resume` | `session-workflow@zzizily` |
+| `content-l10n` | 1.9.1 | `optimize-images-4k`, `korean-translation-verify`, `product-planning-dr-pipeline` | `content-l10n@zzizily` |
 | `commit-commands` | 1.9.1 | `commit`, `commit-push-pr`, `clean-gone` | `commit-commands@zzizily` |
 | `agents-md-management` | 1.9.1 | `agents-md-management`, `revise-agents-md` | `agents-md-management@zzizily` |
 | `readme-md-management` | 1.9.1 | `readme-md-management`, `revise-readme-md` | `readme-md-management@zzizily` |
-
-## 스킬 카탈로그 (19)
-
-기능 도메인별 그룹핑. 신규 스킬 추가 시 [분류 원칙](#분류-원칙)에 따라 배치.
-
-### 보안 · 감사 (Security & Audit)
-
-| 스킬 | 설명 |
-| :--- | :--- |
-| code-audit | 정적 코드 보안 점검 (SAST/CWE/OWASP) |
-| system-audit | 시스템 패키지 보안 감사 (CVE/CVSS/KEV) |
-| backdoor-investigation | Linux 백도어 포렌식 진단 (read-only) |
-| backdoor-remediation | 백도어 제거·복구 (파괴적, 승인 필요) |
-
-### 인프라 · 프로비저닝 (Infra & Provisioning)
-
-| 스킬 | 설명 |
-| :--- | :--- |
-| setup | 초기 설정 (brew/stow/sops/Tailscale) |
-| system-upgrade | OS 패키지 업그레이드 (brew/apt/dnf/nix) |
-| proxmox-vm-create | Proxmox VE VM 프로비저닝 (qm→pvesh→REST) |
-| openwrt-initd | OpenWrt init.d 백그라운드 서비스 설치 |
-
-### 자동화 · 트래커 (Automation & Trackers)
-
-| 스킬 | 설명 |
-| :--- | :--- |
-| calendar-sync | Notion/GCal → Hermes 일정 동기화 |
-| exchange-rate-tracker | 환율 추적 (USD/KRW, USD/VND) |
-| hot-game-deals-n-news | 게임 할인/무료/뉴스 트래커 |
-
-### AI Agent · 배포 (Agents & Deploy)
-
-| 스킬 | 설명 |
-| :--- | :--- |
-| agents | AI Agent/MCP/LSP 설치·업그레이드 자동화 |
-| verify | runtime-neutral 교차검증 (Claude/Codex/agy runner + Codex/agy/shell-gpt reviewer, spec/plan 최소 2-Way) |
-| deploy-android-wifi | WiFi ADB React Native 배포 자동화 |
-
-### 워크플로우 · 세션 (Workflow & Session)
-
-| 스킬 | 설명 |
-| :--- | :--- |
-| handoff | 현재 세션 작업을 .zzizily/handoff/에 구조화 저장 (/clear 전 수동) |
-| resume | 이전 handoff 읽어 task preview → 승인 → TaskCreate 복원 (injection 차단) |
-
-### 콘텐츠 · 로컬라이제이션 (Content & L10n)
-
-| 스킬 | 설명 |
-| :--- | :--- |
-| optimize-images-4k | 4K 이미지 최적화 (ImageMagick) |
-| korean-translation-verify | 한국어 번역 품질 검증 |
-| product-planning-dr-pipeline | 제품 기획 Deep Research 파이프라인 |
 
 ## SKILL.md 규격
 
@@ -161,29 +88,6 @@ description: <한 줄 설명>
 <스킬 실행 로직>
 ```
 
-## 개발 워크플로우
+## 버전 관리
 
-빌드/테스트 과정 없음. SKILL.md 직접 편집 후 커밋.
-
-### 새 Skill 추가
-
-1. `skills/<skill-name>/SKILL.md` 생성
-2. [분류 원칙](#분류-원칙)에 따라 카테고리 결정 → 스킬 카탈로그 테이블에 행 추가
-3. `plugin.json` `skills` 경로가 `./skills/` → 자동 인식
-4. `/reload-plugins` 후 `/zzizily:<skill-name>` 테스트
-
-### 버전 관리
-
-[SemVer](https://semver.org/) 기반으로 관리한다. `plugin.json` / `marketplace.json` / `README.md` 버전 동기화 필수.
-
-- 새 skill 추가: `1.x.y` → `1.(x+1).0` (minor bump, patch reset)
-- 기존 skill 개선/수정: `1.x.y` → `1.x.(y+1)` (patch bump)
-- 여러 변경이 섞이면 가장 큰 영향 기준 적용. 예: 새 skill + 기존 skill 개선 = minor bump
-- version bump commit은 관련 skill/doc 변경과 함께 묶거나, 누락 시 즉시 별도 commit으로 보정
-
-## 환경별 패키지 관리
-
-- macOS: AI Agent(`codex`·`claude-code`·`antigravity-cli`)는 brew cask 우선 관리 — pnpm global(`minimumReleaseAge` 최신 지연)·native installer(PATH 충돌)·agy 자체 업데이터(추적 불일치) 회피. 분기/주의사항은 `skills/agents/SKILL.md` Brew Cask AI Agents 섹션
-- zzizily verify: Codex MCP/CLI + Antigravity(agy) + shell-gpt(Aperture profile) + gitleaks/sops 의존 — Codex/agy/sgpt는 `agents` 스킬로 설치, gitleaks/sops는 `setup` 스킬로 관리
-- NixOS: `k8sgpt`만 nix 패키지로 관리, 나머지는 pnpm/uv 사용
-- 감지: binary 경로가 `/nix/store/` 또는 `/run/current-system/sw/bin/`이면 nix 관리. `/opt/homebrew/bin/`이면 brew
+[SemVer](https://semver.org/) 기반으로 관리하며 모든 9개 독립 플러그인 매니페스트 및 문서 표의 버전을 동기화한다.

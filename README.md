@@ -1,6 +1,6 @@
 # zzizily
 
-zzizily는 Claude Code, Codex, Antigravity(Gemini) 등 멀티 Agent 런타임을 지원하는 개인 자동화 AI Agent Skill 플러그인 모음입니다. 보안 감사, 인프라 프로비저닝, 일상 자동화, 런타임 교차 검증부터 Git 워크플로우 및 문서 관리까지 19개 핵심 스킬과 3개 독립 도메인 플러그인을 통합 제공합니다.
+zzizily는 Claude Code, Codex, Antigravity(Gemini) 등 멀티 Agent 런타임을 지원하는 개인 자동화 AI Agent Skill 플러그인 모음입니다. 보안 감사, 인프라 프로비저닝, 일상 자동화, 런타임 교차 검증부터 Git 워크플로우 및 문서 관리까지 26개 전체 스킬을 9개 독립 도메인 플러그인으로 모듈화하여 제공합니다.
 
 ## 문서 체계 및 Diátaxis 인덱스
 
@@ -9,7 +9,13 @@ zzizily는 Claude Code, Codex, Antigravity(Gemini) 등 멀티 Agent 런타임을
 | 영역 (Quadrant) | 대상 문서 | 설명 |
 | :--- | :--- | :--- |
 | **Tutorials** (학습 / 입문) | [Quick Start](#설치-및-사용-가이드-quick-start) | 런타임별(`claude`, `code`, `agy`) 빠른 설치 및 시작 가이드 |
-| **How-To Guides** (실무 / 절차) | [commit-commands](./plugins/commit-commands/README.md) | Git 커밋, PR 생성 및 스태일 브랜치 정리 절차 |
+| **How-To Guides** (실무 / 절차) | [security-audit](./plugins/security-audit/README.md) | SAST, 시스템 패키지 CVE 및 백도어 감사 절차 |
+| | [infra-provisioning](./plugins/infra-provisioning/README.md) | 머신 초기 설정, OS 업그레이드, Proxmox VM 프로비저닝 |
+| | [trackers-automation](./plugins/trackers-automation/README.md) | 일정 동기화, 환율 추적 및 게임 핫딜 알림 |
+| | [agent-dev-deploy](./plugins/agent-dev-deploy/README.md) | AI Agent 설치, 교차 검증 및 Android WiFi 배포 |
+| | [session-workflow](./plugins/session-workflow/README.md) | 세션 작업 저장(handoff) 및 복원(resume) 절차 |
+| | [content-l10n](./plugins/content-l10n/README.md) | 이미지 4K 최적화, 한국어 번역 검증 및 딥리서치 기획 |
+| | [commit-commands](./plugins/commit-commands/README.md) | Git 커밋, PR 생성 및 스태일 브랜치 정리 절차 |
 | | [agents-md-management](./plugins/agents-md-management/README.md) | 에이전트 지침 파일 구조 감사 및 세션 러닝 반영 |
 | | [readme-md-management](./plugins/readme-md-management/README.md) | README 요약 감사, Diátaxis 인덱싱 및 고아 문서 관리 |
 | **Reference** (참조 / 규격) | [docs/README.md](./docs/README.md) | 서브 문서 디렉토리 역할 및 체계 정의 |
@@ -24,25 +30,31 @@ zzizily는 Claude Code, Codex, Antigravity(Gemini) 등 멀티 Agent 런타임을
 
 ### 1. Claude Mode (`claude`)
 
-Claude Code CLI 환경에서 마켓플레이스를 추가하고 플러그인을 설치합니다.
+Claude Code CLI 환경에서 마켓플레이스를 추가하고 필요한 도메인 플러그인을 설치합니다.
 
 ```bash
 # 마켓플레이스 등록
 claude plugin marketplace add deuxksy/ai-agent-skill
 
-# 메인 플러그인 설치
-claude plugin install deuxksy@zzizily
-
-# 독립 도메인 플러그인 설치
+# 9개 독립 도메인 플러그인 설치 (필요한 도메인만 선택 설치 가능)
+claude plugin install security-audit@zzizily
+claude plugin install infra-provisioning@zzizily
+claude plugin install trackers-automation@zzizily
+claude plugin install agent-dev-deploy@zzizily
+claude plugin install session-workflow@zzizily
+claude plugin install content-l10n@zzizily
 claude plugin install commit-commands@zzizily
 claude plugin install agents-md-management@zzizily
+claude plugin install readme-md-management@zzizily
 ```
 
 **사용 방법:**
 ```bash
-/zzizily:<skill-name>                     # 메인 스킬 호출 (예: /zzizily:verify)
+/security-audit:code-audit                 # 코드 보안 감사 스킬 호출
+/infra-provisioning:setup                  # 초기 설정 스킬 호출
+/agent-dev-deploy:verify                   # 런타임 교차검증 스킬 호출
+/session-workflow:handoff                  # 세션 저장 스킬 호출
 /commit-commands:commit                    # commit-commands 스킬 호출
-/agents-md-management:agents-md-management # agents-md-management 스킬 호출
 ```
 
 ### 2. Code Mode (`code` / Codex / Cursor / VS Code)
@@ -51,142 +63,59 @@ Codex CLI 및 VS Code / Cursor AI 환경에서 마켓플레이스를 등록하�
 
 #### Marketplace 설치 (Codex)
 ```bash
-# 마켓플레이스 등록 (GitHub 또는 로컬 .agents/plugins)
+# 마켓플레이스 등록
 codex plugin marketplace add deuxksy/ai-agent-skill
 
-# 플러그인 설치
-codex plugin add deuxksy@zzizily
+# 원하는 독립 플러그인 설치
+codex plugin add security-audit@zzizily
+codex plugin add infra-provisioning@zzizily
+codex plugin add trackers-automation@zzizily
+codex plugin add agent-dev-deploy@zzizily
+codex plugin add session-workflow@zzizily
+codex plugin add content-l10n@zzizily
 codex plugin add commit-commands@zzizily
 codex plugin add agents-md-management@zzizily
+codex plugin add readme-md-management@zzizily
 ```
-
-#### 스킬 디렉토리 연동 (Copy / Symlink)
-마켓플레이스 미사용 시, `$HOME/.agents/skills/` (User scope) 또는 프로젝트 경로 `.agents/skills/` / `.codex/skills/` (Repository scope)에 스킬 디렉토리를 복사 또는 링크합니다.
-
-```bash
-# User scope (전역)
-mkdir -p ~/.agents/skills
-cp -r skills/* ~/.agents/skills/
-
-# Repository scope (프로젝트)
-mkdir -p .agents/skills
-cp -r skills/* .agents/skills/
-```
-
-**사용 방법:**
-- CLI / Agent 명령: `$<skill-name>` 또는 작업 맥락 감지 시 자동(implicit) 실행
 
 ### 3. AGY Mode (`agy` / Antigravity)
 
 Antigravity CLI(`agy`) 환경에서 `agy plugin` CLI 명령어 또는 스킬 경로 연동으로 설치합니다.
 
-#### CLI 명령어 설치 (추천)
 ```bash
-# 메인 플러그인 설치 (현재 리포지토리 기준)
-agy plugin install .
-
-# 독립 도메인 플러그인 설치
+# 원하는 독립 도메인 플러그인 설치
+agy plugin install plugins/security-audit
+agy plugin install plugins/infra-provisioning
+agy plugin install plugins/trackers-automation
+agy plugin install plugins/agent-dev-deploy
+agy plugin install plugins/session-workflow
+agy plugin install plugins/content-l10n
 agy plugin install plugins/commit-commands
 agy plugin install plugins/agents-md-management
+agy plugin install plugins/readme-md-management
 
-# 설치된 플러그인 및 스킬 확인
+# 설치된 플러그인 확인
 agy plugin list
 ```
 
-#### Global / Workspace Scope 수동 연동
-`~/.gemini/config/skills/` (User scope) 또는 프로젝트 경로 `<workspace>/.agents/skills/` (Workspace scope)에 스킬을 복사 또는 링크합니다.
+## 플러그인 메타 & 버전 정책
 
-```bash
-# Global scope (전역)
-mkdir -p ~/.gemini/config/skills
-cp -r skills/* ~/.gemini/config/skills/
+- **마켓플레이스 저장소**: `deuxksy/ai-agent-skill`
+- **통합 단일 버전**: `1.9.1` (모든 9개 독립 플러그인 매니페스트 및 마켓플레이스 동기화)
 
-# Workspace scope (작업공간)
-mkdir -p .agents/skills
-cp -r skills/* .agents/skills/
-```
+## 독립 도메인 플러그인 카탈로그 (9)
 
-**사용 방법:**
-- Skill 이름 직접 지시 (예: `/zzizily:<skill-name>` 또는 `<skill-name>`), 작업 맥락 감지 시 자동(implicit) 실행
-
-## 플러그인 메타
-
-| 항목 | 값 |
-| :--- | :--- |
-| Plugin name | `zzizily` (plugin.json) |
-| Marketplace plugin name | `deuxksy` (marketplace.json) |
-| 호출 prefix | `/zzizily:<skill-name>` |
-| GitHub repo | `deuxksy/ai-agent-skill` |
-| 버전 | 1.9.0 |
-
-## 버전 정책
-
-- 새 skill 추가: `1.x.y` → `1.(x+1).0`
-- 기존 skill 개선/수정: `1.x.y` → `1.x.(y+1)`
-- `.claude-plugin/plugin.json`, `.claude-plugin/marketplace.json`, `README.md` 버전은 항상 동기화
-
-## 독립 Plugin
-
-기존 `zzizily`와 별도로 설치하는 domain plugin.
-
-| Plugin | Version | Skills | 설치 |
+| Plugin | Version | 포함 스킬 | 설치 명령어 |
 | :--- | :--- | :--- | :--- |
+| `security-audit` | 1.9.1 | `code-audit`, `system-audit`, `backdoor-investigation`, `backdoor-remediation` | `security-audit@zzizily` |
+| `infra-provisioning` | 1.9.1 | `setup`, `system-upgrade`, `proxmox-vm-create`, `openwrt-initd` | `infra-provisioning@zzizily` |
+| `trackers-automation` | 1.9.1 | `calendar-sync`, `exchange-rate-tracker`, `hot-game-deals-n-news` | `trackers-automation@zzizily` |
+| `agent-dev-deploy` | 1.9.1 | `agents`, `verify`, `deploy-android-wifi` | `agent-dev-deploy@zzizily` |
+| `session-workflow` | 1.9.1 | `handoff`, `resume` | `session-workflow@zzizily` |
+| `content-l10n` | 1.9.1 | `optimize-images-4k`, `korean-translation-verify`, `product-planning-dr-pipeline` | `content-l10n@zzizily` |
 | `commit-commands` | 1.9.1 | `commit`, `commit-push-pr`, `clean-gone` | `commit-commands@zzizily` |
 | `agents-md-management` | 1.9.1 | `agents-md-management`, `revise-agents-md` | `agents-md-management@zzizily` |
 | `readme-md-management` | 1.9.1 | `readme-md-management`, `revise-readme-md` | `readme-md-management@zzizily` |
-
-## 스킬 카탈로그 (19)
-
-기능 도메인별 그룹핑. 각 스킬은 `skills/<skill-name>/SKILL.md`에 정의.
-
-### 보안 · 감사 (Security & Audit)
-
-| 스킬 | 설명 |
-| :--- | :--- |
-| `code-audit` | 정적 코드 보안 점검 (SAST/CWE/OWASP) |
-| `system-audit` | 시스템 패키지 보안 감사 (CVE/CVSS/KEV) |
-| `backdoor-investigation` | Linux 백도어 포렌식 진단 (read-only) |
-| `backdoor-remediation` | 백도어 제거·복구 (파괴적, 승인 필요) |
-
-### 인프라 · 프로비저닝 (Infra & Provisioning)
-
-| 스킬 | 설명 |
-| :--- | :--- |
-| `setup` | 초기 설정 (brew/stow/sops/Tailscale) |
-| `system-upgrade` | OS 패키지 업그레이드 (brew/apt/dnf/nix) |
-| `proxmox-vm-create` | Proxmox VE VM 프로비저닝 (qm→pvesh→REST) |
-| `openwrt-initd` | OpenWrt init.d 백그라운드 서비스 설치 |
-
-### 자동화 · 트래커 (Automation & Trackers)
-
-| 스킬 | 설명 |
-| :--- | :--- |
-| `calendar-sync` | Notion/GCal → Hermes 일정 동기화 |
-| `exchange-rate-tracker` | 환율 추적 (USD/KRW, USD/VND) |
-| `hot-game-deals-n-news` | 게임 할인/무료/뉴스 트래커 |
-
-### AI Agent · 배포 (Agents & Deploy)
-
-| 스킬 | 설명 |
-| :--- | :--- |
-| `agents` | AI Agent/MCP/LSP 설치·업그레이드 자동화 |
-| `verify` | runtime-neutral 교차검증 (Claude/Codex/agy runner + Codex/agy/shell-gpt reviewer, 격리 snapshot) |
-| `deploy-android-wifi` | WiFi ADB React Native 배포 자동화 |
-
-### 워크플로우 · 세션 (Workflow & Session)
-
-| 스킬 | 설명 |
-| :--- | :--- |
-| `handoff` | 현재 세션 작업을 구조화 저장 (`/clear` 전 수동) |
-| `resume` | 이전 handoff 읽어 task preview → 승인 → TaskCreate 복원 |
-
-### 콘텐츠 · 로컬라이제이션 (Content & L10n)
-
-| 스킬 | 설명 |
-| :--- | :--- |
-| `optimize-images-4k` | 4K 이미지 최적화 (ImageMagick) |
-| `korean-translation-verify` | 한국어 번역 품질 검증 |
-| `product-planning-dr-pipeline` | 제품 기획 Deep Research 파이프라인 |
 
 ## 상세 문서
 
