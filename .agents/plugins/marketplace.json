@@ -5,6 +5,90 @@
   },
   "plugins": [
     {
+      "name": "security-audit",
+      "source": {
+        "source": "local",
+        "path": "./plugins/security-audit",
+        "description": "Code SAST, system vulnerability, and backdoor investigation/remediation security skills",
+        "version": "1.10.0"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Security"
+    },
+    {
+      "name": "infra-provisioning",
+      "source": {
+        "source": "local",
+        "path": "./plugins/infra-provisioning",
+        "description": "Dotfiles setup, system package upgrade, Proxmox VM, and OpenWrt service provisioning skills",
+        "version": "1.10.0"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Infrastructure"
+    },
+    {
+      "name": "trackers-automation",
+      "source": {
+        "source": "local",
+        "path": "./plugins/trackers-automation",
+        "description": "Calendar sync, USD/KRW/VND exchange rates, and hot game deals/news tracker skills",
+        "version": "1.10.0"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Productivity"
+    },
+    {
+      "name": "agent-dev-deploy",
+      "source": {
+        "source": "local",
+        "path": "./plugins/agent-dev-deploy",
+        "description": "AI agents/MCP/LSP installer, runtime-neutral cross verification, and Android WiFi deployment skills",
+        "version": "1.10.0"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Development"
+    },
+    {
+      "name": "session-workflow",
+      "source": {
+        "source": "local",
+        "path": "./plugins/session-workflow",
+        "description": "Session context handoff and task resume workflow skills",
+        "version": "1.10.0"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Productivity"
+    },
+    {
+      "name": "content-l10n",
+      "source": {
+        "source": "local",
+        "path": "./plugins/content-l10n",
+        "description": "4K image optimization, Korean translation verification, and product planning deep research pipeline skills",
+        "version": "1.10.0"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Content"
+    },
+    {
       "name": "git",
       "source": {
         "source": "local",
