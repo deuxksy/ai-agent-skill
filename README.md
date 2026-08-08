@@ -15,7 +15,7 @@ zzizily는 Claude Code, Codex, Antigravity(Gemini) 등 멀티 Agent 런타임을
 | | [agent-dev-deploy](./plugins/agent-dev-deploy/README.md) | AI Agent 설치, 교차 검증 및 Android WiFi 배포 |
 | | [session-workflow](./plugins/session-workflow/README.md) | 세션 작업 저장(handoff) 및 복원(resume) 절차 |
 | | [content-l10n](./plugins/content-l10n/README.md) | 이미지 4K 최적화, 한국어 번역 검증 및 딥리서치 기획 |
-| | [commit-commands](./plugins/commit-commands/README.md) | Git 커밋, PR 생성 및 스태일 브랜치 정리 절차 |
+| | [git](./plugins/git/README.md) | Git 커밋, PR 생성 및 스태일 브랜치 정리 절차 |
 | | [agents-md-management](./plugins/agents-md-management/README.md) | 에이전트 지침 파일 구조 감사 및 세션 러닝 반영 |
 | | [readme-md-management](./plugins/readme-md-management/README.md) | README 요약 감사, docs/ 프로젝트 문서, Diátaxis 인덱싱 및 고아 문서 관리 |
 | **Reference** (참조 / 규격) | [docs/README.md](./docs/README.md) | 서브 문서 디렉토리 역할 및 체계 정의 |
@@ -43,7 +43,7 @@ claude plugin install trackers-automation@zzizily
 claude plugin install agent-dev-deploy@zzizily
 claude plugin install session-workflow@zzizily
 claude plugin install content-l10n@zzizily
-claude plugin install commit-commands@zzizily
+claude plugin install git@zzizily
 claude plugin install agents-md-management@zzizily
 claude plugin install readme-md-management@zzizily
 ```
@@ -54,7 +54,7 @@ claude plugin install readme-md-management@zzizily
 /infra-provisioning:setup                  # 초기 설정 스킬 호출
 /agent-dev-deploy:verify                   # 런타임 교차검증 스킬 호출
 /session-workflow:handoff                  # 세션 저장 스킬 호출
-/commit-commands:commit                    # commit-commands 스킬 호출
+/git:commit                    # git 스킬 호출
 ```
 
 ### 2. Code Mode (`code` / Codex / Cursor / VS Code)
@@ -73,7 +73,7 @@ codex plugin add trackers-automation@zzizily
 codex plugin add agent-dev-deploy@zzizily
 codex plugin add session-workflow@zzizily
 codex plugin add content-l10n@zzizily
-codex plugin add commit-commands@zzizily
+codex plugin add git@zzizily
 codex plugin add agents-md-management@zzizily
 codex plugin add readme-md-management@zzizily
 ```
@@ -90,7 +90,7 @@ agy plugin install plugins/trackers-automation
 agy plugin install plugins/agent-dev-deploy
 agy plugin install plugins/session-workflow
 agy plugin install plugins/content-l10n
-agy plugin install plugins/commit-commands
+agy plugin install plugins/git
 agy plugin install plugins/agents-md-management
 agy plugin install plugins/readme-md-management
 
@@ -113,7 +113,7 @@ agy plugin list
 | `agent-dev-deploy` | 1.10.0 | `agents`, `verify`, `deploy-android-wifi` | `agent-dev-deploy@zzizily` |
 | `session-workflow` | 1.10.0 | `handoff`, `resume` | `session-workflow@zzizily` |
 | `content-l10n` | 1.10.0 | `optimize-images-4k`, `korean-translation-verify`, `product-planning-dr-pipeline` | `content-l10n@zzizily` |
-| `commit-commands` | 1.10.0 | `commit`, `commit-push-pr`, `clean-gone` | `commit-commands@zzizily` |
+| `git` | 1.10.0 | `commit`, `commit-push-pr`, `clean-gone` | `git@zzizily` |
 | `agents-md-management` | 1.10.0 | `agents-md-management`, `revise-agents-md` | `agents-md-management@zzizily` |
 | `readme-md-management` | 1.10.0 | `docs-md-management`, `revise-readme-md` | `readme-md-management@zzizily` |
 

@@ -1,4 +1,4 @@
-# commit-commands
+# git
 
 안전한 Git commit, PR/MR, stale branch 정리를 제공하는 runtime-neutral Agent Skills plugin.
 
@@ -15,15 +15,15 @@
 ## Claude Code
 
 ```bash
-claude plugin install commit-commands@zzizily
+claude plugin install git@zzizily
 ```
 
 호출:
 
 ```text
-/commit-commands:commit
-/commit-commands:commit-push-pr
-/commit-commands:clean-gone
+/git:commit
+/git:commit-push-pr
+/git:clean-gone
 ```
 
 ## Codex와 Antigravity
@@ -39,7 +39,7 @@ Codex marketplace entry는 `.agents/plugins/marketplace.json`이다. Repository 
 
 ```bash
 codex plugin marketplace add .agents/plugins
-codex plugin add commit-commands@zzizily
+codex plugin add git@zzizily
 ```
 
 다른 project에서 사용할 때 필요한 Skill directory를 위 location에 copy하거나 지원되는 link 방식으로 등록한다. Windows에서는 symlink 권한이 필요할 수 있으므로 copy 방식도 지원한다.
@@ -78,5 +78,5 @@ CLI가 없거나 인증되지 않았으면 push까지만 수행하고 수동 생
 ## Attribution
 
 Adapted from Anthropic
-[`commit-commands`](https://github.com/anthropics/claude-plugins-official/tree/main/plugins/commit-commands)
+[`git`](https://github.com/anthropics/claude-plugins-official/tree/main/plugins/git)
 under Apache License 2.0. This version changes the original commands into runtime-neutral, approval-gated Agent Skills.

@@ -17,7 +17,7 @@ claude plugin install trackers-automation@zzizily
 claude plugin install agent-dev-deploy@zzizily
 claude plugin install session-workflow@zzizily
 claude plugin install content-l10n@zzizily
-claude plugin install commit-commands@zzizily
+claude plugin install git@zzizily
 claude plugin install agents-md-management@zzizily
 claude plugin install readme-md-management@zzizily
 ```
@@ -44,7 +44,7 @@ claude plugin install readme-md-management@zzizily
     ├── agent-dev-deploy/    # 에이전트/배포 (agents, verify, deploy-android-wifi)
     ├── session-workflow/    # 세션 워크플로우 (handoff, resume)
     ├── content-l10n/        # 콘텐츠/번역 (optimize-images-4k, korean-translation-verify, product-planning-dr-pipeline)
-    ├── commit-commands/     # Git 워크플로우 (commit, commit-push-pr, clean-gone)
+    ├── git/                 # Git 워크플로우 (commit, commit-push-pr, clean-gone)
     ├── agents-md-management/# 에이전트 지침 관리 (agents-md-management, revise-agents-md)
     └── readme-md-management/# README 및 프로젝트 문서 관리 (docs-md-management, revise-readme-md)
 ```
@@ -70,7 +70,7 @@ claude plugin install readme-md-management@zzizily
 | `agent-dev-deploy` | 1.10.0 | `agents`, `verify`, `deploy-android-wifi` | `agent-dev-deploy@zzizily` |
 | `session-workflow` | 1.10.0 | `handoff`, `resume` | `session-workflow@zzizily` |
 | `content-l10n` | 1.10.0 | `optimize-images-4k`, `korean-translation-verify`, `product-planning-dr-pipeline` | `content-l10n@zzizily` |
-| `commit-commands` | 1.10.0 | `commit`, `commit-push-pr`, `clean-gone` | `commit-commands@zzizily` |
+| `git` | 1.10.0 | `commit`, `commit-push-pr`, `clean-gone` | `git@zzizily` |
 | `agents-md-management` | 1.10.0 | `agents-md-management`, `revise-agents-md` | `agents-md-management@zzizily` |
 | `readme-md-management` | 1.10.0 | `docs-md-management`, `revise-readme-md` | `readme-md-management@zzizily` |
 
