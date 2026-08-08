@@ -4,5 +4,5 @@ Runtime-neutral AI Agent skills for auditing, structuring, and updating reposito
 
 ## Skills
 
-- `readme-md-management`: Audits `README.md`, verifies 100~500 char summary, builds Diátaxis document indexes, and detects orphan docs.
+- `docs-md-management`: Audits `README.md` and overall project documentation under `docs/`, verifies 100~500 char summary, builds Diátaxis document indexes, verifies sub-hubs, and detects orphan docs.
 - `revise-readme-md`: Lightly updates `README.md` index and summary when new documentation or features are added.

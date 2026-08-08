@@ -9,6 +9,7 @@
 ```text
 docs/
 ├── README.md                      # [Sub-Hub] docs/ 하위 디렉토리 역할 및 문서 체계 정의
+├── archive/                       # [Reference Archive] 직접 관리하지 않는 참조 기획 문서(화면설계서, 요구서), API 명세(openapi.json, swagger.json), Figma 토큰 등
 ├── okf/
 │   └── README.md                  # [OKF Hub] OKF 명세 문서 허브 및 Diátaxis 작성 가이드
 └── superpowers/                   # [Internal Agent Workspace]

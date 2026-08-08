@@ -1,11 +1,11 @@
 ---
-name: readme-md-management
-description: "Use when repository README.md, document hubs (docs/README.md, docs/okf/README.md), Diátaxis indexes, or orphan docs need audit or update."
+name: docs-md-management
+description: "Use when repository README.md, document hubs (docs/README.md, docs/okf/README.md), Diátaxis indexes, or overall project docs under docs/ need audit, structuring, or updating."
 ---
 
-# README Markdown Management
+# README & Project Documentation Management
 
-Audit repository `README.md` and documentation hierarchy, enforce human-friendly project summaries (100~500 chars), build Diátaxis document indexes, and report orphan markdown files.
+Audit and manage repository `README.md` and **all project documentation under `docs/`**, enforce human-friendly project summaries (100~500 chars), build Diátaxis document indexes across `docs/`, verify sub-hubs, and report orphan markdown files.
 
 ## Key Principles (핵심 원칙)
 
@@ -13,12 +13,15 @@ Audit repository `README.md` and documentation hierarchy, enforce human-friendly
    - 본 스킬이 다루는 모든 문서는 AI 에이전트용 문서(`docs/superpowers/`, `AGENTS.md` 등)와 구분되며, **사람(개발자, 사용자)**이 읽고 이해하기 쉽고 직관적인 톤으로 작성합니다.
 2. **한국어 작성 원칙 (Korean Language Standard)**:
    - `README.md`, 서브 허브(`docs/README.md`, `docs/okf/README.md`), 문서 설명, 카테고리 인덱스 및 모든 감사 보고서는 **한국어**로 작성합니다.
+3. **전체 프로젝트 문서 종합 관리 (Comprehensive Docs Management)**:
+   - 루트 `README.md` 단독 관리에 그치지 않고, `docs/` 이하 디렉터리 내 전체 프로젝트 문서의 디아탁시스(Diátaxis) 구조화, 허브 인덱싱, 링크 무결성 및 고아(Orphan) 문서 관리를 총괄합니다.
 
-## Documentation Hierarchy
+## Documentation Hierarchy & Scope
 
 - **Root `README.md`**: Human-readable project summary (100~500 chars) + top-level Diátaxis index pointing to key guides and sub-hubs (`docs/README.md`, `docs/okf/README.md`).
-- **`docs/README.md`**: Sub-hub explaining `docs/` subdirectories (`okf`, `superpowers`, etc.) and their purposes.
-- **`docs/okf/README.md`**: Sub-hub indexing all OKF specification docs under `docs/okf/`.
+- **`docs/README.md`**: Sub-hub explaining `docs/` subdirectories (`okf`, `archive`, `superpowers`, etc.) and their purposes.
+- **`docs/okf/README.md`**: Sub-hub indexing all OKF specification docs under `docs/okf/`, structured into Diátaxis 4-quadrant subfolders (`tutorials/`, `how-to/`, `reference/`, `explanation/`).
+- **`docs/archive/`**: Reference archive storing unmanaged external planning docs (screen designs, project requirements), API specs (`openapi.json`, `swagger.json`), and Figma design tokens. EXCLUDED from general human index & orphan doc scanning.
 - **`docs/superpowers/`**: Internal AI agent specs (`specs/`) and plans (`plans/`). EXCLUDED from general human index & orphan doc scanning.
 
 ---
@@ -26,9 +29,9 @@ Audit repository `README.md` and documentation hierarchy, enforce human-friendly
 ## 1. Discovery & Exclusion
 
 1. Find Git root (or current working directory if non-Git).
-2. Check existence of `README.md`, `docs/README.md`, `docs/okf/README.md`.
+2. Check existence of `README.md`, `docs/README.md`, `docs/okf/README.md` and `docs/okf/` Diátaxis subfolders (`tutorials/`, `how-to/`, `reference/`, `explanation/`).
 3. Scan repository markdown files (`*.md`, `docs/**/*.md`).
-4. **Strict Exclusion Filter**: Exclude `.git`, `node_modules`, `dist`, `build`, `docs/superpowers/`, `.ai/`, `.claude/`, `.gemini/`, `.agents/`, `.codex/`.
+4. **Strict Exclusion Filter**: Exclude `.git`, `node_modules`, `dist`, `build`, `docs/archive/`, `docs/superpowers/`, `.ai/`, `.claude/`, `.gemini/`, `.agents/`, `.codex/`.
 
 ---
 
@@ -46,11 +49,11 @@ Audit repository `README.md` and documentation hierarchy, enforce human-friendly
      - **Explanation**: Architecture, concepts, design decisions.
    - Format relative links: `[Doc Title](./relative/path.md) - 1-line description`.
 3. **Sub-Hub Integrity Check**:
-   - Verify `docs/README.md` correctly describes subfolder roles (`okf`, `superpowers`, etc.).
-   - Verify `docs/okf/README.md` correctly indexes OKF files under `docs/okf/`.
+   - Verify `docs/README.md` correctly describes subfolder roles (`okf`, `archive`, `superpowers`, etc.).
+   - Verify `docs/okf/README.md` correctly indexes OKF files categorized under Diátaxis subfolders (`tutorials/`, `how-to/`, `reference/`, `explanation/`).
 4. **Stale Link & Orphan Page Audit**:
-   - Check for broken relative links in `README.md`.
-   - Identify unindexed human markdown files (files not linked in `README.md` or sub-hubs) as **Orphan Pages** and suggest their Diátaxis category.
+   - Check for broken relative links across `README.md`, `docs/README.md`, `docs/okf/README.md`, and all indexed project docs under `docs/`.
+   - Identify unindexed human markdown files (files under `docs/` or root not linked in `README.md` or sub-hubs) as **Orphan Pages** and suggest their Diátaxis category placement.
 5. **100-Point Quality Scoring Matrix**:
    - Evaluate `README.md` and documentation hierarchy against `references/readme-quality-criteria.md` (Total 100 points):
      - Summary (20p), Diátaxis Structure (20p), Actionability & Quick Start (20p), Link Integrity & Hubs (15p), Human-Centric Formatting (15p), No Orphan/Conciseness (10p).

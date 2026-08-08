@@ -1,7 +1,7 @@
 {
   "name": "agents-md-management",
   "description": "Audit and revise common and vendor-specific AI agent instruction files",
-  "version": "1.9.1",
+  "version": "1.10.0",
   "author": {
     "name": "Crong"
   },

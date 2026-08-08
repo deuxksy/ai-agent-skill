@@ -17,7 +17,7 @@ zzizily는 Claude Code, Codex, Antigravity(Gemini) 등 멀티 Agent 런타임을
 | | [content-l10n](./plugins/content-l10n/README.md) | 이미지 4K 최적화, 한국어 번역 검증 및 딥리서치 기획 |
 | | [commit-commands](./plugins/commit-commands/README.md) | Git 커밋, PR 생성 및 스태일 브랜치 정리 절차 |
 | | [agents-md-management](./plugins/agents-md-management/README.md) | 에이전트 지침 파일 구조 감사 및 세션 러닝 반영 |
-| | [readme-md-management](./plugins/readme-md-management/README.md) | README 요약 감사, Diátaxis 인덱싱 및 고아 문서 관리 |
+| | [readme-md-management](./plugins/readme-md-management/README.md) | README 요약 감사, docs/ 프로젝트 문서, Diátaxis 인덱싱 및 고아 문서 관리 |
 | **Reference** (참조 / 규격) | [docs/README.md](./docs/README.md) | 서브 문서 디렉토리 역할 및 체계 정의 |
 | | [docs/okf/README.md](./docs/okf/README.md) | OKF(Open Knowledge Framework) 명세 허브 및 작성 가이드 |
 | | [CLAUDE.md](./CLAUDE.md) | 프로젝트 구조, 분류 원칙, SKILL.md 규격 및 패키지 관리 명세 |
@@ -101,21 +101,21 @@ agy plugin list
 ## 플러그인 메타 & 버전 정책
 
 - **마켓플레이스 저장소**: `deuxksy/ai-agent-skill`
-- **통합 단일 버전**: `1.9.1` (모든 9개 독립 플러그인 매니페스트 및 마켓플레이스 동기화)
+- **통합 단일 버전**: `1.10.0` (모든 9개 독립 플러그인 매니페스트 및 마켓플레이스 동기화)
 
 ## 독립 도메인 플러그인 카탈로그 (9)
 
 | Plugin | Version | 포함 스킬 | 설치 명령어 |
 | :--- | :--- | :--- | :--- |
-| `security-audit` | 1.9.1 | `code-audit`, `system-audit`, `backdoor-investigation`, `backdoor-remediation` | `security-audit@zzizily` |
-| `infra-provisioning` | 1.9.1 | `setup`, `system-upgrade`, `proxmox-vm-create`, `openwrt-initd` | `infra-provisioning@zzizily` |
-| `trackers-automation` | 1.9.1 | `calendar-sync`, `exchange-rate-tracker`, `hot-game-deals-n-news` | `trackers-automation@zzizily` |
-| `agent-dev-deploy` | 1.9.1 | `agents`, `verify`, `deploy-android-wifi` | `agent-dev-deploy@zzizily` |
-| `session-workflow` | 1.9.1 | `handoff`, `resume` | `session-workflow@zzizily` |
-| `content-l10n` | 1.9.1 | `optimize-images-4k`, `korean-translation-verify`, `product-planning-dr-pipeline` | `content-l10n@zzizily` |
-| `commit-commands` | 1.9.1 | `commit`, `commit-push-pr`, `clean-gone` | `commit-commands@zzizily` |
-| `agents-md-management` | 1.9.1 | `agents-md-management`, `revise-agents-md` | `agents-md-management@zzizily` |
-| `readme-md-management` | 1.9.1 | `readme-md-management`, `revise-readme-md` | `readme-md-management@zzizily` |
+| `security-audit` | 1.10.0 | `code-audit`, `system-audit`, `backdoor-investigation`, `backdoor-remediation` | `security-audit@zzizily` |
+| `infra-provisioning` | 1.10.0 | `setup`, `system-upgrade`, `proxmox-vm-create`, `openwrt-initd` | `infra-provisioning@zzizily` |
+| `trackers-automation` | 1.10.0 | `calendar-sync`, `exchange-rate-tracker`, `hot-game-deals-n-news` | `trackers-automation@zzizily` |
+| `agent-dev-deploy` | 1.10.0 | `agents`, `verify`, `deploy-android-wifi` | `agent-dev-deploy@zzizily` |
+| `session-workflow` | 1.10.0 | `handoff`, `resume` | `session-workflow@zzizily` |
+| `content-l10n` | 1.10.0 | `optimize-images-4k`, `korean-translation-verify`, `product-planning-dr-pipeline` | `content-l10n@zzizily` |
+| `commit-commands` | 1.10.0 | `commit`, `commit-push-pr`, `clean-gone` | `commit-commands@zzizily` |
+| `agents-md-management` | 1.10.0 | `agents-md-management`, `revise-agents-md` | `agents-md-management@zzizily` |
+| `readme-md-management` | 1.10.0 | `docs-md-management`, `revise-readme-md` | `readme-md-management@zzizily` |
 
 ## 상세 문서
 

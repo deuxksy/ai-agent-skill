@@ -61,6 +61,16 @@ graph LR
 
 ### 📑 OKF 명세 문서 Index
 
-OKF 가이드라인에 따른 `docs/okf/` 내부 문서 목록입니다:
+OKF 가이드라인에 따른 `docs/okf/` 내부 서브 폴더별 문서 목록입니다:
 
-- *(신규 OKF 명세 문서 추가 시 이곳에 상대 링크 및 1줄 설명을 등록합니다)*
+#### 🎓 1. Tutorials (`docs/okf/tutorials/`)
+- *(입문자용 실습 튜토리얼 문서 추가 시 등록)*
+
+#### 🛠️ 2. How-to Guides (`docs/okf/how-to/`)
+- *(특정 과제 해결을 위한 하우투 가이드 문서 추가 시 등록)*
+
+#### 📋 3. Reference (`docs/okf/reference/`)
+- *(기술 명세 및 API/설정 참고 문서 추가 시 등록)*
+
+#### 💡 4. Explanation (`docs/okf/explanation/`)
+- *(아키텍처 및 개념 설명 문서 추가 시 등록)*

@@ -1,5 +1,5 @@
 {
   "name": "readme-md-management",
-  "description": "Audit and revise README.md, document hubs, Diátaxis indexes, and orphan docs",
-  "version": "1.9.1"
+  "description": "Audit and revise README.md and overall project documentation under docs/, Diátaxis indexes, and orphan docs",
+  "version": "1.10.0"
 }

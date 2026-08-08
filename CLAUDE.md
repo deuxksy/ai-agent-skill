@@ -24,7 +24,7 @@ claude plugin install readme-md-management@zzizily
 
 ## 플러그인 메타 & 버전 정책
 
-- **통합 단일 버전**: `1.9.1`
+- **통합 단일 버전**: `1.10.0`
 - **마켓플레이스 매니페스트**: `.claude-plugin/marketplace.json`
 - **GitHub repo**: `deuxksy/ai-agent-skill`
 
@@ -33,8 +33,8 @@ claude plugin install readme-md-management@zzizily
 ```
 .
 ├── .claude-plugin/
-│   ├── plugin.json          # 루트 래퍼 매니페스트 (v1.9.1)
-│   └── marketplace.json     # 9개 전체 도메인 플러그인 등록 마켓플레이스 (v1.9.1)
+│   ├── plugin.json          # 루트 래퍼 매니페스트 (v1.10.0)
+│   └── marketplace.json     # 9개 전체 도메인 플러그인 등록 마켓플레이스 (v1.10.0)
 ├── agents/
 │   └── verify.md            # Claude runner adapter (격리 reviewer fanout)
 └── plugins/
@@ -46,7 +46,7 @@ claude plugin install readme-md-management@zzizily
     ├── content-l10n/        # 콘텐츠/번역 (optimize-images-4k, korean-translation-verify, product-planning-dr-pipeline)
     ├── commit-commands/     # Git 워크플로우 (commit, commit-push-pr, clean-gone)
     ├── agents-md-management/# 에이전트 지침 관리 (agents-md-management, revise-agents-md)
-    └── readme-md-management/# README 문서 관리 (readme-md-management, revise-readme-md)
+    └── readme-md-management/# README 및 프로젝트 문서 관리 (docs-md-management, revise-readme-md)
 ```
 
 ## 분류 원칙
@@ -64,15 +64,15 @@ claude plugin install readme-md-management@zzizily
 
 | Plugin | Version | Skills | 설치 |
 | :--- | :--- | :--- | :--- |
-| `security-audit` | 1.9.1 | `code-audit`, `system-audit`, `backdoor-investigation`, `backdoor-remediation` | `security-audit@zzizily` |
-| `infra-provisioning` | 1.9.1 | `setup`, `system-upgrade`, `proxmox-vm-create`, `openwrt-initd` | `infra-provisioning@zzizily` |
-| `trackers-automation` | 1.9.1 | `calendar-sync`, `exchange-rate-tracker`, `hot-game-deals-n-news` | `trackers-automation@zzizily` |
-| `agent-dev-deploy` | 1.9.1 | `agents`, `verify`, `deploy-android-wifi` | `agent-dev-deploy@zzizily` |
-| `session-workflow` | 1.9.1 | `handoff`, `resume` | `session-workflow@zzizily` |
-| `content-l10n` | 1.9.1 | `optimize-images-4k`, `korean-translation-verify`, `product-planning-dr-pipeline` | `content-l10n@zzizily` |
-| `commit-commands` | 1.9.1 | `commit`, `commit-push-pr`, `clean-gone` | `commit-commands@zzizily` |
-| `agents-md-management` | 1.9.1 | `agents-md-management`, `revise-agents-md` | `agents-md-management@zzizily` |
-| `readme-md-management` | 1.9.1 | `readme-md-management`, `revise-readme-md` | `readme-md-management@zzizily` |
+| `security-audit` | 1.10.0 | `code-audit`, `system-audit`, `backdoor-investigation`, `backdoor-remediation` | `security-audit@zzizily` |
+| `infra-provisioning` | 1.10.0 | `setup`, `system-upgrade`, `proxmox-vm-create`, `openwrt-initd` | `infra-provisioning@zzizily` |
+| `trackers-automation` | 1.10.0 | `calendar-sync`, `exchange-rate-tracker`, `hot-game-deals-n-news` | `trackers-automation@zzizily` |
+| `agent-dev-deploy` | 1.10.0 | `agents`, `verify`, `deploy-android-wifi` | `agent-dev-deploy@zzizily` |
+| `session-workflow` | 1.10.0 | `handoff`, `resume` | `session-workflow@zzizily` |
+| `content-l10n` | 1.10.0 | `optimize-images-4k`, `korean-translation-verify`, `product-planning-dr-pipeline` | `content-l10n@zzizily` |
+| `commit-commands` | 1.10.0 | `commit`, `commit-push-pr`, `clean-gone` | `commit-commands@zzizily` |
+| `agents-md-management` | 1.10.0 | `agents-md-management`, `revise-agents-md` | `agents-md-management@zzizily` |
+| `readme-md-management` | 1.10.0 | `docs-md-management`, `revise-readme-md` | `readme-md-management@zzizily` |
 
 ## SKILL.md 규격
 
