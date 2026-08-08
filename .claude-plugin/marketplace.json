@@ -54,8 +54,8 @@
       "version": "1.10.0"
     },
     {
-      "name": "readme-md-management",
-      "source": "./plugins/readme-md-management",
+      "name": "docs",
+      "source": "./plugins/docs",
       "description": "Audit and revise README.md and overall project documentation under docs/, Diátaxis indexes, and orphan docs",
       "version": "1.10.0"
     }

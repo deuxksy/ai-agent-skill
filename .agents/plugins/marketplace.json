@@ -29,10 +29,10 @@
       "category": "Productivity"
     },
     {
-      "name": "readme-md-management",
+      "name": "docs",
       "source": {
         "source": "local",
-        "path": "./plugins/readme-md-management",
+        "path": "./plugins/docs",
         "description": "Audit and revise README.md and overall project documentation under docs/, Diátaxis indexes, and orphan docs",
         "version": "1.10.0"
       },
