@@ -17,10 +17,12 @@
       "category": "Productivity"
     },
     {
-      "name": "agents-md-management",
+      "name": "rules",
       "source": {
         "source": "local",
-        "path": "./plugins/agents-md-management"
+        "path": "./plugins/rules",
+        "description": "Audit and revise AGENTS.md, CLAUDE.md, GEMINI.md, and shared .ai/RULES.md",
+        "version": "1.10.0"
       },
       "policy": {
         "installation": "AVAILABLE",

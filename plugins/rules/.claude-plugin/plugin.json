@@ -1,0 +1,9 @@
+{
+  "name": "rules",
+  "description": "Audit and revise AGENTS.md, CLAUDE.md, GEMINI.md, and shared .ai/RULES.md",
+  "version": "1.10.0",
+  "author": {
+    "name": "Crong"
+  },
+  "skills": "./skills/"
+}

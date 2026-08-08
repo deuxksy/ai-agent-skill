@@ -48,8 +48,8 @@
       "version": "1.10.0"
     },
     {
-      "name": "agents-md-management",
-      "source": "./plugins/agents-md-management",
+      "name": "rules",
+      "source": "./plugins/rules",
       "description": "Audit and revise AGENTS.md, CLAUDE.md, GEMINI.md, and shared .ai/RULES.md",
       "version": "1.10.0"
     },

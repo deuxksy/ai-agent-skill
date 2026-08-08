@@ -1,18 +1,20 @@
 {
-  "name": "agents-md-management",
-  "description": "Audit and revise common and vendor-specific AI agent instruction files",
+  "name": "rules",
+  "description": "Audit and revise AGENTS.md, CLAUDE.md, GEMINI.md, and shared .ai/RULES.md",
   "version": "1.10.0",
   "author": {
     "name": "Crong"
   },
   "skills": "./skills/",
   "interface": {
-    "displayName": "Agents MD Management",
+    "displayName": "Rules",
     "shortDescription": "AI agent instruction 관리",
-    "longDescription": "공통 규칙과 vendor별 AGENTS.md, CLAUDE.md, GEMINI.md를 audit하고 안전하게 개선합니다.",
+    "longDescription": "공통 규칙과 vendor별 AGENTS.md, CLAUDE.md, GEMINI.md, shared .ai/RULES.md를 audit하고 안전하게 개선합니다.",
     "developerName": "Crong",
     "category": "Productivity",
-    "capabilities": ["Write"],
+    "capabilities": [
+      "Write"
+    ],
     "defaultPrompt": [
       "AI agent instruction hierarchy를 audit해줘.",
       "이번 session learning을 적절한 instruction file에 반영해줘.",
