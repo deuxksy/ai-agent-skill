@@ -21,6 +21,7 @@ description: "dotfiles 기반 머신 설정. hostname 감지해 brew bundle, sto
 | mo | NixOS | `base`, `mo` | nixos-rebuild, sops, Aperture |
 | girl | SteamOS | `base`, `girl` | mise |
 | walle | Proxmox (Debian) | `base`, `walle` | sops |
+| ava | Windows 10 | pwsh | 수동 (stow 미사용, `windows/install.ps1`) |
 
 ## Workflow
 
@@ -140,6 +141,11 @@ Tailscale Aperture을 AI 프록시로 사용. 설정은 sops로 관리되는 API
 | stow 배포 | OK (base, axiom) |
 | sops 복호화 | OK |
 | Aperture | OK |
+
+## 참고
+
+- `references/dotfiles-infra.md` — 전체 호스트/하드웨어/네트워크/패키지 매니저 구조 요약
+- `references/dotfiles-ai-agents.md` — Claude Code + OMC + 다중 에이전트 검증 워크플로우 규칙 요약
 
 ## Key Rules
 

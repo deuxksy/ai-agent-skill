@@ -122,13 +122,7 @@ def generate_png_charts(krw_rates, vnd_rates, output_dir, points=8):
     if not krw_rates or len(krw_rates) < 2:
         return None
 
-    # 한국어 폰트 (NanumGothic 우선, 미설치 시 fallback 경고만)
-    import matplotlib.font_manager as fm
-    available = {f.name for f in fm.fontManager.ttflist}
-    for font in ["NanumGothic", "Noto Sans CJK KR", "Noto Sans CJK JP", "Malgun Gothic"]:
-        if font in available:
-            plt.rcParams["font.family"] = font
-            break
+    # Default font (no CJK — labels are in English)
     plt.rcParams["axes.unicode_minus"] = False
 
     files = {}
@@ -142,9 +136,9 @@ def generate_png_charts(krw_rates, vnd_rates, output_dir, points=8):
         # 일별 그래프
         fig, ax = plt.subplots(figsize=(10, 6))
         ax.plot(dates, values, marker="o", linewidth=2, markersize=8, color=color)
-        ax.set_title(f"{title} (일별)", fontsize=16, fontweight="bold")
-        ax.set_xlabel("날짜", fontsize=12)
-        ax.set_ylabel("환율", fontsize=12)
+        ax.set_title(f"{title} (Daily)", fontsize=16, fontweight="bold")
+        ax.set_xlabel("Date", fontsize=12)
+        ax.set_ylabel("Rate", fontsize=12)
         ax.grid(True, alpha=0.3)
         ax.xaxis.set_major_formatter(mdates.DateFormatter("%m/%d %H:%M"))
         ax.xaxis.set_major_locator(mdates.AutoDateLocator())
@@ -165,11 +159,11 @@ def generate_png_charts(krw_rates, vnd_rates, output_dir, points=8):
             z = np.polyfit(range(len(values)), values, 1)
             p = np.poly1d(z)
             ax.plot(dates, p(range(len(values))), "--", alpha=0.7,
-                    color=trend_color, linewidth=2, label="추세선")
+                    color=trend_color, linewidth=2, label="Trend")
             ax.legend()
-        ax.set_title(f"{title} (추세)", fontsize=16, fontweight="bold")
-        ax.set_xlabel("날짜", fontsize=12)
-        ax.set_ylabel("환율", fontsize=12)
+        ax.set_title(f"{title} (Trend)", fontsize=16, fontweight="bold")
+        ax.set_xlabel("Date", fontsize=12)
+        ax.set_ylabel("Rate", fontsize=12)
         ax.grid(True, alpha=0.3)
         ax.xaxis.set_major_formatter(mdates.DateFormatter("%m/%d %H:%M"))
         ax.xaxis.set_major_locator(mdates.AutoDateLocator())
