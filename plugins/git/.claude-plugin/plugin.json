@@ -1,5 +1,5 @@
 {
-  "name": "commit-commands",
+  "name": "git",
   "description": "Safe runtime-neutral Git commit, push, pull/merge request, and stale branch cleanup skills",
   "version": "1.10.0",
   "author": {

@@ -5,10 +5,10 @@
   },
   "plugins": [
     {
-      "name": "commit-commands",
+      "name": "git",
       "source": {
         "source": "local",
-        "path": "./plugins/commit-commands"
+        "path": "./plugins/git"
       },
       "policy": {
         "installation": "AVAILABLE",
