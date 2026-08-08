@@ -1,4 +1,4 @@
-# agents-md-management
+# rules
 
 공통 `.ai/RULES.md`와 vendor별 `AGENTS.md`, `CLAUDE.md`, `GEMINI.md`를 audit하고 session learning을 반영하는 runtime-neutral Agent Skills plugin.
 
@@ -30,14 +30,14 @@ Root `CLAUDE.md`와 `GEMINI.md`는 `@./.ai/RULES.md`를 import한다. Root `AGEN
 ## Claude Code
 
 ```bash
-claude plugin install agents-md-management@zzizily
+claude plugin install rules@zzizily
 ```
 
 호출:
 
 ```text
-/agents-md-management:agents-md-management
-/agents-md-management:revise-agents-md
+/rules:agents-md-management
+/rules:revise-agents-md
 ```
 
 ## Codex와 Antigravity
