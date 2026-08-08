@@ -19,7 +19,7 @@ claude plugin install session-workflow@zzizily
 claude plugin install content-l10n@zzizily
 claude plugin install git@zzizily
 claude plugin install agents-md-management@zzizily
-claude plugin install readme-md-management@zzizily
+claude plugin install docs@zzizily
 ```
 
 ## 플러그인 메타 & 버전 정책
@@ -46,7 +46,7 @@ claude plugin install readme-md-management@zzizily
     ├── content-l10n/        # 콘텐츠/번역 (optimize-images-4k, korean-translation-verify, product-planning-dr-pipeline)
     ├── git/                 # Git 워크플로우 (commit, commit-push-pr, clean-gone)
     ├── agents-md-management/# 에이전트 지침 관리 (agents-md-management, revise-agents-md)
-    └── readme-md-management/# README 및 프로젝트 문서 관리 (docs-md-management, revise-readme-md)
+    └── docs/                # README 및 프로젝트 문서 관리 (docs-md-management, revise-readme-md)
 ```
 
 ## 분류 원칙
@@ -72,7 +72,7 @@ claude plugin install readme-md-management@zzizily
 | `content-l10n` | 1.10.0 | `optimize-images-4k`, `korean-translation-verify`, `product-planning-dr-pipeline` | `content-l10n@zzizily` |
 | `git` | 1.10.0 | `commit`, `commit-push-pr`, `clean-gone` | `git@zzizily` |
 | `agents-md-management` | 1.10.0 | `agents-md-management`, `revise-agents-md` | `agents-md-management@zzizily` |
-| `readme-md-management` | 1.10.0 | `docs-md-management`, `revise-readme-md` | `readme-md-management@zzizily` |
+| `docs` | 1.10.0 | `docs-md-management`, `revise-readme-md` | `docs@zzizily` |
 
 ## SKILL.md 규격
 

@@ -17,7 +17,7 @@ zzizily는 Claude Code, Codex, Antigravity(Gemini) 등 멀티 Agent 런타임을
 | | [content-l10n](./plugins/content-l10n/README.md) | 이미지 4K 최적화, 한국어 번역 검증 및 딥리서치 기획 |
 | | [git](./plugins/git/README.md) | Git 커밋, PR 생성 및 스태일 브랜치 정리 절차 |
 | | [agents-md-management](./plugins/agents-md-management/README.md) | 에이전트 지침 파일 구조 감사 및 세션 러닝 반영 |
-| | [readme-md-management](./plugins/readme-md-management/README.md) | README 요약 감사, docs/ 프로젝트 문서, Diátaxis 인덱싱 및 고아 문서 관리 |
+| | [docs](./plugins/docs/README.md) | README 요약 감사, docs/ 프로젝트 문서, Diátaxis 인덱싱 및 고아 문서 관리 |
 | **Reference** (참조 / 규격) | [docs/README.md](./docs/README.md) | 서브 문서 디렉토리 역할 및 체계 정의 |
 | | [docs/okf/README.md](./docs/okf/README.md) | OKF(Open Knowledge Framework) 명세 허브 및 작성 가이드 |
 | | [CLAUDE.md](./CLAUDE.md) | 프로젝트 구조, 분류 원칙, SKILL.md 규격 및 패키지 관리 명세 |
@@ -45,7 +45,7 @@ claude plugin install session-workflow@zzizily
 claude plugin install content-l10n@zzizily
 claude plugin install git@zzizily
 claude plugin install agents-md-management@zzizily
-claude plugin install readme-md-management@zzizily
+claude plugin install docs@zzizily
 ```
 
 **사용 방법:**
@@ -75,7 +75,7 @@ codex plugin add session-workflow@zzizily
 codex plugin add content-l10n@zzizily
 codex plugin add git@zzizily
 codex plugin add agents-md-management@zzizily
-codex plugin add readme-md-management@zzizily
+codex plugin add docs@zzizily
 ```
 
 ### 3. AGY Mode (`agy` / Antigravity)
@@ -92,7 +92,7 @@ agy plugin install plugins/session-workflow
 agy plugin install plugins/content-l10n
 agy plugin install plugins/git
 agy plugin install plugins/agents-md-management
-agy plugin install plugins/readme-md-management
+agy plugin install plugins/docs
 
 # 설치된 플러그인 확인
 agy plugin list
@@ -115,7 +115,7 @@ agy plugin list
 | `content-l10n` | 1.10.0 | `optimize-images-4k`, `korean-translation-verify`, `product-planning-dr-pipeline` | `content-l10n@zzizily` |
 | `git` | 1.10.0 | `commit`, `commit-push-pr`, `clean-gone` | `git@zzizily` |
 | `agents-md-management` | 1.10.0 | `agents-md-management`, `revise-agents-md` | `agents-md-management@zzizily` |
-| `readme-md-management` | 1.10.0 | `docs-md-management`, `revise-readme-md` | `readme-md-management@zzizily` |
+| `docs` | 1.10.0 | `docs-md-management`, `revise-readme-md` | `docs@zzizily` |
 
 ## 상세 문서
 
