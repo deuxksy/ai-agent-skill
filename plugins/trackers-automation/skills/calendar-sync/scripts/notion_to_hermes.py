@@ -45,9 +45,18 @@ def fetch_notion_events(notion):
     has_more = True
     cursor = None
 
+    # notion-client 3.x: databases.query() 제거 → data_sources.query() 사용
+    # data_source_id는 databases.retrieve()로 조회 필요
+    data_source_id = None
+    if hasattr(notion, "data_sources"):
+        db = notion.databases.retrieve(database_id=NOTION_DB_ID)
+        ds = db.get("data_sources") or []
+        if not ds:
+            raise RuntimeError(f"No data_sources in database {NOTION_DB_ID}")
+        data_source_id = ds[0]["id"]
+
     while has_more:
         body: dict = {
-            "database_id": NOTION_DB_ID,
             "filter": {
                 "and": [
                     {"property": "날짜", "date": {"on_or_after": past}},
@@ -60,7 +69,11 @@ def fetch_notion_events(notion):
         if cursor:
             body["start_cursor"] = cursor
 
-        response = notion.databases.query(**body)
+        # notion-client 3.x: databases.query() 제거 → data_sources.query() 사용
+        if data_source_id:
+            response = notion.data_sources.query(data_source_id=data_source_id, **body)
+        else:
+            response = notion.databases.query(database_id=NOTION_DB_ID, **body)
         results.extend(response["results"])
         has_more = response.get("has_more", False)
         cursor = response.get("next_cursor")
