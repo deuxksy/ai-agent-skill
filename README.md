@@ -120,3 +120,8 @@ agy plugin list
 ## 상세 문서
 
 구조 트리, 분류 원칙, SKILL.md 규격, 개발 워크플로우, 환경별 패키지 관리는 [CLAUDE.md](./CLAUDE.md) 참조.
+
+## License
+
+MIT License © Crong (kyolim)
+

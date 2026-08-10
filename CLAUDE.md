@@ -1,5 +1,7 @@
 # CLAUDE.md
 
+@./.ai/RULES.md
+
 ## 프로젝트 개요
 
 **zzizily** — 9개 독립 도메인 플러그인을 통합 제공하는 개인 자동화 AI Agent Skill 마켓플레이스.
@@ -33,7 +35,6 @@ claude plugin install docs@zzizily
 ```
 .
 ├── .claude-plugin/
-│   ├── plugin.json          # 루트 래퍼 매니페스트 (v1.10.0)
 │   └── marketplace.json     # 9개 전체 도메인 플러그인 등록 마켓플레이스 (v1.10.0)
 ├── agents/
 │   └── verify.md            # Claude runner adapter (격리 reviewer fanout)

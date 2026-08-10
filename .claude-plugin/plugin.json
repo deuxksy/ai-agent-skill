@@ -1,9 +1,0 @@
-{
-  "name": "zzizily",
-  "description": "Personal skill collection: agents install/upgrade/setup, security audit, deploy, translation, game deals, exchange rate",
-  "version": "1.10.0",
-  "author": {
-    "name": "Crong"
-  },
-  "skills": "./skills/"
-}
