@@ -1,0 +1,21 @@
+{
+  "name": "review",
+  "description": "Runtime-neutral cross verification skill for spec/plan documents and code changes",
+  "version": "1.11.0",
+  "author": {
+    "name": "Crong"
+  },
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Review",
+    "shortDescription": "멀티 에이전트 런타임 교차검증",
+    "longDescription": "Codex/Antigravity/shell-gpt reviewer를 조합해 spec/plan 문서와 코드 변경을 격리 snapshot에서 검증하는 교차 검증 스킬을 제공합니다.",
+    "developerName": "Crong",
+    "category": "Development",
+    "capabilities": ["Write"],
+    "defaultPrompt": [
+      "현재 작성된 코드를 verify 스킬로 교차 검증해줘.",
+      "spec/plan 문서를 2-Way 교차검증해줘."
+    ]
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "name": "security",
+  "description": "Code SAST, system vulnerability, and backdoor investigation/remediation security skills",
+  "version": "1.11.0",
+  "author": {
+    "name": "Crong"
+  },
+  "skills": "./skills/"
+}

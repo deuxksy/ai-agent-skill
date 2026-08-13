@@ -1,0 +1,20 @@
+{
+  "name": "dev",
+  "description": "Android WiFi ADB 기반 React Native 앱 자동 빌드 및 배포 스킬",
+  "version": "1.11.0",
+  "author": {
+    "name": "Crong"
+  },
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Dev",
+    "shortDescription": "Android WiFi 앱 배포",
+    "longDescription": "WiFi ADB 기반 React Native 앱 자동 빌드 및 Android 디바이스 배포 스킬을 제공합니다.",
+    "developerName": "Crong",
+    "category": "Development",
+    "capabilities": ["Write"],
+    "defaultPrompt": [
+      "React Native 앱을 WiFi ADB로 Android 디바이스에 빌드 및 배포해줘."
+    ]
+  }
+}

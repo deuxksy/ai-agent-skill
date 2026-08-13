@@ -1,0 +1,9 @@
+{
+  "name": "dev",
+  "description": "Android WiFi ADB 기반 React Native 앱 자동 빌드 및 배포 스킬",
+  "version": "1.11.0",
+  "author": {
+    "name": "Crong"
+  },
+  "skills": "./skills/"
+}

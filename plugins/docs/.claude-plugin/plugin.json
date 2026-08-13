@@ -1,7 +1,7 @@
 {
   "name": "docs",
   "description": "Audit and revise README.md and overall project documentation under docs/, Diátaxis indexes, and orphan docs",
-  "version": "1.10.0",
+  "version": "1.11.0",
   "author": {
     "name": "Crong"
   },

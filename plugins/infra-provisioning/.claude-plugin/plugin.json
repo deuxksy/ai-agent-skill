@@ -1,9 +1,0 @@
-{
-  "name": "infra-provisioning",
-  "description": "Dotfiles setup, system package upgrade, Proxmox VM, and OpenWrt service provisioning skills",
-  "version": "1.10.0",
-  "author": {
-    "name": "Crong"
-  },
-  "skills": "./skills/"
-}

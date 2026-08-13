@@ -1,0 +1,9 @@
+{
+  "name": "review",
+  "description": "Runtime-neutral cross verification skill for spec/plan documents and code changes",
+  "version": "1.11.0",
+  "author": {
+    "name": "Crong"
+  },
+  "skills": "./skills/"
+}

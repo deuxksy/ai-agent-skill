@@ -1,7 +1,7 @@
 {
   "name": "git",
   "description": "Safe runtime-neutral Git commit, push, pull/merge request, and stale branch cleanup skills",
-  "version": "1.10.0",
+  "version": "1.11.0",
   "author": {
     "name": "Crong"
   },
