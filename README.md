@@ -128,4 +128,4 @@ agy plugin list
 
 ## License
 
-MIT License © Crong (kyolim)
+MIT License © Crong (ZZiZiLY)
