@@ -41,8 +41,8 @@ claude plugin install dev@zzizily
 │   └── verify.md            # Claude runner adapter (격리 reviewer fanout)
 └── plugins/
     ├── security/            # 코드/시스템 보안 감사 (code-audit, system-audit, backdoor-*)
-    ├── infra/               # 인프라 프로비저닝 (setup, packages, agents, proxmox-vm-create, openwrt-initd)
-    ├── trackers/            # 자동화/트래커 (calendar-sync, exchange-rate-tracker, hot-game-deals-n-news)
+    ├── infra/               # 인프라 프로비저닝 (setup, packages, agents, proxmox-vm-create, openwrt-initd, acl-owner-reset)
+    ├── trackers/            # 자동화/트래커 (calendar-sync, exchange-rate-tracker, hot-game-deals-n-news, notion-sprint-sync)
     ├── sessions/            # 세션 워크플로우 (handoff, resume)
     ├── l10n/                # 콘텐츠/번역 (optimize-images-4k, korean-translation-verify, product-planning-dr-pipeline)
     ├── git/                 # Git 워크플로우 (commit, commit-push-pr, clean-gone)

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Notion Sprint Sync"
+  short_description: "로컬 Sprint 구조를 Notion 작업 속성에 안전하게 동기화"
+  default_prompt: "Use $notion-sprint-sync to dry-run and safely sync a local sprint into Notion."

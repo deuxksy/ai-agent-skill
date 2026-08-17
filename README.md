@@ -1,6 +1,6 @@
 # AI-AGENT-SKILL
 
-zzizily는 Claude Code, Codex, Antigravity(Gemini) 등 멀티 Agent 런타임을 지원하는 개인 자동화 AI Agent Skill 플러그인 모음입니다. 보안 감사, 인프라 프로비저닝, 일상 자동화, 런타임 교차 검증부터 Git 워크플로우 및 문서 관리까지 26개 전체 스킬을 10개 독립 도메인 플러그인으로 모듈화하여 제공합니다.
+zzizily는 Claude Code, Codex, Antigravity(Gemini) 등 멀티 Agent 런타임을 지원하는 개인 자동화 AI Agent Skill 플러그인 모음입니다. 보안 감사, 인프라 프로비저닝, 일상 자동화, 런타임 교차 검증부터 Git 워크플로우 및 문서 관리까지 28개 전체 스킬을 10개 독립 도메인 플러그인으로 모듈화하여 제공합니다.
 
 ## 문서 체계 및 Diátaxis 인덱스
 
@@ -112,8 +112,8 @@ agy plugin list
 | Plugin | Version | 포함 스킬 | 설치 명령어 |
 | :--- | :--- | :--- | :--- |
 | `security` | 1.11.0 | `code-audit`, `system-audit`, `backdoor-investigation`, `backdoor-remediation` | `security@zzizily` |
-| `infra` | 1.11.0 | `setup`, `packages`, `agents`, `proxmox-vm-create`, `openwrt-initd` | `infra@zzizily` |
-| `trackers` | 1.11.0 | `calendar-sync`, `exchange-rate-tracker`, `hot-game-deals-n-news` | `trackers@zzizily` |
+| `infra` | 1.11.0 | `setup`, `packages`, `agents`, `proxmox-vm-create`, `openwrt-initd`, `acl-owner-reset` | `infra@zzizily` |
+| `trackers` | 1.11.0 | `calendar-sync`, `exchange-rate-tracker`, `hot-game-deals-n-news`, `notion-sprint-sync` | `trackers@zzizily` |
 | `sessions` | 1.11.0 | `handoff`, `resume` | `sessions@zzizily` |
 | `l10n` | 1.11.0 | `optimize-images-4k`, `korean-translation-verify`, `product-planning-dr-pipeline` | `l10n@zzizily` |
 | `git` | 1.11.0 | `commit`, `commit-push-pr`, `clean-gone` | `git@zzizily` |
