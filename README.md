@@ -1,4 +1,4 @@
-# zzizily
+# AI-AGENT-SKILL
 
 zzizily는 Claude Code, Codex, Antigravity(Gemini) 등 멀티 Agent 런타임을 지원하는 개인 자동화 AI Agent Skill 플러그인 모음입니다. 보안 감사, 인프라 프로비저닝, 일상 자동화, 런타임 교차 검증부터 Git 워크플로우 및 문서 관리까지 26개 전체 스킬을 10개 독립 도메인 플러그인으로 모듈화하여 제공합니다.
 
@@ -87,16 +87,16 @@ Antigravity CLI(`agy`) 환경에서 `agy plugin` CLI 명령어 또는 스킬 경
 
 ```bash
 # 원하는 독립 도메인 플러그인 설치
-agy plugin install plugins/security
-agy plugin install plugins/infra
-agy plugin install plugins/trackers
-agy plugin install plugins/sessions
-agy plugin install plugins/l10n
-agy plugin install plugins/git
-agy plugin install plugins/rules
-agy plugin install plugins/docs
-agy plugin install plugins/review
-agy plugin install plugins/dev
+agy plugin install https://github.com/deuxksy/ai-agent-skill/plugins/security
+agy plugin install https://github.com/deuxksy/ai-agent-skill/plugins/infra
+agy plugin install https://github.com/deuxksy/ai-agent-skill/plugins/trackers
+agy plugin install https://github.com/deuxksy/ai-agent-skill/plugins/sessions
+agy plugin install https://github.com/deuxksy/ai-agent-skill/plugins/l10n
+agy plugin install https://github.com/deuxksy/ai-agent-skill/plugins/git
+agy plugin install https://github.com/deuxksy/ai-agent-skill/plugins/rules
+agy plugin install https://github.com/deuxksy/ai-agent-skill/plugins/docs
+agy plugin install https://github.com/deuxksy/ai-agent-skill/plugins/review
+agy plugin install https://github.com/deuxksy/ai-agent-skill/plugins/dev
 
 # 설치된 플러그인 확인
 agy plugin list
