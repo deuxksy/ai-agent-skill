@@ -27,7 +27,7 @@ claude plugin install dev@zzizily
 
 ## 플러그인 메타 & 버전 정책
 
-- **통합 단일 버전**: `1.11.0`
+- **통합 단일 버전**: `1.12.0`
 - **마켓플레이스 매니페스트**: `.claude-plugin/marketplace.json`
 - **GitHub repo**: `deuxksy/ai-agent-skill`
 
@@ -36,7 +36,7 @@ claude plugin install dev@zzizily
 ```
 .
 ├── .claude-plugin/
-│   └── marketplace.json     # 10개 전체 도메인 플러그인 등록 마켓플레이스 (v1.11.0)
+│   └── marketplace.json     # 10개 전체 도메인 플러그인 등록 마켓플레이스 (v1.12.0)
 ├── agents/
 │   └── verify.md            # Claude runner adapter (격리 reviewer fanout)
 └── plugins/
@@ -68,16 +68,16 @@ claude plugin install dev@zzizily
 
 | Plugin | Version | Skills | 설치 |
 | :--- | :--- | :--- | :--- |
-| `security` | 1.11.0 | `code-audit`, `system-audit`, `backdoor-investigation`, `backdoor-remediation` | `security@zzizily` |
-| `infra` | 1.11.0 | `setup`, `packages`, `agents`, `proxmox-vm-create`, `openwrt-initd` | `infra@zzizily` |
-| `trackers` | 1.11.0 | `calendar-sync`, `exchange-rate-tracker`, `hot-game-deals-n-news` | `trackers@zzizily` |
-| `sessions` | 1.11.0 | `handoff`, `resume` | `sessions@zzizily` |
-| `l10n` | 1.11.0 | `optimize-images-4k`, `korean-translation-verify`, `product-planning-dr-pipeline` | `l10n@zzizily` |
-| `git` | 1.11.0 | `commit`, `commit-push-pr`, `clean-gone` | `git@zzizily` |
-| `rules` | 1.11.0 | `agents-md-management`, `revise-agents-md` | `rules@zzizily` |
-| `docs` | 1.11.0 | `docs-md-management`, `revise-readme-md` | `docs@zzizily` |
-| `review` | 1.11.0 | `verify` | `review@zzizily` |
-| `dev` | 1.11.0 | `deploy-android-wifi` | `dev@zzizily` |
+| `security` | 1.12.0 | `code-audit`, `system-audit`, `backdoor-investigation`, `backdoor-remediation` | `security@zzizily` |
+| `infra` | 1.12.0 | `setup`, `packages`, `agents`, `proxmox-vm-create`, `openwrt-initd`, `acl-owner-reset` | `infra@zzizily` |
+| `trackers` | 1.12.0 | `calendar-sync`, `exchange-rate-tracker`, `hot-game-deals-n-news`, `notion-sprint-sync` | `trackers@zzizily` |
+| `sessions` | 1.12.0 | `handoff`, `resume` | `sessions@zzizily` |
+| `l10n` | 1.12.0 | `optimize-images-4k`, `korean-translation-verify`, `product-planning-dr-pipeline` | `l10n@zzizily` |
+| `git` | 1.12.0 | `commit`, `commit-push-pr`, `clean-gone` | `git@zzizily` |
+| `rules` | 1.12.0 | `agents-md-management`, `revise-agents-md` | `rules@zzizily` |
+| `docs` | 1.12.0 | `docs-md-management`, `revise-readme-md` | `docs@zzizily` |
+| `review` | 1.12.0 | `verify` | `review@zzizily` |
+| `dev` | 1.12.0 | `deploy-android-wifi` | `dev@zzizily` |
 
 ## SKILL.md 규격
 

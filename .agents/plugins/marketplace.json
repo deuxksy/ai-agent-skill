@@ -10,7 +10,7 @@
         "source": "local",
         "path": "./plugins/security",
         "description": "Code SAST, system vulnerability, and backdoor investigation/remediation security skills",
-        "version": "1.11.0"
+        "version": "1.12.0"
       },
       "policy": {
         "installation": "AVAILABLE",
@@ -24,7 +24,7 @@
         "source": "local",
         "path": "./plugins/infra",
         "description": "Dotfiles setup, system package management, AI agents/MCP/LSP lifecycle, Proxmox VM, and OpenWrt service provisioning skills",
-        "version": "1.11.0"
+        "version": "1.12.0"
       },
       "policy": {
         "installation": "AVAILABLE",
@@ -38,7 +38,7 @@
         "source": "local",
         "path": "./plugins/trackers",
         "description": "Calendar sync, USD/KRW/VND exchange rates, and hot game deals/news tracker skills",
-        "version": "1.11.0"
+        "version": "1.12.0"
       },
       "policy": {
         "installation": "AVAILABLE",
@@ -52,7 +52,7 @@
         "source": "local",
         "path": "./plugins/sessions",
         "description": "Session context handoff and task resume workflow skills",
-        "version": "1.11.0"
+        "version": "1.12.0"
       },
       "policy": {
         "installation": "AVAILABLE",
@@ -66,7 +66,7 @@
         "source": "local",
         "path": "./plugins/l10n",
         "description": "4K image optimization, Korean translation verification, and product planning deep research pipeline skills",
-        "version": "1.11.0"
+        "version": "1.12.0"
       },
       "policy": {
         "installation": "AVAILABLE",
@@ -80,7 +80,7 @@
         "source": "local",
         "path": "./plugins/git",
         "description": "Safe runtime-neutral Git commit, push, pull/merge request, and stale branch cleanup skills",
-        "version": "1.11.0"
+        "version": "1.12.0"
       },
       "policy": {
         "installation": "AVAILABLE",
@@ -94,7 +94,7 @@
         "source": "local",
         "path": "./plugins/rules",
         "description": "Audit and revise AGENTS.md, CLAUDE.md, GEMINI.md, and shared .ai/RULES.md",
-        "version": "1.11.0"
+        "version": "1.12.0"
       },
       "policy": {
         "installation": "AVAILABLE",
@@ -108,7 +108,7 @@
         "source": "local",
         "path": "./plugins/docs",
         "description": "Audit and revise README.md and overall project documentation under docs/, Diátaxis indexes, and orphan docs",
-        "version": "1.11.0"
+        "version": "1.12.0"
       },
       "policy": {
         "installation": "AVAILABLE",
@@ -122,7 +122,7 @@
         "source": "local",
         "path": "./plugins/review",
         "description": "Runtime-neutral cross verification of spec/plan documents and code changes",
-        "version": "1.11.0"
+        "version": "1.12.0"
       },
       "policy": {
         "installation": "AVAILABLE",
@@ -136,7 +136,7 @@
         "source": "local",
         "path": "./plugins/dev",
         "description": "Android WiFi ADB deployment of React Native apps",
-        "version": "1.11.0"
+        "version": "1.12.0"
       },
       "policy": {
         "installation": "AVAILABLE",
