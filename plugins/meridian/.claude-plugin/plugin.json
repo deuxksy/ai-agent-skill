@@ -1,0 +1,9 @@
+{
+  "name": "meridian",
+  "description": "SSH/Tailscale 경유 원격 Meridian-X 미디어 수집 및 파이프라인 관리",
+  "version": "0.1.0",
+  "author": {
+    "name": "Crong"
+  },
+  "skills": "./skills/"
+}

@@ -1,0 +1,20 @@
+{
+  "name": "meridian",
+  "description": "SSH/Tailscale 경유 원격 Meridian-X 미디어 수집 및 파이프라인 관리",
+  "version": "0.1.0",
+  "author": {
+    "name": "Crong"
+  },
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Meridian",
+    "shortDescription": "원격 미디어 수집/파이프라인",
+    "longDescription": "SSH/Tailscale로 원격 서버의 Meridian-X 파이프라인(수집, 필터, 라벨, 동기화, 정리, 분류)을 실행합니다.",
+    "developerName": "Crong",
+    "category": "Media",
+    "capabilities": ["Write"],
+    "defaultPrompt": [
+      "meridian pipeline 실행해줘"
+    ]
+  }
+}

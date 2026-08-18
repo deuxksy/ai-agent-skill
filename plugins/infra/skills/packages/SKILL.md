@@ -2,7 +2,6 @@
 name: packages
 description: "시스템 패키지 매니저. OS를 감지해 prerequisites(pnpm/uv/mise) 설치, OS 패키지(brew/apt/dnf/nix) 관리, Brewfile 동기화, 시스템 전체 업그레이드 실행. AI 에이전트/MCP/LSP는 /infra:agents 사용. 'install'로 신규 머신 패키지 셋업, 'upgrade'로 기존 머신 시스템 업그레이드."
 ---
-
 # Packages
 
 시스템 패키지 설치·업그레이드. macOS는 `brew bundle` 중심, Linux는 apt/dnf/nix.
@@ -25,12 +24,12 @@ grep -q ^ID=nixos /etc/os-release 2>/dev/null && echo "NixOS"
 cat /etc/os-release 2>/dev/null | grep ^ID=
 ```
 
-| 감지 결과 | 패키지 매니저 | 업그레이드 명령 |
-| :--- | :--- | :--- |
-| macOS | brew | `brew update && brew upgrade && brew cleanup` + Brewfile 동기화 |
-| NixOS | nix | `sudo nixos-rebuild switch --flake ~/git/dotfiles/nix/nixos#<hostname>` |
-| Debian/Ubuntu | apt | `sudo apt update && sudo apt upgrade -y` |
-| Fedora | dnf | `sudo dnf upgrade -y` |
+| 감지 결과     | 패키지 매니저 | 업그레이드 명령                                                           |
+| :------------ | :------------ | :------------------------------------------------------------------------ |
+| macOS         | brew          | `brew update && brew upgrade && brew cleanup` + Brewfile 동기화         |
+| NixOS         | nix           | `sudo nixos-rebuild switch --flake ~/git/dotfiles/nix/nixos#<hostname>` |
+| Debian/Ubuntu | apt           | `sudo apt update && sudo apt upgrade -y`                                |
+| Fedora        | dnf           | `sudo dnf upgrade -y`                                                   |
 
 ---
 
@@ -39,12 +38,12 @@ cat /etc/os-release 2>/dev/null | grep ^ID=
 Node.js(lts-latest)가 설치되어 있다고 가정. pnpm, uv가 없으면 OS별로 설치.
 `/infra:agents` 실행 전 pnpm/uv가 없는 경우에도 이 섹션으로 설치.
 
-| 도구 | macOS | SteamOS | Linux (Debian/Ubuntu/Fedora) | NixOS |
-| :--- | :--- | :--- | :--- | :--- |
-| Node.js | brew / 기존 설치 | mise (`mise use node@lts`) | 기존 설치 | nix 패키지 |
-| pnpm | `corepack enable pnpm && pnpm setup` | `corepack enable pnpm && corepack prepare pnpm@latest --activate` | `corepack enable pnpm && pnpm setup` | nix 패키지 (configuration.nix) |
-| uv | `brew install uv` | mise (`mise use uv@latest`) 또는 기존 설치 | `curl -LsSf https://astral.sh/uv/install.sh \| sh` | nix 패키지 (configuration.nix) |
-| mise | 불필요 (brew가 Node 관리) | 런타임 관리자 (Node.js/corepack/uv) | 불필요 | 불필요 |
+| 도구    | macOS                                  | SteamOS                                                             | Linux (Debian/Ubuntu/Fedora)                        | NixOS                          |
+| :------ | :------------------------------------- | :------------------------------------------------------------------ | :-------------------------------------------------- | :----------------------------- |
+| Node.js | brew / 기존 설치                       | mise (`mise use node@lts`)                                        | 기존 설치                                           | nix 패키지                     |
+| pnpm    | `corepack enable pnpm && pnpm setup` | `corepack enable pnpm && corepack prepare pnpm@latest --activate` | `corepack enable pnpm && pnpm setup`              | nix 패키지 (configuration.nix) |
+| uv      | `brew install uv`                    | mise (`mise use uv@latest`) 또는 기존 설치                        | `curl -LsSf https://astral.sh/uv/install.sh \| sh` | nix 패키지 (configuration.nix) |
+| mise    | 불필요 (brew가 Node 관리)              | 런타임 관리자 (Node.js/corepack/uv)                                 | 불필요                                              | 불필요                         |
 
 ```bash
 # --- OS 감지 ---
@@ -157,31 +156,13 @@ curl -fsSL "https://github.com/k8sgpt-ai/k8sgpt/releases/latest/download/k8sgpt_
 
 ## Brewfile 관리 (macOS)
 
-`~/.Brewfile`은 상대경로 symlink (`git/dotfiles/$HOSTNAME/Brewfile`)인 경우가 있음.
-`brew bundle`은 cwd 기준으로 상대경로를 해석하므로 **realpath로 절대경로 변환 후 실행** 필수.
-
-### realpath 우선 처리 순서
+`brew bundle --global`이 Brewfile을 자동 탐색. 수동 경로 지정 불필요.
 
 ```bash
-if [ -f ~/.Brewfile ]; then
-  # 1. realpath로 절대경로 변환 (symlink 해결)
-  BREWFILE=$(realpath ~/.Brewfile 2>/dev/null)
-elif [ -f ~/git/dotfiles/$HOSTNAME/Brewfile ]; then
-  # 2. dotfiles 호스트 디렉토리 직접 참조
-  BREWFILE=~/git/dotfiles/$HOSTNAME/Brewfile
-fi
-
-if [ -n "$BREWFILE" ] && [ -f "$BREWFILE" ]; then
-  # 3. 절대경로로 brew bundle 실행
-  brew bundle --file="$BREWFILE"
-else
-  # 4. Brewfile 없으면 warn + brew upgrade만 실행
-  echo "WARN: Brewfile을 찾을 수 없습니다. brew upgrade만 실행합니다."
-  brew upgrade
-fi
+brew bundle --global
 ```
 
-> `brew bundle --global`도 동일한 symlink 해석 문제가 있으므로 사용하지 않음.
+> `--global` 탐색 순서: `$HOMEBREW_BUNDLE_FILE_GLOBAL` → `${XDG_CONFIG_HOME}/homebrew/Brewfile` → `~/.homebrew/Brewfile` → `~/.Brewfile`
 
 ### brew upgrade / cask
 
@@ -253,13 +234,8 @@ brew upgrade
 # Cask 업그레이드
 brew upgrade --cask --greedy 2>/dev/null || true
 
-# Brewfile 정합성 — realpath 우선 처리 (위 Brewfile 관리 섹션 참조)
-BREWFILE=$(realpath ~/.Brewfile 2>/dev/null || echo ~/git/dotfiles/$HOSTNAME/Brewfile)
-if [ -f "$BREWFILE" ]; then
-  brew bundle --file="$BREWFILE"
-else
-  echo "WARN: Brewfile을 찾을 수 없습니다 ($BREWFILE)"
-fi
+# Brewfile 정합성
+brew bundle --global
 
 brew cleanup
 ```
@@ -312,7 +288,7 @@ sudo dnf autoremove -y
 | brew update | OK |
 | brew upgrade | OK (23 packages) |
 | brew cask | OK (5 casks) |
-| brew bundle | OK (99 satisfied, realpath=/Users/crong/git/dotfiles/axiom/Brewfile) |
+| brew bundle | OK (99 satisfied) |
 | brew cleanup | OK (512MB freed) |
 ```
 
@@ -329,7 +305,7 @@ sudo dnf autoremove -y
 
 - **시스템 패키지만 담당**: AI 에이전트·MCP·LSP는 `/infra:agents`로 분리
 - **사용자 확인 후 실행** (upgrade): 사전 버전과 업그레이드 대상 수를 보여주고 승인 후 실행
-- **Brewfile realpath 우선**: `~/.Brewfile` symlink는 `realpath`로 절대경로 변환 후 `brew bundle --file=` 실행. cwd 의존 해석 금지
+- **Brewfile은 `brew bundle --global` 사용**: 수동 경로 지정 불필요. brew가 `$HOMEBREW_BUNDLE_FILE_GLOBAL` → `${XDG_CONFIG_HOME}/homebrew/Brewfile` → `~/.homebrew/Brewfile` → `~/.Brewfile` 순으로 자동 탐색
 - **에러 시 중단하지 않음**: 일부 패키지/cask 실패해도 계속 진행하고 리포트에 명시
 - **NixOS flake update는 명시적 요청 시만**: 기본은 `nixos-rebuild`만, `flake update`는 사용자 승인 필요
 - **pip, npm 직접 사용 금지**: Python은 uv tool, Node는 pnpm으로 관리. pip/npm은 전이 의존성만 관리하므로 직접 업그레이드하지 않음
