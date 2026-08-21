@@ -91,6 +91,38 @@ node -e "const p=require('<패키지>/package.json');console.log(p.name,p.versio
 | 폰트 | SIL OFL 1.1 등 — 고지 의무 있음 |
 | Lottie JSON | lottiefiles 출처별 상이 — 미확인 시 ⚠️ 표기 |
 
+## OSS Licenses plugin 병행 (Android)
+
+Google 공식 plugin — 빌드타임에 POM `<licenses>`를 수집해 앱 리소스로 생성. 인벤토리 문서(SoT)와 상호 보완하는 자동화 계층. 공식 가이드: developers.google.com/android/guides/opensource
+
+### 적용
+
+```groovy
+// android/build.gradle — buildscript.dependencies
+classpath("com.google.android.gms:oss-licenses-plugin:0.13.0")
+
+// android/app/build.gradle — 최상위 apply 그룹에 추가
+apply plugin: "com.google.android.gms.oss-licenses-plugin"
+```
+
+### 실행
+
+```bash
+./gradlew :app:<releaseVariant>OssLicensesTask
+# 산출: app/build/generated/res/<variant>OssLicensesTask/raw/third_party_licenses (+ _metadata)
+```
+
+인앱 고지 화면은 런타임 라이브러리(`play-services-oss-licenses`) 추가 후 `OssLicensesMenuActivity`를 Intent로 호출 — 별도 단계.
+
+### 가치 / 한계
+
+| 구분 | 내용 |
+| :--- | :--- |
+| 가치 | POM 라이선스 원문 자동 수집. hermes 등 AAR에 정적 링크된 내부 컴포넌트(ICU4C, RE2, zlib, PCRE 등) 발견 — gradle 의존성 트리에는 나오지 않음 |
+| 한계 | POM 보유 Maven 좌표만 수집 — autolink 모듈·jitpack 저장소(예: BlurView) 미수집, 빌드 계열(apksig 등) 과다 포함 가능. 항목명이 POM display name이라 버전 정보 없음 |
+
+정리: plugin = gradle 계층 자동화 + 원문 확보, 인벤토리 문서 = 전 계층(JS/autolink/에셋) SoT.
+
 ## 산출물 구조 (licenses.md)
 
 프로젝트 문서 규칙에 맞는 위치에 작성:
@@ -117,6 +149,8 @@ node -e "const p=require('<패키지>/package.json');console.log(p.name,p.versio
 | transitive 전부 MIT 가정 | BSD-3 등 예외 누락 (hoist-non-react-statics 사례) | 패키지별 개별 확인 |
 | `ls \| grep -i licen` 탐색 | COPYING 등 변형명 누락 | `find -maxdepth 1 -iname 'licen*'` |
 | 에셋 제외 | 폰트(LICENSE 고지 의무) 누락 | 폰트·Lottie 별도 섹션 |
+| plugin id에서 `-plugin` suffix 누락 | `Plugin with id not found` 에러 | id는 `com.google.android.gms.oss-licenses-plugin` |
+| plugin 0.10.6 사용 | AGP 신버전에서 부분 크래시 — 빈 metadata·잘린 출력 | 0.13.0+ 사용 |
 
 ## 검증 기준
 
