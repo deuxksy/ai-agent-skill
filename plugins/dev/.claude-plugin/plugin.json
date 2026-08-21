@@ -1,7 +1,7 @@
 {
   "name": "dev",
-  "description": "Android WiFi ADB 기반 React Native 앱 자동 빌드 및 배포 스킬",
-  "version": "1.12.0",
+  "description": "React Native 앱 개발 스킬 — WiFi ADB 배포, 오픈소스 라이선스 인벤토리",
+  "version": "1.13.0",
   "author": {
     "name": "Crong"
   },
