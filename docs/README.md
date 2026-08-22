@@ -11,7 +11,11 @@ docs/
 ├── README.md                      # [Sub-Hub] docs/ 하위 디렉토리 역할 및 문서 체계 정의
 ├── archive/                       # [Reference Archive] 직접 관리하지 않는 참조 기획 문서(화면설계서, 요구서), API 명세(openapi.json, swagger.json), Figma 토큰 등
 ├── okf/
-│   └── README.md                  # [OKF Hub] OKF 명세 문서 허브 및 Diátaxis 작성 가이드
+│   ├── README.md                  # [OKF Hub] OKF 명세 문서 허브 및 Diátaxis 작성 가이드
+│   ├── tutorials/                 # [Tutorials] 입문자용 실습 문서
+│   ├── how-to/                    # [How-to] 과제 해결 가이드 문서
+│   ├── reference/                 # [Reference] 기술 명세 및 참고 문서
+│   └── explanation/               # [Explanation] 아키텍처 및 개념 설명 문서
 └── superpowers/                   # [Internal Agent Workspace]
     ├── specs/                     # AI Agent 디자인 스펙 (README 인덱싱 대상 제외)
     └── plans/                     # AI Agent 실행 계획 (README 인덱싱 대상 제외)

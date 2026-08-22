@@ -1,6 +1,6 @@
 # AI-AGENT-SKILL
 
-zzizily는 Claude Code, Codex, Antigravity(Gemini) 등 멀티 Agent 런타임을 지원하는 개인 자동화 AI Agent Skill 플러그인 모음입니다. 보안 감사, 인프라 프로비저닝, 일상 자동화, 런타임 교차 검증부터 Git 워크플로우 및 문서 관리까지 28개 전체 스킬을 10개 독립 도메인 플러그인으로 모듈화하여 제공합니다.
+zzizily는 Claude Code, Codex, Antigravity(Gemini) 등 멀티 Agent 런타임을 지원하는 개인 자동화 AI Agent Skill 플러그인 모음입니다. 보안 감사, 인프라 프로비저닝, 일상 자동화, 런타임 교차 검증부터 Git 워크플로우 및 문서 관리까지 30개 전체 스킬을 10개 독립 도메인 플러그인으로 모듈화하여 제공합니다.
 
 ## 문서 체계 및 Diátaxis 인덱스
 
@@ -14,14 +14,16 @@ zzizily는 Claude Code, Codex, Antigravity(Gemini) 등 멀티 Agent 런타임을
 | | [trackers](./plugins/trackers/README.md) | 일정 동기화, 환율 추적 및 게임 핫딜 알림 |
 | | [sessions](./plugins/sessions/README.md) | 세션 작업 저장(handoff) 및 복원(resume) 절차 |
 | | [l10n](./plugins/l10n/README.md) | 이미지 4K 최적화, 한국어 번역 검증 및 딥리서치 기획 |
-| | [git](./plugins/git/README.md) | Git 커밋, PR 생성 및 스태일 브랜치 정리 절차 |
+| | [git](./plugins/git/README.md) | Git 커밋, PR 생성, 태그 릴리스 및 스태일 브랜치 정리 절차 |
 | | [rules](./plugins/rules/README.md) | 에이전트 지침 파일 구조 감사 및 세션 러닝 반영 |
 | | [docs](./plugins/docs/README.md) | README 요약 감사, docs/ 프로젝트 문서, Diátaxis 인덱싱 및 고아 문서 관리 |
 | | [review](./plugins/review/README.md) | spec/plan 문서 및 코드 변경 런타임 교차 검증 |
-| | [dev](./plugins/dev/README.md) | Android WiFi ADB 빌드 및 배포 |
+| | [dev](./plugins/dev/README.md) | Android WiFi ADB 빌드 배포 및 오픈소스 라이선스 조사 |
 | **Reference** (참조 / 규격) | [docs/README.md](./docs/README.md) | 서브 문서 디렉토리 역할 및 체계 정의 |
 | | [docs/okf/README.md](./docs/okf/README.md) | OKF(Open Knowledge Framework) 명세 허브 및 작성 가이드 |
 | | [CLAUDE.md](./CLAUDE.md) | 프로젝트 구조, 분류 원칙, SKILL.md 규격 및 패키지 관리 명세 |
+| | [AGENTS.md](./AGENTS.md) | Codex 런타임용 프로젝트 지침 명세 |
+| | [GEMINI.md](./GEMINI.md) | Gemini 런타임용 프로젝트 지침 명세 |
 | | [agents/verify.md](./agents/verify.md) | Claude Code runner adapter 및 교차 검증 라우팅 명세 |
 | **Explanation** (원리 / 설계) | [분류 원칙](./CLAUDE.md#분류-원칙) | 스킬 분류 배치 원칙 및 아키텍처 배경 설명 |
 
@@ -105,22 +107,22 @@ agy plugin list
 ## 플러그인 메타 & 버전 정책
 
 - **마켓플레이스 저장소**: `deuxksy/ai-agent-skill`
-- **통합 단일 버전**: `1.12.0` (모든 10개 독립 플러그인 매니페스트 및 마켓플레이스 동기화)
+- **통합 단일 버전**: `1.13.0` (모든 10개 독립 플러그인 매니페스트 및 마켓플레이스 동기화)
 
 ## 독립 도메인 플러그인 카탈로그 (10)
 
 | Plugin | Version | 포함 스킬 | 설치 명령어 |
 | :--- | :--- | :--- | :--- |
-| `security` | 1.12.0 | `code-audit`, `system-audit`, `backdoor-investigation`, `backdoor-remediation` | `security@zzizily` |
-| `infra` | 1.12.0 | `setup`, `packages`, `agents`, `proxmox-vm-create`, `openwrt-initd`, `acl-owner-reset` | `infra@zzizily` |
-| `trackers` | 1.12.0 | `calendar-sync`, `exchange-rate-tracker`, `hot-game-deals-n-news`, `notion-sprint-sync` | `trackers@zzizily` |
-| `sessions` | 1.12.0 | `handoff`, `resume` | `sessions@zzizily` |
-| `l10n` | 1.12.0 | `optimize-images-4k`, `korean-translation-verify`, `product-planning-dr-pipeline` | `l10n@zzizily` |
-| `git` | 1.12.0 | `commit`, `commit-push-pr`, `clean-gone` | `git@zzizily` |
-| `rules` | 1.12.0 | `agents-md-management`, `revise-agents-md` | `rules@zzizily` |
-| `docs` | 1.12.0 | `docs-md-management`, `revise-readme-md` | `docs@zzizily` |
-| `review` | 1.12.0 | `verify` | `review@zzizily` |
-| `dev` | 1.12.0 | `deploy-android-wifi` | `dev@zzizily` |
+| `security` | 1.13.0 | `code-audit`, `system-audit`, `backdoor-investigation`, `backdoor-remediation` | `security@zzizily` |
+| `infra` | 1.13.0 | `setup`, `packages`, `agents`, `proxmox-vm-create`, `openwrt-initd`, `acl-owner-reset` | `infra@zzizily` |
+| `trackers` | 1.13.0 | `calendar-sync`, `exchange-rate-tracker`, `hot-game-deals-n-news`, `notion-sprint-sync` | `trackers@zzizily` |
+| `sessions` | 1.13.0 | `handoff`, `resume` | `sessions@zzizily` |
+| `l10n` | 1.13.0 | `optimize-images-4k`, `korean-translation-verify`, `product-planning-dr-pipeline` | `l10n@zzizily` |
+| `git` | 1.13.0 | `commit`, `commit-push-pr`, `clean-gone`, `tag-release` | `git@zzizily` |
+| `rules` | 1.13.0 | `agents-md-management`, `revise-agents-md` | `rules@zzizily` |
+| `docs` | 1.13.0 | `docs-md-management`, `revise-readme-md` | `docs@zzizily` |
+| `review` | 1.13.0 | `verify` | `review@zzizily` |
+| `dev` | 1.13.0 | `deploy-android-wifi`, `license` | `dev@zzizily` |
 
 ## 상세 문서
 
