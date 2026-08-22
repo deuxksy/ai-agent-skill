@@ -10,14 +10,14 @@ This file provides guidance to Codex (Codex.ai/code) when working with code in t
 
 - Author: Crong (kyolim)
 - GitHub Repository: `deuxksy/ai-agent-skill`
-- 통합 버전: `1.12.0`
+- 통합 버전: `1.13.0`
 
 ## 구조
 
 ```
 .
 ├── .claude-plugin/
-│   └── marketplace.json     # 10개 전체 도메인 플러그인 등록 마켓플레이스 (v1.12.0)
+│   └── marketplace.json     # 10개 전체 도메인 플러그인 등록 마켓플레이스 (v1.13.0)
 ├── agents/                  # AI 에이전트 지침 및 어댑터
 └── plugins/
     ├── security/            # 코드/시스템 보안 감사
@@ -29,7 +29,8 @@ This file provides guidance to Codex (Codex.ai/code) when working with code in t
     ├── rules/               # 에이전트 지침 관리
     ├── docs/                # README 및 문서 관리
     ├── review/              # 교차 검증
-    └── dev/                 # 빌드/배포
+    ├── dev/                 # 빌드/배포
+    └── meridian/            # 원격 미디어 파이프라인 (마켓 미등록·로컬 전용)
 ```
 
 ## 개발 명령
