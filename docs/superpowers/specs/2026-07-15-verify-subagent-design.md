@@ -27,22 +27,20 @@
 
 `~/.claude/rules/05-multi-agent.md`의 검증 체계(3단계 티어, 2-Way 이상 교차검증, B/R/A/T 포맷)를 zzizily 플러그인의 독립 컴포넌트로 이관.
 
-**하이브리드 v4**: skill(`/zzizily:verify`)이 진입점·판사·**보안 책임**(무결성·secret)을 유지하고, `runner`(Claude Code/Codex/agy)와 `reviewer`(Codex/agy/shell-gpt)를 분리한다. Claude Code subagent(`verify`)는 여러 runner 중 하나일 뿐이다.
+**하이브리드 v4**: skill(`/zzizily:verify`)이 진입점·판사·**보안 책임**(무결성·secret)을 유지하고, `runner`(Claude Code/Codex/agy)와 `reviewer`(Codex/agy/Tailscale Aperture)를 분리한다. Claude Code subagent(`verify`)는 여러 runner 중 하나일 뿐이다.
 
 v4 기준 선택지:
-1. `runner=claude` — Claude Code subagent가 reviewer fanout을 수행. `codex(MCP 우선, CLI 차선)` + `agy CLI`는 필수, `shell-gpt`는 선택
-2. `runner=codex` — Codex 세션 또는 `codex exec`가 reviewer fanout을 수행. 최소 검증 경로는 `agy CLI` 필수 + `shell-gpt` 선택
-3. `runner=agy` — Antigravity CLI가 reviewer fanout을 수행. 최소 검증 경로는 `codex(MCP 우선, CLI 차선)` 필수 + `shell-gpt` 선택
+1. `runner=claude` — Claude Code subagent가 reviewer fanout을 수행. `codex(MCP 우선, CLI 차선)` + `agy CLI`는 필수, `aperture`는 선택
+2. `runner=codex` — Codex 세션 또는 `codex exec`가 reviewer fanout을 수행. 최소 검증 경로는 `agy CLI` 필수 + `aperture` 선택
+3. `runner=agy` — Antigravity CLI가 reviewer fanout을 수행. 최소 검증 경로는 `codex(MCP 우선, CLI 차선)` 필수 + `aperture` 선택
 
-shell-gpt reviewer는 Tailscale Aperture(AI Gateway)에 연결된 profile/model만 사용한다. 현재 명시 모델은 `kimi-for-coding`, `k3`, `k3-256k`, `glm-5.2`, `deepseek-v4-pro-260425`, `seed-2-0-pro-260328`다. API key, endpoint URL, gateway secret은 평문 출력·저장하지 않는다.
+`aperture` reviewer는 OpenAI-compatible `/v1/chat/completions`를 직접 호출한다. `APERTURE_BASE_URL`은 `/v1`까지 포함한 API base URL로 환경변수에서만 참조하고 API key, endpoint URL, gateway secret은 평문 출력·저장하지 않는다.
 
 모델 선택 기준:
-1. `kimi-for-coding` — 작은 코드 diff와 구현 품질 검토
-2. `k3-256k` — 중대형 diff, 256k 안에 들어오는 repo 문맥 검증
-3. `k3` — 긴 spec/plan, 대형 diff, cross-file consistency
-4. `glm-5.2` — agent workflow, tool-use, 권한 경계, 실행 계획 검증
-5. `deepseek-v4-pro-260425` — 복잡한 bug 추론, 알고리즘/동시성/성능 리스크 검증
-6. `seed-2-0-pro-260328` — 넓은 대안 검토, spec/architecture trade-off sanity check
+1. `k3` — 긴 spec/plan, 대형 diff, cross-file consistency
+2. `qwen3.8-max` — coding, research, architecture·대안 검토, K3 결과 sanity check
+
+`aperture`를 선택하면 두 모델을 항상 독립 병렬 실행하고, 한 모델이라도 실패하면 pair 결과를 `INCOMPLETE`로 판정한다.
 
 아래 v3 상세 섹션은 보안 경계와 기존 이관 근거를 보존하기 위한 historical context다. 현재 operative contract는 `skills/verify/SKILL.md`와 `agents/verify.md`의 v4 runner/reviewer 계약을 우선한다.
 

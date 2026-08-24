@@ -9,7 +9,7 @@
   "interface": {
     "displayName": "Review",
     "shortDescription": "멀티 에이전트 런타임 교차검증",
-    "longDescription": "Codex/Antigravity/shell-gpt reviewer를 조합해 spec/plan 문서와 코드 변경을 격리 snapshot에서 검증하는 교차 검증 스킬을 제공합니다.",
+    "longDescription": "Codex/Antigravity/Tailscale Aperture reviewer를 조합해 spec/plan 문서와 코드 변경을 격리 snapshot에서 검증하는 교차 검증 스킬을 제공합니다.",
     "developerName": "Crong",
     "category": "Development",
     "capabilities": ["Write"],
