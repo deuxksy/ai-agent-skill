@@ -1,7 +1,7 @@
 {
   "name": "dev",
   "description": "React Native 앱 개발 스킬 — WiFi ADB 배포, 오픈소스 라이선스 인벤토리",
-  "version": "1.14.0",
+  "version": "1.15.0",
   "author": {
     "name": "Crong"
   },

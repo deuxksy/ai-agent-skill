@@ -1,6 +1,6 @@
 # AI-AGENT-SKILL
 
-zzizily는 Claude Code, Codex, Antigravity(Gemini) 등 멀티 Agent 런타임을 지원하는 개인 자동화 AI Agent Skill 플러그인 모음입니다. 보안 감사, 인프라 프로비저닝, 일상 자동화, 런타임 교차 검증부터 Git 워크플로우 및 문서 관리까지 30개 전체 스킬을 10개 독립 도메인 플러그인으로 모듈화하여 제공합니다.
+zzizily는 Claude Code, Codex, Antigravity(Gemini) 등 멀티 Agent 런타임을 지원하는 개인 자동화 AI Agent Skill 플러그인 모음입니다. 보안 감사, 인프라 프로비저닝, 일상 자동화, 런타임 교차 검증부터 Git 워크플로우 및 문서 관리까지 31개 전체 스킬을 10개 독립 도메인 플러그인으로 모듈화하여 제공합니다.
 
 ## 목차
 
@@ -25,7 +25,7 @@ zzizily는 Claude Code, Codex, Antigravity(Gemini) 등 멀티 Agent 런타임을
 | | [l10n](./plugins/l10n/README.md) | 이미지 4K 최적화, 한국어 번역 검증 및 딥리서치 기획 |
 | | [git](./plugins/git/README.md) | Git 커밋, PR 생성, 태그 릴리스 및 스태일 브랜치 정리 절차 |
 | | [rules](./plugins/rules/README.md) | 에이전트 지침 파일 구조 감사 및 세션 러닝 반영 |
-| | [docs](./plugins/docs/README.md) | README 요약 감사, docs/ 프로젝트 문서, Diátaxis 인덱싱 및 고아 문서 관리 |
+| | [docs](./plugins/docs/README.md) | README 요약 감사, 문서 재구성(분리/합병/이동), Diátaxis 인덱싱 및 고아 문서 관리 |
 | | [review](./plugins/review/README.md) | spec/plan 문서 및 코드 변경 런타임 교차 검증 |
 | | [dev](./plugins/dev/README.md) | Android WiFi ADB 빌드 배포 및 오픈소스 라이선스 조사 |
 | **Reference** (참조 / 규격) | [docs/README.md](./docs/README.md) | 서브 문서 디렉토리 역할 및 체계 정의 |
@@ -116,22 +116,22 @@ agy plugin list
 ## 플러그인 메타 & 버전 정책
 
 - **마켓플레이스 저장소**: `deuxksy/ai-agent-skill`
-- **통합 단일 버전**: `1.14.0` (모든 10개 독립 플러그인 매니페스트 및 마켓플레이스 동기화)
+- **통합 단일 버전**: `1.15.0` (모든 10개 독립 플러그인 매니페스트 및 마켓플레이스 동기화)
 
 ## 독립 도메인 플러그인 카탈로그 (10)
 
 | Plugin | Version | 포함 스킬 | 설치 명령어 |
 | :--- | :--- | :--- | :--- |
-| `security` | 1.14.0 | `code-audit`, `system-audit`, `backdoor-investigation`, `backdoor-remediation` | `security@zzizily` |
-| `infra` | 1.14.0 | `setup`, `packages`, `agents`, `proxmox-vm-create`, `openwrt-initd`, `acl-owner-reset` | `infra@zzizily` |
-| `trackers` | 1.14.0 | `calendar-sync`, `exchange-rate-tracker`, `hot-game-deals-n-news`, `notion-sprint-sync` | `trackers@zzizily` |
-| `sessions` | 1.14.0 | `handoff`, `resume` | `sessions@zzizily` |
-| `l10n` | 1.14.0 | `optimize-images-4k`, `korean-translation-verify`, `product-planning-dr-pipeline` | `l10n@zzizily` |
-| `git` | 1.14.0 | `commit`, `commit-push-pr`, `clean-gone`, `tag-release` | `git@zzizily` |
-| `rules` | 1.14.0 | `agents-md-management`, `revise-agents-md` | `rules@zzizily` |
-| `docs` | 1.14.0 | `docs-md-management`, `revise-readme-md` | `docs@zzizily` |
-| `review` | 1.14.0 | `verify` | `review@zzizily` |
-| `dev` | 1.14.0 | `deploy-android-wifi`, `license` | `dev@zzizily` |
+| `security` | 1.15.0 | `code-audit`, `system-audit`, `backdoor-investigation`, `backdoor-remediation` | `security@zzizily` |
+| `infra` | 1.15.0 | `setup`, `packages`, `agents`, `proxmox-vm-create`, `openwrt-initd`, `acl-owner-reset` | `infra@zzizily` |
+| `trackers` | 1.15.0 | `calendar-sync`, `exchange-rate-tracker`, `hot-game-deals-n-news`, `notion-sprint-sync` | `trackers@zzizily` |
+| `sessions` | 1.15.0 | `handoff`, `resume` | `sessions@zzizily` |
+| `l10n` | 1.15.0 | `optimize-images-4k`, `korean-translation-verify`, `product-planning-dr-pipeline` | `l10n@zzizily` |
+| `git` | 1.15.0 | `commit`, `commit-push-pr`, `clean-gone`, `tag-release` | `git@zzizily` |
+| `rules` | 1.15.0 | `agents-md-management`, `revise-agents-md` | `rules@zzizily` |
+| `docs` | 1.15.0 | `docs-md-management`, `docs-restructure`, `revise-readme-md` | `docs@zzizily` |
+| `review` | 1.15.0 | `verify` | `review@zzizily` |
+| `dev` | 1.15.0 | `deploy-android-wifi`, `license` | `dev@zzizily` |
 
 ## 상세 문서
 
