@@ -2,7 +2,7 @@
 
 안전한 Git commit, PR/MR, stale branch 정리, 버전 tag와 release 발행을 제공하는 runtime-neutral Agent Skills plugin.
 
-**Version:** 1.13.0
+**Version:** 1.14.0
 
 ## Skills
 

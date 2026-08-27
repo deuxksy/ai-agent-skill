@@ -1,7 +1,7 @@
 {
   "name": "trackers",
   "description": "Calendar sync, USD/KRW/VND exchange rates, and hot game deals/news tracker skills",
-  "version": "1.13.0",
+  "version": "1.14.0",
   "author": {
     "name": "Crong"
   },

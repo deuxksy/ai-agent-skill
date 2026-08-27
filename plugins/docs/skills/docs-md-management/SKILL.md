@@ -1,11 +1,11 @@
 ---
 name: docs-md-management
-description: "Use when repository README.md, document hubs (docs/README.md, docs/okf/README.md), Diátaxis indexes, or overall project docs under docs/ need audit, structuring, or updating."
+description: "Use when repository README.md, document hubs (docs/README.md, docs/okf/README.md), Diátaxis indexes, architecture documentation (arc42 structure, C4 diagrams, ADR decision records), or overall project docs under docs/ need audit, structuring, or updating."
 ---
 
 # README & Project Documentation Management
 
-Audit and manage repository `README.md` and **all project documentation under `docs/`**, enforce human-friendly project summaries (100~500 chars), build Diátaxis document indexes across `docs/`, verify sub-hubs, and report orphan markdown files.
+Audit and manage repository `README.md` and **all project documentation under `docs/`**, enforce human-friendly project summaries (100~500 chars), build Diátaxis document indexes across `docs/`, verify sub-hubs, report orphan markdown files, and audit architecture documentation layered on the Diátaxis Explanation quadrant (arc42 structure + C4 diagrams + ADR records, per `references/arch-docs-spec.md`).
 
 ## Key Principles (핵심 원칙)
 
@@ -21,6 +21,8 @@ Audit and manage repository `README.md` and **all project documentation under `d
 - **Root `README.md`**: Human-readable project summary (100~500 chars) + top-level Diátaxis index pointing to key guides and sub-hubs (`docs/README.md`, `docs/okf/README.md`).
 - **`docs/README.md`**: Sub-hub explaining `docs/` subdirectories (`okf`, `archive`, `superpowers`, etc.) and their purposes.
 - **`docs/okf/README.md`**: Sub-hub indexing all OKF specification docs under `docs/okf/`, structured into Diátaxis 4-quadrant subfolders (`tutorials/`, `how-to/`, `reference/`, `explanation/`).
+- **`docs/okf/explanation/`**: Architecture documentation hub — arc42 12-section structure with C4 zoom-level diagrams (see `references/arch-docs-spec.md`). Audited only when architecture docs are detected.
+- **`docs/okf/reference/decisions/`**: ADR (Architecture Decision Records) — indexed under the Reference quadrant in `docs/okf/README.md`. Fallback location when no OKF hub exists: `docs/decisions/`.
 - **`docs/archive/`**: Reference archive storing unmanaged external planning docs (screen designs, project requirements), API specs (`openapi.json`, `swagger.json`), and Figma design tokens. EXCLUDED from general human index & orphan doc scanning.
 - **`docs/superpowers/`**: Internal AI agent specs (`specs/`) and plans (`plans/`). EXCLUDED from general human index & orphan doc scanning.
 
@@ -54,7 +56,14 @@ Audit and manage repository `README.md` and **all project documentation under `d
 4. **Stale Link & Orphan Page Audit**:
    - Check for broken relative links across `README.md`, `docs/README.md`, `docs/okf/README.md`, and all indexed project docs under `docs/`.
    - Identify unindexed human markdown files (files under `docs/` or root not linked in `README.md` or sub-hubs) as **Orphan Pages** and suggest their Diátaxis category placement.
-5. **100-Point Quality Scoring Matrix**:
+5. **Architecture Docs Audit (Conditional)**:
+   - Activate ONLY when architecture documentation is detected — filename patterns (`architecture*.md`, `arc42*.md`), arc42 section headers, or a `decisions/` directory. Repos without architecture docs skip this step entirely (current behavior unchanged).
+   - Audit against `references/arch-docs-spec.md`:
+     - **arc42 (structure)**: 12-section completeness of architecture docs in the Explanation quadrant (`docs/okf/explanation/`).
+     - **C4 (diagrams)**: Zoom-level discipline (L1 Context / L2 Container / L3 Component) rendered with Mermaid `graph` keyword only.
+     - **ADR (rationale)**: Record format (Status/Context/Decision/Consequences) and hub indexing of `docs/okf/reference/decisions/` (or `docs/decisions/` fallback).
+   - Findings go to a separate report section. The 100-point scoring matrix below stays UNCHANGED.
+6. **100-Point Quality Scoring Matrix**:
    - Evaluate `README.md` and documentation hierarchy against `references/readme-quality-criteria.md` (Total 100 points):
      - Summary (20p), Diátaxis Structure (20p), Actionability & Quick Start (20p), Link Integrity & Hubs (15p), Human-Centric Formatting (15p), No Orphan/Conciseness (10p).
      - Calculate grade (A: 90-100, B: 70-89, C: 50-69, D: 30-49, F: 0-29).
@@ -70,6 +79,7 @@ Output audit findings and score card before proposing any changes:
 - Diátaxis index structure preview
 - Stale links found
 - Orphan pages detected with recommended Diátaxis placement
+- Architecture audit findings (only when detected): arc42 section gaps, C4 zoom-level violations, ADR format/indexing issues
 - Surgical diff proposal for `README.md` to achieve Grade A (90~100)
 
 ---
@@ -93,4 +103,4 @@ Output audit findings and score card before proposing any changes:
 
 ## Attribution
 
-Adapted for runtime-neutral AI Agent skills following Diátaxis framework and OKF documentation standards.
+Adapted for runtime-neutral AI Agent skills following Diátaxis classification, OKF hub standards, and arc42/C4/ADR architecture documentation practices.

@@ -1,4 +1,8 @@
-# OKF (Open Knowledge Framework) Reference
+# OKF (Open Knowledge Format) Reference
+
+Upstream spec: https://github.com/GoogleCloudPlatform/open-knowledge-format/blob/main/SPEC.md
+
+The upstream OKF defines a knowledge **file format** (UTF-8 markdown + YAML frontmatter, `type` required, optional provenance/trust/lifecycle metadata) and deliberately does NOT prescribe an organizational taxonomy. The Diátaxis 4-quadrant hub layout for `docs/okf/` defined below is this repository's convention layered on top of OKF.
 
 This specification defines how `docs/okf/` documentation hub is audited.
 

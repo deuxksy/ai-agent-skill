@@ -1,7 +1,7 @@
 {
   "name": "docs",
-  "description": "Audit and revise README.md and overall project documentation under docs/, Diátaxis indexes, and orphan docs",
-  "version": "1.13.0",
+  "description": "Audit and revise README.md and overall project documentation under docs/, Diátaxis indexes, orphan docs, and architecture documentation (arc42/C4/ADR)",
+  "version": "1.14.0",
   "author": {
     "name": "Crong"
   },
