@@ -16,13 +16,12 @@ Composition rule: arc42 §3/§5 contain C4-level diagrams; arc42 §9 links ADR r
 
 ## 2. Detection (Conditional Activation)
 
-The architecture audit activates ONLY when at least one of:
+The architecture audit activates **per artifact**, not all-or-nothing:
 
-- Filename pattern under `docs/`: `architecture*.md`, `arc42*.md`
-- arc42 section headers present in a document (e.g. "Scope and Context", "Building Block View", "Architecture Decisions")
-- A `decisions/` directory exists (`docs/okf/reference/decisions/` or `docs/decisions/`)
+- **ADR audit**: activates when a `decisions/` directory exists (`docs/okf/reference/decisions/` or `docs/decisions/`)
+- **arc42 + C4 audit**: activates when an architecture document is detected — filename pattern (`architecture*.md`, `arc42*.md`) under `docs/`, or arc42 section headers present (e.g. "Context and Scope", "Building Block View", "Architectural Decisions")
 
-Otherwise the audit is skipped entirely — non-architecture repositories keep the baseline Diátaxis/hub audit behavior and the 100-point scoring matrix unchanged.
+Both artifacts present → full audit. Neither → skipped entirely — non-architecture repositories keep the baseline Diátaxis/hub audit behavior and the 100-point scoring matrix unchanged. An ADR-only repository (decisions without an arc42 document) gets the ADR checks only, and is NOT flagged for missing arc42 sections.
 
 ## 3. arc42 — 12-Section Structure Checklist
 
@@ -45,13 +44,15 @@ Location: `docs/okf/explanation/` (one document per system, e.g. `architecture.m
 
 Empty sections are acceptable only with an explicit "not applicable" note — silent omission is flagged.
 
+Section-name variants between the arc42 overview page and the downloadable template (e.g. "Constraints" vs "Architecture Constraints", "Architectural Decisions" vs "Architecture Decisions") are treated as equivalent.
+
 ## 4. C4 — Zoom-Level Discipline
 
 C4 is adopted as an abstraction discipline, NOT a diagram syntax. Render with Mermaid `graph` keyword only (GitLab renderer compatibility — `flowchart`, `C4Context`, `C4Container` keywords are NOT allowed).
 
 | Level | Shows | Rendering rule |
 | :--- | :--- | :--- |
-| L1 System Context | System + actors + external systems, no internals | `graph LR`; one node per actor/external system |
+| L1 System Context | System + actors + external systems, no internals | `graph LR`; central node = system of interest, plus one node per actor/external system |
 | L2 Container | System boundary + containers (apps, services, DBs) | `graph TD`; `subgraph` = system boundary; node = container with tech in label |
 | L3 Component | Inside exactly ONE container | `graph TD`; only components of a single container |
 
@@ -65,7 +66,7 @@ Rules:
 
 Location: `docs/okf/reference/decisions/` when the OKF hub exists, otherwise `docs/decisions/`. File naming: `NNNN-kebab-case-title.md` with zero-padded sequence.
 
-MADR-lite template per record:
+ADR-lite (Nygard-style) template per record:
 
 ```markdown
 # NNNN. Decision title
@@ -88,7 +89,7 @@ Rules:
 - One decision per record — atomic and small
 - Superseded records are never deleted: update Status and link to the successor
 - All records must be indexed in the hub README under the Reference quadrant — orphan audit applies
-- The template above (MADR-lite) is the MINIMUM audit subset — records following the full MADR 4.0.0 template (Decision Drivers, Considered Options, Pros and Cons, ...) also pass (see Canonical Sources)
+- The template above (ADR-lite, Nygard-style — NOT a MADR subset) is the minimum audit format; records following the full MADR 4.0.0 template also pass (see Canonical Sources)
 
 ## 6. Relationship to Scoring
 
@@ -103,5 +104,5 @@ Each link is the normative anchor for a specific claim in this spec — consult 
 | Diátaxis | https://diataxis.fr | The four documentation types (tutorials / how-to guides / reference / explanation) |
 | OKF | https://github.com/GoogleCloudPlatform/open-knowledge-format/blob/main/SPEC.md | Knowledge file format: `type` frontmatter, provenance, trust, lifecycle. Note: the `okf/` copy in GoogleCloudPlatform/knowledge-catalog is a frozen snapshot, no longer maintained |
 | C4 model | https://c4model.com/introduction | Zoom-level definitions (System Context / Container / Component / Code) as abstraction discipline, not fixed notation |
-| ADR / MADR 4.0.0 | https://adr.github.io (concept hub) · https://adr.github.io/madr/ (template spec) | ADR concept; the decision record template this spec audits (MADR-lite is the minimum subset) |
+| ADR / MADR 4.0.0 | https://adr.github.io (concept hub) · https://adr.github.io/madr/ (template spec) | ADR concept; the decision record format this spec audits (ADR-lite/Nygard is the audit minimum) |
 | arc42 | https://arc42.org/overview/ | The 12-section structure checklist in section 3 above |

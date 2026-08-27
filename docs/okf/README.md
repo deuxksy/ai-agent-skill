@@ -1,6 +1,6 @@
 # OKF Documentation Hub (`docs/okf/`)
 
-본 디렉토리는 OKF (Open Knowledge Framework) 최신 버전 표준에 따라 관리되는 기술 명세 및 문서 허브입니다.
+본 디렉토리는 OKF (Open Knowledge Format) 파일 포맷 표준과 Diátaxis 분류 체계를 따르는 기술 명세 및 문서 허브입니다.
 
 ---
 

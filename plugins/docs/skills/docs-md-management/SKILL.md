@@ -48,7 +48,7 @@ Audit and manage repository `README.md` and **all project documentation under `d
      - **Tutorials**: Beginner lessons & getting started.
      - **How-To Guides**: Practical task procedures.
      - **Reference**: Technical specs, `docs/README.md`, `docs/okf/README.md`, API & CLI refs.
-     - **Explanation**: Architecture, concepts, design decisions.
+     - **Explanation**: Architecture, concepts, design rationale (arc42 documents). ADR records are indexed under Reference (`decisions/`), not here.
    - Format relative links: `[Doc Title](./relative/path.md) - 1-line description`.
 3. **Sub-Hub Integrity Check**:
    - Verify `docs/README.md` correctly describes subfolder roles (`okf`, `archive`, `superpowers`, etc.).
@@ -57,7 +57,7 @@ Audit and manage repository `README.md` and **all project documentation under `d
    - Check for broken relative links across `README.md`, `docs/README.md`, `docs/okf/README.md`, and all indexed project docs under `docs/`.
    - Identify unindexed human markdown files (files under `docs/` or root not linked in `README.md` or sub-hubs) as **Orphan Pages** and suggest their Diátaxis category placement.
 5. **Architecture Docs Audit (Conditional)**:
-   - Activate ONLY when architecture documentation is detected — filename patterns (`architecture*.md`, `arc42*.md`), arc42 section headers, or a `decisions/` directory. Repos without architecture docs skip this step entirely (current behavior unchanged).
+   - Activate per artifact — a `decisions/` directory enables ADR checks; an architecture document (filename pattern `architecture*.md`/`arc42*.md` or arc42 section headers) enables arc42+C4 checks. Repos with neither skip this step entirely (current behavior unchanged).
    - Audit against `references/arch-docs-spec.md`:
      - **arc42 (structure)**: 12-section completeness of architecture docs in the Explanation quadrant (`docs/okf/explanation/`).
      - **C4 (diagrams)**: Zoom-level discipline (L1 Context / L2 Container / L3 Component) rendered with Mermaid `graph` keyword only.

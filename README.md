@@ -20,7 +20,7 @@ zzizily는 Claude Code, Codex, Antigravity(Gemini) 등 멀티 Agent 런타임을
 | | [review](./plugins/review/README.md) | spec/plan 문서 및 코드 변경 런타임 교차 검증 |
 | | [dev](./plugins/dev/README.md) | Android WiFi ADB 빌드 배포 및 오픈소스 라이선스 조사 |
 | **Reference** (참조 / 규격) | [docs/README.md](./docs/README.md) | 서브 문서 디렉토리 역할 및 체계 정의 |
-| | [docs/okf/README.md](./docs/okf/README.md) | OKF(Open Knowledge Framework) 명세 허브 및 작성 가이드 |
+| | [docs/okf/README.md](./docs/okf/README.md) | OKF(Open Knowledge Format) 명세 허브 및 작성 가이드 |
 | | [CLAUDE.md](./CLAUDE.md) | 프로젝트 구조, 분류 원칙, SKILL.md 규격 및 패키지 관리 명세 |
 | | [AGENTS.md](./AGENTS.md) | Codex 런타임용 프로젝트 지침 명세 |
 | | [GEMINI.md](./GEMINI.md) | Gemini 런타임용 프로젝트 지침 명세 |
