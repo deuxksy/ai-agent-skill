@@ -12,11 +12,13 @@ description: "JMeter 원격 실행 결과 수집·무결성 검증. master의 re
 ## 1. 수집 (master → 로컬, 증분)
 
 ```bash
-rsync -az <master>:<remote_path 절대경로>/results/ ./results/
+rsync -az --exclude=summary.md <master>:<remote_path 절대경로>/results/ ./results/
 # Windows는 reverse robocopy (원격→로컬, /MIR 금지):
-# robocopy \\<master-ip>\<share>\results .\results /E /XD .git
+# robocopy \\<master-ip>\<share>\results .\results /E /XD .git summary.md
 # SMB 미탑재면 scp -r fallback
 ```
+
+`summary.md`는 로컬에서 누적 편집 후 push하는 단방향 파일이다 — pull에 포함하면 원격 구버전이 로컬 편집분을 되돌린다 (2026-08-28 실측 회귀: knee 사이클 중 pull이 세션 블록 행을 삭제). run.md는 폴더 단위라 충돌 없음.
 
 수집 직후 jtl만 누락된 run이 없는지 `ls results/*/result.jtl` 대응점검.
 
@@ -34,6 +36,10 @@ python3 check_integrity.py results/<OUT>; echo exit=$?
 
 - 종료코드: `0` 양호 / `1` 중단 의심 — `1`이면 해당 run은 집계·보고에서 제외하고 원인(run.md 특이사항, jmeter.log 끝)을 확인
 - 검사 대상 파일 분리 원칙: `summary =`는 콘솔(jmeter.log) 항목이지 jtl(CSV)에는 없다 — jtl에 summary가 없다고 오경고하지 않는다
+
+## 2.5 소급 집계 (실행 완료·집계 전 중단 run)
+
+무결성 통과 run 중 `run.md`가 없는 것(세션 중단으로 실행만 원격에 남은 경우)은 run 스킬의 "실행 후 자동 3종"을 소급 수행한다 — 집계 → run.md 생성(특이사항에 "소급 작성" 명시, 실행 일시는 폴더 타임스탬프 부하원 TZ에서 KST 환산) → summary.md 누적. 무효(무결성 exit=1) run은 표에 `베이스라인(무효)`·`래더(무효)`로 기록해 재실행 대상임을 남긴다 (2026-08-28 실측 — 세션 중단 11건 복구).
 
 ## 3. HTML 리포트 (로컬 생성)
 

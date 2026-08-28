@@ -11,6 +11,8 @@ description: "점진적 VU 상승 래더로 시나리오별 knee(포화 변곡�
 
 `jmx`, `vu_start`(기본 2), `step_policy`(기본 geo2: 2,4,8,16,… / `list:10,30,50` 형식), `ramp`(60), `duration`(120)
 
+**보간 래더 재개(중간 VU부터)**: 남은 포인트만 `list:`로 지정하고, 판정 기준이 될 직전 포인트 TPS를 인자와 함께 전달한다 (2026-08-28 실측 — 세션 중단 후 `list:16,50,100` 재개, 직전 8VU 1,544.9 기준 평탄 판정). 기존 세션의 인접 포인트(예: 1차 캠페인 30VU)도 참조해 교차검증한다.
+
 ## 사이클 (포인트마다 — run 스킬의 실행·집계를 재사용)
 
 1. 현재 VU로 run 실행 + `../run/aggregate.py` 집계
@@ -40,6 +42,8 @@ python3 ../run/aggregate.py results/<OUT>/result.jtl <ramp>
 curl -s "<metrics_url>/api/v1/query" --data-urlencode 'query=sum(rate(nginx_ingress_controller_requests[1m]))'
 curl -s "<metrics_url>/api/v1/query" --data-urlencode 'query=hikaricp_connections_pending'
 curl -s "<metrics_url>/api/v1/query" --data-urlencode 'query=vllm:num_requests_waiting'   # 4-x 계열 후
+# metrics URL이 로컬에서 직접 닿지 않으면 부하원 ssh 경유:
+ssh <master> "curl -s '<metrics_url>/api/v1/query' --data-urlencode 'query=...'"
 ```
 
 ## 산출

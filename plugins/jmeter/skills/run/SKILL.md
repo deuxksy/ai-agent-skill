@@ -32,6 +32,7 @@ ssh <master> 'cd <remote_path 절대경로> && OUT=results/<OUT> && mkdir -p "$O
 1. 집계: `python3 aggregate.py <수집된 jtl> <ramp>` (원격에서 직접 실행 가능)
 2. run.md 생성: 실행 일시(KST), 명령 전체, 형상(master/workers, JMeter 버전), 프로파일(VU/R/D), 집계 결과, 특이사항
 3. summary.md 1행 누적: `| 시나리오 | 단계 | 회차 | T(x{n}) | R | D | 폴더 | 샘플수 | TPS | p95 | stdev | Err% | 특이 |`
+   summary.md가 세션별 블록(`## 세션N`) 구조면 진행 중 세션 표에 행을 추가하고, 블록이 없으면 새로 만든다 — 이전 세션 결과와 섞지 않는다 (2026-08-28 실측 관례)
 
 ## --smoke 통과 기준
 
