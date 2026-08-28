@@ -1,7 +1,7 @@
 {
   "name": "docs",
   "description": "Audit and restructure README.md and project documentation under docs/: Diátaxis indexes, orphan docs, doc migration (split/merge/move), and architecture documentation (arc42/C4/ADR)",
-  "version": "1.15.0",
+  "version": "1.16.0",
   "author": {
     "name": "Crong"
   },

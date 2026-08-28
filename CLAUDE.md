@@ -4,7 +4,7 @@
 
 ## 프로젝트 개요
 
-**zzizily** — 10개 독립 도메인 플러그인을 통합 제공하는 개인 자동화 AI Agent Skill 마켓플레이스.
+**zzizily** — 11개 독립 도메인 플러그인을 통합 제공하는 개인 자동화 AI Agent Skill 마켓플레이스.
 
 ## Quick Start
 
@@ -23,11 +23,12 @@ claude plugin install rules@zzizily
 claude plugin install docs@zzizily
 claude plugin install review@zzizily
 claude plugin install dev@zzizily
+claude plugin install jmeter@zzizily
 ```
 
 ## 플러그인 메타 & 버전 정책
 
-- **통합 단일 버전**: `1.15.0` (비공개 플러그인 `meridian` 제외 — 독립 버전)
+- **통합 단일 버전**: `1.16.0` (비공개 플러그인 `meridian` 제외 — 독립 버전)
 - **마켓플레이스 매니페스트**: `.claude-plugin/marketplace.json`
 - **GitHub repo**: `deuxksy/ai-agent-skill`
 
@@ -36,7 +37,7 @@ claude plugin install dev@zzizily
 ```
 .
 ├── .claude-plugin/
-│   └── marketplace.json     # 10개 전체 도메인 플러그인 등록 마켓플레이스 (v1.15.0)
+│   └── marketplace.json     # 11개 전체 도메인 플러그인 등록 마켓플레이스 (v1.16.0)
 ├── agents/
 │   └── verify.md            # Claude runner adapter (격리 reviewer fanout)
 ├── docs/                    # 프로젝트 서브 문서 (docs/README.md, docs/okf/)
@@ -51,6 +52,7 @@ claude plugin install dev@zzizily
     ├── docs/                # README 및 프로젝트 문서 관리 (docs-md-management, docs-restructure, revise-readme-md)
     ├── review/              # 교차 검증 (verify)
     ├── dev/                 # 빌드/배포 (deploy-android-wifi, license)
+    ├── jmeter/              # 부하 테스트 (lint, deploy, run, knee, collect, report)
     └── meridian/            # 원격 미디어 파이프라인 — 마켓플레이스 미등록·로컬 전용
 ```
 
@@ -65,21 +67,23 @@ claude plugin install dev@zzizily
 5. **빌드/배포/개발 도구** → `dev`
 6. **파일/문서/번역 콘텐츠 처리** → `l10n`
 7. **세션/작업 보존** → `sessions`
+8. **부하 테스트/JMeter 실행** → `jmeter`
 
-## 독립 도메인 플러그인 카탈로그 (10)
+## 독립 도메인 플러그인 카탈로그 (11)
 
 | Plugin | Version | Skills | 설치 |
 | :--- | :--- | :--- | :--- |
-| `security` | 1.15.0 | `code-audit`, `system-audit`, `backdoor-investigation`, `backdoor-remediation` | `security@zzizily` |
-| `infra` | 1.15.0 | `setup`, `packages`, `agents`, `proxmox-vm-create`, `openwrt-initd`, `acl-owner-reset` | `infra@zzizily` |
-| `trackers` | 1.15.0 | `calendar-sync`, `exchange-rate-tracker`, `hot-game-deals-n-news`, `notion-sprint-sync` | `trackers@zzizily` |
-| `sessions` | 1.15.0 | `handoff`, `resume` | `sessions@zzizily` |
-| `l10n` | 1.15.0 | `optimize-images-4k`, `korean-translation-verify`, `product-planning-dr-pipeline` | `l10n@zzizily` |
-| `git` | 1.15.0 | `commit`, `commit-push-pr`, `clean-gone`, `tag-release` | `git@zzizily` |
-| `rules` | 1.15.0 | `agents-md-management`, `revise-agents-md` | `rules@zzizily` |
-| `docs` | 1.15.0 | `docs-md-management`, `docs-restructure`, `revise-readme-md` | `docs@zzizily` |
-| `review` | 1.15.0 | `verify` | `review@zzizily` |
-| `dev` | 1.15.0 | `deploy-android-wifi`, `license` | `dev@zzizily` |
+| `security` | 1.16.0 | `code-audit`, `system-audit`, `backdoor-investigation`, `backdoor-remediation` | `security@zzizily` |
+| `infra` | 1.16.0 | `setup`, `packages`, `agents`, `proxmox-vm-create`, `openwrt-initd`, `acl-owner-reset` | `infra@zzizily` |
+| `trackers` | 1.16.0 | `calendar-sync`, `exchange-rate-tracker`, `hot-game-deals-n-news`, `notion-sprint-sync` | `trackers@zzizily` |
+| `sessions` | 1.16.0 | `handoff`, `resume` | `sessions@zzizily` |
+| `l10n` | 1.16.0 | `optimize-images-4k`, `korean-translation-verify`, `product-planning-dr-pipeline` | `l10n@zzizily` |
+| `git` | 1.16.0 | `commit`, `commit-push-pr`, `clean-gone`, `tag-release` | `git@zzizily` |
+| `rules` | 1.16.0 | `agents-md-management`, `revise-agents-md` | `rules@zzizily` |
+| `docs` | 1.16.0 | `docs-md-management`, `docs-restructure`, `revise-readme-md` | `docs@zzizily` |
+| `review` | 1.16.0 | `verify` | `review@zzizily` |
+| `dev` | 1.16.0 | `deploy-android-wifi`, `license` | `dev@zzizily` |
+| `jmeter` | 1.16.0 | `lint`, `deploy`, `run`, `knee`, `collect`, `report` | `jmeter@zzizily` |
 
 ## SKILL.md 규격
 
@@ -97,4 +101,4 @@ description: <한 줄 설명>
 
 ## 버전 관리
 
-[SemVer](https://semver.org/) 기반으로 관리하며 모든 10개 독립 플러그인 매니페스트 및 문서 표의 버전을 동기화한다.
+[SemVer](https://semver.org/) 기반으로 관리하며 모든 11개 독립 플러그인 매니페스트 및 문서 표의 버전을 동기화한다.

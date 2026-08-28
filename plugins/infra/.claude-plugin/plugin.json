@@ -1,7 +1,7 @@
 {
   "name": "infra",
   "description": "Dotfiles setup, system package management, AI agents/MCP/LSP lifecycle, Proxmox VM, and OpenWrt service provisioning skills",
-  "version": "1.15.0",
+  "version": "1.16.0",
   "author": {
     "name": "Crong"
   },
