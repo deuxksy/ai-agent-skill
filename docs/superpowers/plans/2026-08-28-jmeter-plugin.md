@@ -480,7 +480,7 @@ description: "JMeter 시나리오 1회 실행. jmx + 총 VU + ramp + duration(+ 
 
 ## 인자
 
-- `jmx`(필수), `vu` 총 VU(필수), `ramp`(초, 기본 60), `duration`(초, 기본 180)
+- `jmx`(필수), `vu` 총 VU(필수), `ramp`(초, 기본 60), `duration`(초, 기본 120)
 - `mode`: `x2`(기본, 분산) / `x1`(단독)
 - 옵션: `--smoke` (T1~2·D5~10 사전 실행), `--verify-db` (jmeter.json verify_db로 jtl↔DB 정합)
 
@@ -554,7 +554,7 @@ description: "점진적 VU 상승 래더로 시나리오별 knee(포화 변곡�
 
 ## 인자
 
-`jmx`, `vu_start`(기본 2), `step_policy`(기본 geo2: 2,4,8,16,… / `list:10,30,50` 형식), `ramp`(60), `duration`(180)
+`jmx`, `vu_start`(기본 2), `step_policy`(기본 geo2: 2,4,8,16,… / `list:10,30,50` 형식), `ramp`(60), `duration`(120)
 
 ## 사이클 (포인트마다 — run 스킬의 실행·집계를 재사용)
 
