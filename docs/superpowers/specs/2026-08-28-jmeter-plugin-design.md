@@ -89,7 +89,7 @@ jmeter:lint (사전) → jmeter:deploy → jmeter:run ─┐
 
 ### 4.3 `jmeter:run` — 1회 실행
 
-- **인자**: `jmx`, `vu`(총), `ramp`(기본 60), `duration`(기본 **120** — 스킬 실행 시간 단축 목적, 2026-08-28 사용자 확정), `[mode=x2|x1]`, `[--smoke]`, `[--verify-db <쿼리세트>]`
+- **인자**: `jmx`, `vu`(총), `ramp`(기본 60 — 단, **vu=2 베이스라인은 R=10·D=30** 기본, 2026-08-28 사용자 확정), `duration`(기본 **120** — 스킬 실행 시간 단축 목적, 2026-08-28 사용자 확정), `[mode=x2|x1]`, `[--smoke]`, `[--verify-db <쿼리세트>]`
 - **T 계산**: x2 → `T=vu/2` (짝수 강제, 홀수면 x1 유도), x1 → `T=vu`
 - **명명**: `results/{시나리오}-T{t}x{n}_R{r}_D{d}-{yymmdd-hhmmss}/` (result.jtl + jmeter.log)
 - **실행 후 자동**: 풀가동 구간(램프 제외, Transaction parent `→` 라벨 제외) 집계 — TPS·p95·stdev·Err% (검증된 python 스크립트 내장) + **run.md 자동 생성**

@@ -511,7 +511,7 @@ Err 0 + worker 분포 균형(편차 <10%) + jmeter.json smoke.expect 라벨·상
 ## 내장 주의
 
 - 콘솔 `summary =` 는 분산 display 오탐 — 판정은 항상 jtl
-- 베이스라인은 T1x2 R0 D60 권장
+- 베이스라인(vu=2)은 **R=10, D=30** 기본 (2026-08-28 사용자 확정 — 실행 시간 단축)
 ```
 
 - [ ] **Step 3: bash 블록 문법 검증** (Task 3 Step 2의 검증 스크립트 재사용, 치환 변수에 `$T/$RAMP/$DUR/$OUT/<jmx>/<master>/<worker_ips>` 추가)
