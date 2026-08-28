@@ -21,6 +21,8 @@ import xml.etree.ElementTree as ET
 # 리소스 부재 시 404가 정상응답일 수 있는 엔드포인트 경로 힌트 (B1 BLOCKER 판정용)
 OPTIONAL_RESOURCE_HINTS = ("image", "asset", "thumbnail", "avatar", "file", "download")
 
+THREAD_GROUP_TAGS = ("ThreadGroup", "SetupThreadGroup", "PostThreadGroup")
+
 
 def _sampler_path(el, parents):
     """어설션 소속 HTTPSampler의 경로 — hashTree 상위로 올라가며 선행 형제 샘플러 탐색.
@@ -42,15 +44,31 @@ def _sampler_path(el, parents):
     return ""
 
 
+def _owning_group_mode(el, parents):
+    """원소가 속한 ThreadGroup의 on_sample_error 값 — 그룹 판별 불가 시 None.
+
+    JMX 구조상 ThreadGroup 바로 뒤의 hashTree가 해당 그룹의 서브트리다.
+    부모 체인을 올라가며 hashTree 직전 형제가 ThreadGroup인 지점에서 귀속한다.
+    파일에 stopthread 그룹이 하나라도 있으면 전역 차단하는 오탐(continue 그룹 누수) 방지.
+    """
+    node = el
+    while node is not None:
+        p = parents.get(node)
+        if p is None:
+            return None
+        siblings = list(p)
+        idx = siblings.index(node)
+        if idx > 0 and siblings[idx - 1].tag in THREAD_GROUP_TAGS:
+            ose = siblings[idx - 1].find(".//stringProp[@name='ThreadGroup.on_sample_error']")
+            return (ose.text or "") if ose is not None else None
+        node = p
+    return None
+
+
 def analyze(path):
     findings = []
     root = ET.parse(path).getroot()
 
-    has_stopthread = any(
-        (p.find(".//stringProp[@name='ThreadGroup.on_sample_error']") is not None
-         and p.find(".//stringProp[@name='ThreadGroup.on_sample_error']").text == "stopthread")
-        for p in root.iter("ThreadGroup")
-    )
     parents = {c: p for p in root.iter() for c in p}
 
     for ra in root.iter("ResponseAssertion"):
@@ -64,7 +82,7 @@ def analyze(path):
         assume = ra.find(".//boolProp[@name='Assertion.assume_success']")
         ignore_status = assume is not None and assume.text == "true"
         strict = len(values) == 1 and "|" not in values[0] and not ignore_status
-        if strict and has_stopthread:
+        if strict and _owning_group_mode(ra, parents) == "stopthread":
             optional_resource = any(
                 h in _sampler_path(ra, parents).lower() for h in OPTIONAL_RESOURCE_HINTS)
             if optional_resource:
@@ -87,7 +105,7 @@ def analyze(path):
         expected = ja.find(".//stringProp[@name='EXPECTED_VALUE']")
         forces_existence = (exp_null is not None and exp_null.text == "false"
                             and expected is not None and not (expected.text or "").strip())
-        if forces_existence and has_stopthread:
+        if forces_existence and _owning_group_mode(ja, parents) == "stopthread":
             jp = ja.find(".//stringProp[@name='JSON_PATH']")
             json_path = (jp.text or "") if jp is not None else ""
             array_indexed = re.search(r"\$\[\d+\]", json_path) is not None
@@ -148,6 +166,9 @@ def main():
         findings = analyze(path)
     except ET.ParseError as e:
         print(f"[ERROR] XML 파싱 실패: {e}", file=sys.stderr)
+        return 2
+    except OSError as e:  # 미존재 파일 등 — BLOCKER(exit=1)와 의미 충돌 방지
+        print(f"[ERROR] 파일 읽기 실패: {e}", file=sys.stderr)
         return 2
     if as_json:
         print(json.dumps(findings, ensure_ascii=False, indent=2))
