@@ -44,7 +44,24 @@ jmeter:lint (사전) → jmeter:deploy → jmeter:run ─┐
 ## 3. 공통 컨텍스트
 
 - **프로젝트 감지**: cwd에 `src/jmeter/*.jmx` 존재 시 JMeter 프로젝트로 판정. 미존재 시 스킬 중단.
-- **대상 서버 설정**: `jmeter.json` (프로젝트 루트) — `master`, `workers[{host, ip}]`, `remote_path`. 미존재 시 인자 또는 질문으로 생성 제안.
+- **대상 서버 설정**: `jmeter.json` (프로젝트 루트) — 전체 스키마:
+
+```json
+{
+  "master": "keco-train-02",
+  "workers": [{ "host": "keco-train-01", "ip": "172.20.100.19" }, { "host": "keco-train-02", "ip": "172.20.100.20" }],
+  "remote_path": "/home/kls/git/<repo>",
+  "ssh": { "user": "kls", "port": 22, "key_ref": "환경변수 또는 ssh-config 별칭 — 평문 키 금지" },
+  "remote_os": "linux",
+  "smoke": { "expect": [{ "label_pattern": "5.3.3", "status": 201 }] },
+  "verify_db": { "dsn_ref": "환경변수명", "queries": ["SELECT ..."], "expect": "jtl 라벨 카운트 = 쿼리 결과" },
+  "metrics": { "prometheus_url": "https://...", "grafana_url": "https://..." }
+}
+```
+
+  - `remote_os: linux` 전제 — 원격 노드가 POSIX(`/proc`, nohup)임을 명시. Windows 원격은 비지원 (로컬 Windows만 지원).
+  - `smoke.expect` 미선언 시 통과 기준은 Err 0 + worker 분포 균형만 적용 (범용 기본).
+  - credential은 항상 참조(dsn_ref/key_ref)로만 — jmeter.json에 평문 금지.
 - **OS 분기**: 로컬 Darwin/Linux → `rsync`, Windows → `robocopy`(UNC/SMB, 실패 시 scp fallback). 원격 명령은 항상 `ssh`.
 - **CWD 절대경로 규칙**: 원격 cd는 반드시 절대경로 (`~`는 zsh 쌍따옴표/PowerShell 확장으로 깨짐 — 실측).
 
@@ -76,29 +93,38 @@ jmeter:lint (사전) → jmeter:deploy → jmeter:run ─┐
 - **명명**: `results/{시나리오}-T{t}x{n}_R{r}_D{d}-{yymmdd-hhmmss}/` (result.jtl + jmeter.log)
 - **실행 후 자동**: 풀가동 구간(램프 제외, Transaction parent `→` 라벨 제외) 집계 — TPS·p95·stdev·Err% (검증된 python 스크립트 내장) + **run.md 자동 생성**
 - **주의 내장**: 콘솔 `summary =` 는 분산 모드 display 오탐 — 판정은 항상 jtl
-- **`--smoke`**: T1~2 VU·D5~10 사전 실행 (통과: Err 0 + 핵심 쓰기 201 + worker 분포 균형)
-- **`--verify-db`**: 쓰기 시나리오 후 jtl↔DB 정합 — 쿼리세트는 `jmeter.json`의 `verify_db` 섹션(쿼리 + 기대 매핑)으로 정의, 타임존/시퀀스갭 주의 내장
+- **`--smoke`**: T1~2 VU·D5~10 사전 실행. 통과 기준: Err 0 + worker 분포 균형 + `jmeter.json > smoke.expect`에 선언된 라벨·상태코드 충족 (미선언 시 범용 기본만)
+- **`--verify-db`**: 쓰기 시나리오 후 jtl↔DB 정합 — `jmeter.json > verify_db`(dsn_ref·queries·expect)로 정의, 타임존/시퀀스갭 주의 내장
+- **summary.md 누적**: 각 실행 직후 `results/summary.md`에 1행 추가 — 스키마 `| 시나리오 | 단계 | 회차 | T(x{n}) | R | D | 폴더 | 샘플수 | TPS | p95 | stdev | Err% | 특이 |` (파일 미존재 시 헤더 생성)
 
 ### 4.4 `jmeter:knee` — 점진 VU 탐색
 
 - **인자**: `jmx`, `[vu_start=2]`, `[step_policy=geo2|list:10,30,50]`, `ramp`, `duration`
-- **판정룰 (2026-08-28 확정본)**:
-  - 진행: TPS +5% 초과 상승 + Err < 1% + 절대 p95 < 1s (상승 구간에서 p95 배수 미적용)
-  - 평탄(±5%): 감지 후 **확인 2포인트까지만** 추가 실행 후 종료 — 잔여 스텝 생략
-  - 이상 종료: Err ≥ 5%, 절대 p95 ≥ 1s, 또는 TPS 평탄/하락 구간에서 p95 ≥ 직전 2배
+- **판정룰 (2026-08-28 확정본)** — 각 런 종료 후 아래 우선순위로 **단일 판정** (첫 매칭 채택):
+
+| 우선순위 | 판정 | 조건 (직전 포인트 대비) | 동작 |
+| :--- | :--- | :--- | :--- |
+| 1 | 이상 종료 | Err ≥ 5% 또는 절대 p95 ≥ 1s | 즉시 종료 |
+| 2 | 이상 종료 | TPS 하락(>5% 감소) + p95 ≥ 직전 2배 | 종료 — 해당 피크가 MAX TPS |
+| 3 | 이상 재시 | Err 1% ≤ x < 5% (1회만) | 동일 VU 1회 재실행, 재발 시 종료 |
+| 4 | 평탄 | TPS 변화 -5% ~ +5% | 확인 2포인트 추가 실행 후 종료 |
+| 5 | 진행 | TPS +5% 초과 상승 + Err < 1% + p95 < 1s | 다음 스텝 |
+
+  - 상승 구간(판정 5)에서는 p95 배수 규칙 미적용 (빠른 베이스라인 과민 방지)
+  - TPS +5% 이하 상승은 평탄(판정 4) 취급
 - **런 간 게이트**: 최소 120s + 잔여트래픽 확인(NGINX rate < 1, HikariCP pending = 0, 4-x 계열 후 vLLM waiting = 0) — 미통과 시 30s 재확인
 - **산출**: VU-TPS 곡선 표 + knee·MAX TPS 판정 + summary 누적
 
 ### 4.5 `jmeter:collect` — 결과 수집·리포트
 
 1. master → 로컬 `results/` 증분 수집 (rsync pull / robocopy reverse)
-2. **jtl 무결성 3종**: 마지막 라인 필드수 = 헤더, 샘플 span ≈ DURATION, `summary =` 라인 존재 — 중단 run 식별
+2. **무결성 3종 (검사 대상 파일 분리)**: ① `result.jtl` 마지막 라인 필드수 = 헤더 필드수 ② `result.jtl` 샘플 span ≈ DURATION±20% (램프 제외 풀가동 기준) ③ **`jmeter.log`**에 최종 `summary =` 라인 존재 — 중단 run 식별 (`summary =`는 콘솔 로그 항목이지 jtl(CSV)에는 없음 — 판정 지표로 사용 금지)
 3. **HTML 리포트 로컬 생성**: `jmeter -g result.jtl -o report/` (부하원 과부하 방지 — 로컬 생성 규칙, not-empty 폴더 치우고 재생성 gotcha 내장)
 4. `[--evidence]`: 문제 발생 run의 원격(pod/서버) 로그 수집·보존 (2026-08-28 Kakao 500 증거 패턴)
 
 ### 4.6 `jmeter:report` — 결과 보고서
 
-- **입력**: 시나리오명 또는 결과 폴더/summary.md
+- **입력**: 시나리오명 또는 결과 폴더 — `results/summary.md`(run/knee가 누적한 집계표, §4.3 스키마) + 대상 run의 `run.md`를 읽는다
 - **산출**:
   1. 결과서 마크다운 — 테스트 범위 표(VU/Ramp/Duration), VU별 TPS·p95·stdev 추이, **knee·MAX TPS 판정**, 라벨별 스텝 분석, run 폴더 역추적 링크
   2. **차트 자동 생성** — VU-TPS 곡선, VU-p95, 라벨별 분포 (`gen_stress_charts.py` 패턴 일반화)
