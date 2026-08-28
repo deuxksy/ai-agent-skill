@@ -157,3 +157,28 @@ jmeter:lint (사전) → jmeter:deploy → jmeter:run ─┐
 | 콘솔 summary = 분산 display 오탐 | 전 run (`summary = 3 in 60s` vs jtl 29,656) |
 | created_date 타임존 가변(버전별 UTC/KST) + id 시퀀스 갭 | 5-3 DB 정합 |
 | 램프 잔상이 rate[1m]에 남음 → 게이트는 윈도우 밀림 대기 | 드레인 게이트 운용 |
+
+## 8. `jmeter:bottleneck` (v1.17.0 추가, 2026-08-28)
+
+병목 지점 판별 — "무엇이 느린가 → 왜 느린가" 2단 플로우.
+
+**입력**: 런 폴더명 또는 시간 창 (+ 시나리오 계열) — knee 진행 중 라이브 판정 가능.
+
+**진단 플로우**:
+1. **느린 API 식별** — Grafana MCP로 Platform API 대시보드(uid e29885-platform-api) 패널 쿼리 추출(get_dashboard_panel_queries) → http_server_requests P95/P99 by uri 랭킹 + spring_security 지연(인증 병목 분리)
+2. **계층 추적** — 식별된 API 경로에 한정해 8계층 체크 (MCP 부재 시 kubectl/ssh fallback):
+
+| 계층 | 도구 | 판정 신호 |
+| :--- | :--- | :--- |
+| 1. 부하원 | Proxmox MCP | pve_cpu_usage_ratio(qemu 부하원 VM) ≥ 0.85 60s → 측정 무효 |
+| 2. 게이트웨이 | Grafana NGINX ingress detail | rate·5xx·429·커넥션·ingress P95 |
+| 3. pod | Grafana 병목 모니터링 | container CPU·throttling·replicas·JVM GC |
+| 4. 캐시/세션 | Grafana Redis 대시보드 | memory·eviction·hit ratio·latency (4-2 채팅·인증 세션) |
+| 5. 커넥션 풀 | Grafana | hikaricp active 핀(예: 10/10)+pending>0 → 풀 제약; CPU 여유+pending↑ → DB 계층 |
+| 6. DB | Grafana PostgreSQL/Data + dbhub | 활성 커넥션·슬로우·replica lag; 식별된 API 쿼리만 EXPLAIN — 쿼리 < 응답 1%면 앱 레이어 |
+| 7. 디버그 메시지 | K8s MCP pod 로그 | exception·WARN·upstream 에러 (Kakao "API limit exceeded" 패턴) |
+| 8. vLLM/GPU | Grafana AI 대시보드 | vllm waiting·kv cache (4-x 계열만) |
+
+**판정 규칙** (§7.3 트리 준용): 풀 핀+CPU 포화 → replica 증설 후보 / 풀 핀+CPU 여유 → 풀·DB 계층 / 쿼리 무죄 → 앱 레이어(N+1·매핑) / vllm waiting → GPU 하드웨어 / upstream 에러 → 외부 의존.
+
+**산출**: 계층별 판정표(신호·값·근거 쿼리) + 느린 API TOP N + 병목 결론 + report 스킬 연계 스켈레톤.
