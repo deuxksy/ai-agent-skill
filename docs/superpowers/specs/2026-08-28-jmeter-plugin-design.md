@@ -43,6 +43,7 @@ jmeter:lint (사전) → jmeter:deploy → jmeter:run ─┐
 
 ## 3. 공통 컨텍스트
 
+- **부하 발사 원칙 (절대)**: 부하는 항상 **원격 부하원**(master에서 `-R workers` 분산, 또는 단독 부하원)에서만 발사한다. 로컬(맥/Windows)에서 JMeter를 실행해 부하를 발사하는 것을 금지한다. 로컬 `jmeter` 바이너리는 `-g`(jtl→HTML 리포트) **후처리 전용**으로만 사용한다.
 - **프로젝트 감지**: cwd에 `src/jmeter/*.jmx` 존재 시 JMeter 프로젝트로 판정. 미존재 시 스킬 중단.
 - **대상 서버 설정**: `jmeter.json` (프로젝트 루트) — 전체 스키마:
 
