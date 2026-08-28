@@ -30,8 +30,8 @@ description: "스트레스 테스트 병목 지점 판별. Grafana Platform API 
 | 3 | pod | Grafana 병목 모니터링 | `rate(container_cpu_usage_seconds_total{pod=~"<앱>.*"})`, CPU throttling, **replicas 수 기록** |
 | 3b | node HW | K8s MCP / Grafana node 패널 | pod이 안찬 **노드의 HW CPU·memory·disk** 사용률 — 공존 워크로드(예: dev PG가 앱과 같은 노드)의 자원 경합, 디스크 I/O 포화, memory pressure 판별 |
 | 4 | 캐시/세션 | Grafana Redis | memory · evicted_keys · hit ratio · latency — 4-2 채팅(`chat:history:*`)·인증 세션 경로 |
-| 5 | 커넥션 풀 | Grafana | `hikaricp_connections_active`가 max(**기본 10**, 설정 시 그 값)에 핀 + `pending > 0` → 풀 제약. pod CPU 여유 + pending↑ → 6계층으로 |
-| 6 | DB | Grafana PostgreSQL/Data + dbhub | pg 활성 커넥션·슬로우. dbhub로 **식별된 API의 쿼리만** `EXPLAIN ANALYZE` — 실행시간 < 응답시간 1%면 DB 무죄 → 앱 레이어 |
+| 5 | 커넥션 풀 | Grafana | `hikaricp_connections_active`가 max(**기본 10**, 설정 시 그 값)에 핀 + `pending > 0` → 풀 제약. pod CPU 여유 + pending↑ → 6계층으로. **acquire P95**(`hikaricp_connections_acquire_seconds`)도 함께 기록 — 응답시간 분해의 직접 재료 (2026-08-29 3-4 실측: active 10 핀·pending 20·acquire P95 416ms) |
+| 6 | DB | Grafana PostgreSQL/Data + dbhub | pg 활성 커넥션·슬로우. dbhub로 **식별된 API의 쿼리만** `EXPLAIN ANALYZE` — 실행시간 < 응답시간 1%면 DB 무죄 → 앱 레이어. **분해 신호: `spring_data_repository_invocations_seconds` P95(by repository,method)** — repository P95 − EXPLAIN 실행시간 = 앱(JPA 매핑·트랜잭션) 영역 (3-4 실측: repository 523ms − 쿼리 23ms → 앱 레이어 확정) |
 | 7 | 디버그 메시지 | K8s MCP pod 로그 (없으면 `kubectl logs --since`) | 대상 pod에서 `Exception`·`WARN`·upstream 에러 검색 — 외부 API 4xx 본문(`API limit has been exceeded` 패턴)·N+1 힌트 |
 | 8 | vLLM/GPU | Grafana AI 대시보드 (4-x만) | `vllm:num_requests_waiting/running`, `vllm:kv_cache_usage_perc` |
 
