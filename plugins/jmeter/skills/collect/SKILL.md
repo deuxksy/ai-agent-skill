@@ -36,6 +36,7 @@ python3 check_integrity.py results/<OUT>; echo exit=$?
 
 - 종료코드: `0` 양호 / `1` 중단 의심 — `1`이면 해당 run은 집계·보고에서 제외하고 원인(run.md 특이사항, jmeter.log 끝)을 확인
 - 검사 대상 파일 분리 원칙: `summary =`는 콘솔(jmeter.log) 항목이지 jtl(CSV)에는 없다 — jtl에 summary가 없다고 오경고하지 않는다
+- **특정 라벨 전체가 일관되게 필드수가 다르면 중단이 아니라 JMX 출력 특성**이다 — 마지막 라인 불일치가 특정 라벨(예: 3.4.1, Connect 필드 미출력으로 17≠18)의 전체 패턴이고 span 검사②·jmeter.log 정상 종료가 확인되면 run 유효로 판정한다 (2026-08-29 3-4 사례: 두 run 연속 동일 경고, 데이터 온전)
 
 ## 2.5 소급 집계 (실행 완료·집계 전 중단 run)
 
