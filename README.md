@@ -120,23 +120,23 @@ agy plugin list
 ## 플러그인 메타 & 버전 정책
 
 - **마켓플레이스 저장소**: `deuxksy/ai-agent-skill`
-- **통합 단일 버전**: `1.16.0` (모든 11개 독립 플러그인 매니페스트 및 마켓플레이스 동기화)
+- **통합 단일 버전**: `1.17.0` (모든 11개 독립 플러그인 매니페스트 및 마켓플레이스 동기화)
 
 ## 독립 도메인 플러그인 카탈로그 (11)
 
 | Plugin | Version | 포함 스킬 | 설치 명령어 |
 | :--- | :--- | :--- | :--- |
-| `security` | 1.16.0 | `code-audit`, `system-audit`, `backdoor-investigation`, `backdoor-remediation` | `security@zzizily` |
-| `infra` | 1.16.0 | `setup`, `packages`, `agents`, `proxmox-vm-create`, `openwrt-initd`, `acl-owner-reset` | `infra@zzizily` |
-| `trackers` | 1.16.0 | `calendar-sync`, `exchange-rate-tracker`, `hot-game-deals-n-news`, `notion-sprint-sync` | `trackers@zzizily` |
-| `sessions` | 1.16.0 | `handoff`, `resume` | `sessions@zzizily` |
-| `l10n` | 1.16.0 | `optimize-images-4k`, `korean-translation-verify`, `product-planning-dr-pipeline` | `l10n@zzizily` |
-| `git` | 1.16.0 | `commit`, `commit-push-pr`, `clean-gone`, `tag-release` | `git@zzizily` |
-| `rules` | 1.16.0 | `agents-md-management`, `revise-agents-md` | `rules@zzizily` |
-| `docs` | 1.16.0 | `docs-md-management`, `docs-restructure`, `revise-readme-md` | `docs@zzizily` |
-| `review` | 1.16.0 | `verify` | `review@zzizily` |
-| `dev` | 1.16.0 | `deploy-android-wifi`, `license` | `dev@zzizily` |
-| `jmeter` | 1.16.0 | `lint`, `deploy`, `run`, `knee`, `collect`, `report` | `jmeter@zzizily` |
+| `security` | 1.17.0 | `code-audit`, `system-audit`, `backdoor-investigation`, `backdoor-remediation` | `security@zzizily` |
+| `infra` | 1.17.0 | `setup`, `packages`, `agents`, `proxmox-vm-create`, `openwrt-initd`, `acl-owner-reset` | `infra@zzizily` |
+| `trackers` | 1.17.0 | `calendar-sync`, `exchange-rate-tracker`, `hot-game-deals-n-news`, `notion-sprint-sync` | `trackers@zzizily` |
+| `sessions` | 1.17.0 | `handoff`, `resume` | `sessions@zzizily` |
+| `l10n` | 1.17.0 | `optimize-images-4k`, `korean-translation-verify`, `product-planning-dr-pipeline` | `l10n@zzizily` |
+| `git` | 1.17.0 | `commit`, `commit-push-pr`, `clean-gone`, `tag-release` | `git@zzizily` |
+| `rules` | 1.17.0 | `agents-md-management`, `revise-agents-md` | `rules@zzizily` |
+| `docs` | 1.17.0 | `docs-md-management`, `docs-restructure`, `revise-readme-md` | `docs@zzizily` |
+| `review` | 1.17.0 | `verify` | `review@zzizily` |
+| `dev` | 1.17.0 | `deploy-android-wifi`, `license` | `dev@zzizily` |
+| `jmeter` | 1.17.0 | `lint`, `deploy`, `run`, `knee`, `collect`, `report` | `jmeter@zzizily` |
 
 ## 상세 문서
 
