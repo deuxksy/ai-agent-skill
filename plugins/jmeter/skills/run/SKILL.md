@@ -10,13 +10,14 @@ description: "JMeter 시나리오 1회 실행. jmx + 총 VU + ramp + duration(+ 
 ## 인자
 
 - `jmx`(필수), `vu` 총 VU(필수), `ramp`(초, 기본 60), `duration`(초, 기본 120)
+- `rp`: 대상 서비스 replicas 수 (기본 1) — 폴더명·run.md 형상에 반영
 - `mode`: `x2`(기본, 분산) / `x1`(단독)
 - 옵션: `--smoke` (T1~2·D5~10 사전 실행), `--verify-db` (jmeter.json verify_db로 jtl↔DB 정합)
 
 ## T 계산·명명
 
 x2: `T=vu/2` — vu가 홀수면 오류 안내 후 x1 유도. x1: `T=vu`.
-폴더: `results/{시나리오명의 하이픈→언더스코어}-T{T}x{n}_R{ramp}_D{d}-$(date +%y%m%d-%H%M%S)` (부하원 타임존)
+폴더: `results/{시나리오명의 하이픈→언더스코어}-T{T}x{n}_R{ramp}_D{d}-RP{rp}-$(date +%y%m%d-%H%M%S)` (부하원 타임존) — RP는 대상 replicas 수. 정렬 시 시나리오→프로파일→R1/R2/R3 순으로 쌓여 세로 비교에 유리 (2026-08-30 확정)
 
 ## 실행 (master에서)
 
@@ -30,7 +31,7 @@ ssh <master> 'cd <remote_path 절대경로> && OUT=results/<OUT> && mkdir -p "$O
 ## 실행 후 자동 (3종 — 순서대로)
 
 1. 집계: `python3 aggregate.py <수집된 jtl> <ramp>` (원격에서 직접 실행 가능)
-2. run.md 생성: 실행 일시(KST), 명령 전체, 형상(master/workers, JMeter 버전), 프로파일(VU/R/D), 집계 결과, 특이사항
+2. run.md 생성: 실행 일시(KST), 명령 전체, 형상(master/workers, JMeter 버전, **replicas 수(rp)**), 프로파일(VU/R/D), 집계 결과, 특이사항
 3. summary.md 1행 누적: `| 시나리오 | 단계 | 회차 | T(x{n}) | R | D | 폴더 | 샘플수 | TPS | p95 | stdev | Err% | 특이 |`
    summary.md가 세션별 블록(`## 세션N`) 구조면 진행 중 세션 표에 행을 추가하고, 블록이 없으면 새로 만든다 — 이전 세션 결과와 섞지 않는다 (2026-08-28 실측 관례)
 
