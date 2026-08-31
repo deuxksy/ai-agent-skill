@@ -1,6 +1,6 @@
 ---
 name: run
-description: "JMeter 시나리오 1회 실행. jmx + 총 VU + ramp + duration(+ mode x2분산/x1단독)을 받아 T를 계산해 분산 실행하고, 풀가동 집계(TPS/p95/stdev/Err)와 run.md, summary.md 누적까지 자동 생성. '부하 실행', 'jmeter 돌려', '--smoke' 사전검증에서 사용."
+description: "JMeter 시나리오 1회 실행. jmx + 총 VU + ramp + duration(+ mode x2분산/x1단독)을 받아 T를 계산해 분산 실행하고, 풀가동 집계(Req/s·TPS tx/s/p95/stdev/Err)와 run.md, summary.md 누적까지 자동 생성. '부하 실행', 'jmeter 돌려', '--smoke' 사전검증에서 사용."
 ---
 
 # Run — 1회 실행
@@ -13,6 +13,22 @@ description: "JMeter 시나리오 1회 실행. jmx + 총 VU + ramp + duration(+ 
 - `rp`: 대상 서비스 replicas 수 (기본 1) — 폴더명·run.md 형상에 반영
 - `mode`: `x2`(기본, 분산) / `x1`(단독)
 - 옵션: `--smoke` (T1~2·D5~10 사전 실행), `--verify-db` (jmeter.json verify_db로 jtl↔DB 정합)
+
+## 지표 정의 (Throughput·Transaction·Request — 혼용 금지)
+
+| 용어 | 의미 | 예시 |
+| :--- | :--- | :--- |
+| **Throughput** | 일정 시간 동안 처리한 전체 작업량인 **성능 지표** | 초당 주문 100건, 초당 요청 500건 |
+| **Transaction** | 논리적으로 정의한 하나의 **업무 처리 단위** | 주문 생성, 송금, 좌석 예약 |
+| **Request** | 클라이언트가 서버에 보내는 하나의 **요청 단위** | HTTP API 호출 1회 |
+
+정량식: `Throughput = 완료된 Transaction 수 ÷ 시간` — Throughput의 기본 산식은 Transaction 완주 기준이며, Request 기준 처리량(Req/s)은 이와 구분해 단위를 붙여 기록한다.
+
+JMeter 구현 대응 (기록 규칙 — RULES §1):
+
+- **Request** = jtl에서 URL이 비어있지 않은 행(개별 HTTP 샘플). **Req/s (req/s)** = 풀가동 구간 초당 HTTP 요청 수 — Transaction parent(URL null)는 제외.
+- **Transaction** = TransactionController가 집계하는 업무 루프 1회 완주(jtl parent 행). **TPS (tx/s)** = Req/s ÷ 루프당 HTTP 수(JMX 스텝 수). 단일 스텝 시나리오는 TPS = Req/s.
+- **Throughput** = 상위 성능 지표 총칭 — 기록 시 단위(tx/s 또는 req/s)를 반드시 붙인다. **"TPS" 라벨에 req/s 값을 병기하는 것 금지** (복합 시나리오에서 실제 용량의 N배 뻥튀기 — 2026-08-31 정정 사례: 2-4 parent 포함 2배, 5-3 6 HTTP/루프).
 
 ## T 계산·명명
 
@@ -32,7 +48,7 @@ ssh <master> 'cd <remote_path 절대경로> && OUT=results/<OUT> && mkdir -p "$O
 
 1. 집계: `python3 aggregate.py <수집된 jtl> <ramp>` (원격에서 직접 실행 가능)
 2. run.md 생성: 실행 일시(KST), 명령 전체, 형상(master/workers, JMeter 버전, **replicas 수(rp)**), 프로파일(VU/R/D), 집계 결과, 특이사항
-3. summary.md 1행 누적: `| 시나리오 | 단계 | 회차 | T(x{n}) | R | D | 폴더 | 샘플수 | TPS | p95 | stdev | Err% | 특이 |`
+3. summary.md 1행 누적: `| 시나리오 | 단계 | 회차 | T(x{n}) | R | D | 폴더 | 샘플수 | Req/s | TPS (tx/s) | p95 | stdev | Err% | 특이 |` — 샘플수는 HTTP 요청 수(parent 제외), TPS (tx/s)는 Req/s ÷ 루프당 HTTP 수(JMX 스텝 수)로 환산해 병기한다 (지표 정의 참조)
    summary.md가 세션별 블록(`## 세션N`) 구조면 진행 중 세션 표에 행을 추가하고, 블록이 없으면 새로 만든다 — 이전 세션 결과와 섞지 않는다 (2026-08-28 실측 관례)
 
 ## --smoke 통과 기준

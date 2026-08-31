@@ -1,7 +1,7 @@
 {
   "name": "jmeter",
-  "description": "JMeter 스트레스 테스트 파이프라인: JMX 정적 린트, 원격 서버 설치·배포·기동, 부하 실행·집계, knee/MAX TPS 탐색, 결과 수집·무결성 검증, 보고서·차트 생성, 병목 계층 판별",
-  "version": "1.20.0",
+  "description": "JMeter 스트레스 테스트 파이프라인: JMX 정적 린트, 원격 서버 설치·배포·기동, 부하 실행·집계, knee/MAX 처리량(Req/s·TPS tx/s) 탐색, 결과 수집·무결성 검증, 보고서·차트 생성, 병목 계층 판별",
+  "version": "1.21.0",
   "author": {
     "name": "Crong"
   },
@@ -12,7 +12,9 @@
     "longDescription": "JMX 린트, 원격 부하원 배포·실행, knee/MAX TPS 탐색, 결과 수집·검증, 보고서·차트 생성과 병목 계층 판별을 지원합니다.",
     "developerName": "Crong",
     "category": "Development",
-    "capabilities": ["Write"],
+    "capabilities": [
+      "Write"
+    ],
     "defaultPrompt": [
       "JMX 시나리오를 린트하고 원격 부하 테스트를 준비해줘.",
       "점진 VU 테스트로 knee와 MAX TPS를 찾아줘.",

@@ -1,7 +1,7 @@
 {
   "name": "jmeter",
-  "description": "JMeter 스트레스 테스트 파이프라인: JMX 정적 린트, 원격 서버 설치·배포·기동, 부하 실행·집계, knee/MAX TPS 탐색, 결과 수집·무결성 검증, 보고서·차트 생성, 병목 계층 판별",
-  "version": "1.20.0",
+  "description": "JMeter 스트레스 테스트 파이프라인: JMX 정적 린트, 원격 서버 설치·배포·기동, 부하 실행·집계, knee/MAX 처리량(Req/s·TPS tx/s) 탐색, 결과 수집·무결성 검증, 보고서·차트 생성, 병목 계층 판별",
+  "version": "1.21.0",
   "author": {
     "name": "Crong"
   },
