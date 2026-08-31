@@ -1,7 +1,7 @@
 {
   "name": "trackers",
-  "description": "Calendar sync, USD/KRW/VND exchange rates, and hot game deals/news tracker skills",
-  "version": "1.15.0",
+  "description": "Calendar sync, USD/KRW/VND exchange rates, hot game deals/news, and Notion sprint sync tracker skills",
+  "version": "1.19.0",
   "author": {
     "name": "Crong"
   },
@@ -9,7 +9,7 @@
   "interface": {
     "displayName": "Trackers",
     "shortDescription": "일상 자동화 및 정보 트래커 스킬 모음",
-    "longDescription": "Notion/GCal 일정 동기화, 달러/원화/동화 환율 추적, 게임 핫딜 및 뉴스 조회 스킬을 제공합니다.",
+    "longDescription": "Notion·Google Calendar 일정 동기화, 달러·원화·동화 환율 추적, 게임 할인·뉴스 조회와 Notion 스프린트 동기화를 지원합니다.",
     "developerName": "Crong",
     "category": "Productivity",
     "capabilities": ["Write"],

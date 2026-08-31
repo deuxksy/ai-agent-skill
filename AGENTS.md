@@ -6,18 +6,20 @@ This file provides guidance to Codex (Codex.ai/code) when working with code in t
 
 ## 프로젝트 개요
 
-**zzizily** — 10개 독립 도메인 플러그인을 통합 제공하는 개인 자동화 AI Agent Skill 마켓플레이스.
+**zzizily** — 11개 독립 도메인 플러그인을 통합 제공하는 개인 자동화 AI Agent Skill 마켓플레이스.
 
 - Author: Crong (kyolim)
 - GitHub Repository: `deuxksy/ai-agent-skill`
-- 통합 버전: `1.15.0`
+- 통합 버전: `1.19.0`
 
 ## 구조
 
 ```
 .
 ├── .claude-plugin/
-│   └── marketplace.json     # 10개 전체 도메인 플러그인 등록 마켓플레이스 (v1.15.0)
+│   └── marketplace.json     # Claude용 11개 도메인 플러그인 마켓플레이스 (v1.19.0)
+├── .agents/plugins/
+│   └── marketplace.json     # Codex용 11개 도메인 플러그인 마켓플레이스 (v1.19.0)
 ├── agents/                  # AI 에이전트 지침 및 어댑터
 └── plugins/
     ├── security/            # 코드/시스템 보안 감사
@@ -30,6 +32,7 @@ This file provides guidance to Codex (Codex.ai/code) when working with code in t
     ├── docs/                # README 및 문서 관리
     ├── review/              # 교차 검증
     ├── dev/                 # 빌드/배포
+    ├── jmeter/              # 부하 테스트
     └── meridian/            # 원격 미디어 파이프라인 (마켓 미등록·로컬 전용)
 ```
 
@@ -39,4 +42,4 @@ This file provides guidance to Codex (Codex.ai/code) when working with code in t
 
 새 Skill 추가 시:
 1. `plugins/<domain-name>/<skill-name>/SKILL.md` 생성
-2. `.claude-plugin/marketplace.json` 해당 도메인 플러그인 메타데이터 확인 및 동기화
+2. Claude/Codex plugin manifest와 양쪽 marketplace 메타데이터 확인 및 동기화

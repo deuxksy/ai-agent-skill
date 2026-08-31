@@ -4,14 +4,14 @@ This document serves as the Single Source of Truth (SSoT) for all runtime AI age
 
 ## Project Overview
 
-- **Project**: `zzizily` — Personal automation AI Agent Skill marketplace providing 10 domain plugins.
+- **Project**: `zzizily` — Personal automation AI Agent Skill marketplace providing 11 domain plugins.
 - **Repository**: `deuxksy/ai-agent-skill`
-- **Unified Version**: `1.15.0` (marketplace-registered plugins; local-only plugins excluded)
+- **Unified Version**: `1.19.0` (marketplace-registered plugins; local-only plugins excluded)
 - **Author**: Crong (kyolim)
 
 ## Versioning & Commit Convention
 
-- **SemVer**: Follow Semantic Versioning (`1.15.0`). All plugin manifests (`.claude-plugin/marketplace.json`, `.agents/plugins/marketplace.json`, `plugins/*/.claude-plugin/`, `plugins/*/.codex-plugin/`) and catalog tables must stay in sync.
+- **SemVer**: Follow Semantic Versioning (`1.19.0`). All plugin manifests (`.claude-plugin/marketplace.json`, `.agents/plugins/marketplace.json`, `plugins/*/.claude-plugin/`, `plugins/*/.codex-plugin/`) and catalog tables must stay in sync.
 - **Local-only plugins**: Not registered in `marketplace.json` (e.g. `meridian`, independent version). Never add them to public catalog tables.
 - **Conventional Commits**: Commit tag in English (e.g. `feat`, `fix`, `docs`, `chore`), commit message in Korean.
 

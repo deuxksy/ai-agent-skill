@@ -1,15 +1,15 @@
 {
   "name": "review",
   "description": "Runtime-neutral cross verification skill for spec/plan documents and code changes",
-  "version": "1.15.0",
+  "version": "1.19.0",
   "author": {
     "name": "Crong"
   },
   "skills": "./skills/",
   "interface": {
     "displayName": "Review",
-    "shortDescription": "멀티 에이전트 런타임 교차검증",
-    "longDescription": "Codex/Antigravity/Tailscale Aperture reviewer를 조합해 spec/plan 문서와 코드 변경을 격리 snapshot에서 검증하는 교차 검증 스킬을 제공합니다.",
+    "shortDescription": "여러 에이전트의 실행 환경 교차 검증",
+    "longDescription": "Codex, Antigravity, Tailscale Aperture 검토자를 조합해 명세·계획 문서와 코드 변경을 격리된 사본에서 교차 검증합니다.",
     "developerName": "Crong",
     "category": "Development",
     "capabilities": ["Write"],

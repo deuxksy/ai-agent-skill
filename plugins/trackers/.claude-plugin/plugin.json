@@ -1,7 +1,7 @@
 {
   "name": "trackers",
-  "description": "Calendar sync, USD/KRW/VND exchange rates, and hot game deals/news tracker skills",
-  "version": "1.17.0",
+  "description": "Calendar sync, USD/KRW/VND exchange rates, hot game deals/news, and Notion sprint sync tracker skills",
+  "version": "1.19.0",
   "author": {
     "name": "Crong"
   },

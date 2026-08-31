@@ -1,21 +1,22 @@
 {
   "name": "dev",
-  "description": "React Native 앱 개발 스킬 — WiFi ADB 배포, 오픈소스 라이선스 인벤토리",
-  "version": "1.15.0",
+  "description": "개발 보조 스킬 — WiFi ADB 배포, 오픈소스 라이선스 인벤토리, OpenAPI 스펙 갱신",
+  "version": "1.19.0",
   "author": {
     "name": "Crong"
   },
   "skills": "./skills/",
   "interface": {
     "displayName": "Dev",
-    "shortDescription": "RN 배포·라이선스 스킬",
-    "longDescription": "WiFi ADB 기반 React Native 앱 빌드·배포와 산출물 기준 오픈소스 라이선스 인벤토리 스킬을 제공합니다.",
+    "shortDescription": "RN 배포·라이선스·OpenAPI 스킬",
+    "longDescription": "WiFi ADB 기반 React Native 앱 빌드·배포, 산출물 기준 오픈소스 라이선스 인벤토리, OpenAPI 스펙 갱신 스킬을 제공합니다.",
     "developerName": "Crong",
     "category": "Development",
     "capabilities": ["Write"],
     "defaultPrompt": [
       "React Native 앱을 WiFi ADB로 Android 디바이스에 빌드 및 배포해줘.",
-      "산출물에 포함되는 오픈소스 라이선스를 전수 조사해서 문서로 만들어줘."
+      "산출물에 포함되는 오픈소스 라이선스를 전수 조사해서 문서로 만들어줘.",
+      "서버의 OpenAPI 스펙 파일을 최신 버전으로 갱신해줘."
     ]
   }
 }

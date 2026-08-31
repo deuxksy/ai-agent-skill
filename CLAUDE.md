@@ -28,7 +28,7 @@ claude plugin install jmeter@zzizily
 
 ## 플러그인 메타 & 버전 정책
 
-- **통합 단일 버전**: `1.17.0` (비공개 플러그인 `meridian` 제외 — 독립 버전)
+- **통합 단일 버전**: `1.19.0` (비공개 플러그인 `meridian` 제외 — 독립 버전)
 - **마켓플레이스 매니페스트**: `.claude-plugin/marketplace.json`
 - **GitHub repo**: `deuxksy/ai-agent-skill`
 
@@ -37,7 +37,7 @@ claude plugin install jmeter@zzizily
 ```
 .
 ├── .claude-plugin/
-│   └── marketplace.json     # 11개 전체 도메인 플러그인 등록 마켓플레이스 (v1.17.0)
+│   └── marketplace.json     # 11개 전체 도메인 플러그인 등록 마켓플레이스 (v1.19.0)
 ├── agents/
 │   └── verify.md            # Claude runner adapter (격리 reviewer fanout)
 ├── docs/                    # 프로젝트 서브 문서 (docs/README.md, docs/okf/)
@@ -47,12 +47,12 @@ claude plugin install jmeter@zzizily
     ├── trackers/            # 자동화/트래커 (calendar-sync, exchange-rate-tracker, hot-game-deals-n-news, notion-sprint-sync)
     ├── sessions/            # 세션 워크플로우 (handoff, resume)
     ├── l10n/                # 콘텐츠/번역 (optimize-images-4k, korean-translation-verify, product-planning-dr-pipeline)
-    ├── git/                 # Git 워크플로우 (commit, commit-push-pr, clean-gone)
+    ├── git/                 # Git 워크플로우 (commit, commit-push-pr, clean-gone, tag-release)
     ├── rules/               # 에이전트 지침 관리 (agents-md-management, revise-agents-md)
     ├── docs/                # README 및 프로젝트 문서 관리 (docs-md-management, docs-restructure, revise-readme-md)
     ├── review/              # 교차 검증 (verify)
-    ├── dev/                 # 빌드/배포 (deploy-android-wifi, license)
-    ├── jmeter/              # 부하 테스트 (lint, deploy, run, knee, collect, report)
+    ├── dev/                 # 빌드/배포 (deploy-android-wifi, license, update-openapi)
+    ├── jmeter/              # 부하 테스트 (lint, deploy, run, knee, collect, report, bottleneck)
     └── meridian/            # 원격 미디어 파이프라인 — 마켓플레이스 미등록·로컬 전용
 ```
 
@@ -73,17 +73,17 @@ claude plugin install jmeter@zzizily
 
 | Plugin | Version | Skills | 설치 |
 | :--- | :--- | :--- | :--- |
-| `security` | 1.17.0 | `code-audit`, `system-audit`, `backdoor-investigation`, `backdoor-remediation` | `security@zzizily` |
-| `infra` | 1.17.0 | `setup`, `packages`, `agents`, `proxmox-vm-create`, `openwrt-initd`, `acl-owner-reset` | `infra@zzizily` |
-| `trackers` | 1.17.0 | `calendar-sync`, `exchange-rate-tracker`, `hot-game-deals-n-news`, `notion-sprint-sync` | `trackers@zzizily` |
-| `sessions` | 1.17.0 | `handoff`, `resume` | `sessions@zzizily` |
-| `l10n` | 1.17.0 | `optimize-images-4k`, `korean-translation-verify`, `product-planning-dr-pipeline` | `l10n@zzizily` |
-| `git` | 1.17.0 | `commit`, `commit-push-pr`, `clean-gone`, `tag-release` | `git@zzizily` |
-| `rules` | 1.17.0 | `agents-md-management`, `revise-agents-md` | `rules@zzizily` |
-| `docs` | 1.17.0 | `docs-md-management`, `docs-restructure`, `revise-readme-md` | `docs@zzizily` |
-| `review` | 1.17.0 | `verify` | `review@zzizily` |
-| `dev` | 1.17.0 | `deploy-android-wifi`, `license` | `dev@zzizily` |
-| `jmeter` | 1.17.0 | `lint`, `deploy`, `run`, `knee`, `collect`, `report`, `bottleneck` | `jmeter@zzizily` |
+| `security` | 1.19.0 | `code-audit`, `system-audit`, `backdoor-investigation`, `backdoor-remediation` | `security@zzizily` |
+| `infra` | 1.19.0 | `setup`, `packages`, `agents`, `proxmox-vm-create`, `openwrt-initd`, `acl-owner-reset` | `infra@zzizily` |
+| `trackers` | 1.19.0 | `calendar-sync`, `exchange-rate-tracker`, `hot-game-deals-n-news`, `notion-sprint-sync` | `trackers@zzizily` |
+| `sessions` | 1.19.0 | `handoff`, `resume` | `sessions@zzizily` |
+| `l10n` | 1.19.0 | `optimize-images-4k`, `korean-translation-verify`, `product-planning-dr-pipeline` | `l10n@zzizily` |
+| `git` | 1.19.0 | `commit`, `commit-push-pr`, `clean-gone`, `tag-release` | `git@zzizily` |
+| `rules` | 1.19.0 | `agents-md-management`, `revise-agents-md` | `rules@zzizily` |
+| `docs` | 1.19.0 | `docs-md-management`, `docs-restructure`, `revise-readme-md` | `docs@zzizily` |
+| `review` | 1.19.0 | `verify` | `review@zzizily` |
+| `dev` | 1.19.0 | `deploy-android-wifi`, `license`, `update-openapi` | `dev@zzizily` |
+| `jmeter` | 1.19.0 | `lint`, `deploy`, `run`, `knee`, `collect`, `report`, `bottleneck` | `jmeter@zzizily` |
 
 ## SKILL.md 규격
 

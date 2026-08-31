@@ -14,7 +14,7 @@ graph LR
     D --> E[5. report]
 ```
 
-## 🛠️ 포함 스킬 (6)
+## 🛠️ 포함 스킬 (7)
 
 | 스킬 | 용도 | 사용 예 |
 | :-- | :-- | :-- |
@@ -24,6 +24,7 @@ graph LR
 | **`knee`** | 점진 VU 래더 — 판정표(이상/평탄/진행) 기반 knee·MAX TPS 탐색, 드레인 게이트 | `/jmeter:knee 5-3.jmx — MAX TPS 찾아줘` |
 | **`collect`** | 결과 역수집·무결성 3종 — rsync 증분, 중단 run 판별, 로컬 HTML 리포트, `--evidence` 로그 보존 | `/jmeter:collect — 오늘 결과 받아서 검증해줘` |
 | **`report`** | 결과서·차트 생성 — summary.md/run.md 기반 VU 추이, knee 판정, 병목 스켈레톤 | `/jmeter:report 5-3 — 결과서 만들어줘` |
+| **`bottleneck`** | 부하 결과와 시스템 지표를 바탕으로 병목 계층 판별 | `/jmeter:bottleneck 5-3 — 병목을 분석해줘` |
 
 ## jmeter.json 최소 예제
 

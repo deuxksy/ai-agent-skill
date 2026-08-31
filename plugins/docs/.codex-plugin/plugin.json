@@ -1,9 +1,22 @@
 {
   "name": "docs",
   "description": "Audit and restructure README.md and project documentation under docs/: Diátaxis indexes, orphan docs, doc migration (split/merge/move), and architecture documentation (arc42/C4/ADR)",
-  "version": "1.15.0",
+  "version": "1.19.0",
   "author": {
     "name": "Crong"
   },
-  "skills": "./skills/"
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Docs",
+    "shortDescription": "README 및 프로젝트 문서 관리",
+    "longDescription": "README 감사와 개정, Diátaxis 기반 문서 재구성, 고아 문서 관리, arc42·C4·ADR 아키텍처 문서화를 지원합니다.",
+    "developerName": "Crong",
+    "category": "Productivity",
+    "capabilities": ["Write"],
+    "defaultPrompt": [
+      "README와 문서 허브의 구조와 링크를 점검해줘.",
+      "프로젝트 문서를 Diátaxis 기준으로 재구성해줘.",
+      "새 문서와 기능이 README 인덱스에 반영됐는지 확인해줘."
+    ]
+  }
 }

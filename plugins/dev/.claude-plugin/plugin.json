@@ -1,7 +1,7 @@
 {
   "name": "dev",
   "description": "개발 보조 스킬 — WiFi ADB 배포, 오픈소스 라이선스 인벤토리, OpenAPI 스펙 갱신",
-  "version": "1.18.0",
+  "version": "1.19.0",
   "author": {
     "name": "Crong"
   },

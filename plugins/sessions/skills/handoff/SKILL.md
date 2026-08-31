@@ -1,6 +1,6 @@
 ---
 name: handoff
-description: "현재 세션 작업을 .zzizily/handoff/에 구조화 저장. /clear 또는 context 압축 전 수동 호출해 작업 상태를 보존. new session에서 /sessions:resume으로 이어작업. Use when context가 가득 차기 전이나 세션 종료 직전 현재 진행 작업을 저장할 때."
+description: "현재 세션 작업을 .zzizily/handoff/에 구조화 저장. /clear 또는 context 압축 전 수동 호출해 작업 상태를 보존. new session에서 /sessions:resume으로 이어작업. 사용자가 /sessions:handoff를 명시적으로 입력했을 때만 실행한다. 세션 종료 감지로 자동 실행하지 않는다."
 ---
 
 ## 지침
