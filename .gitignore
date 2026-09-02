@@ -11,3 +11,6 @@ skills/exchange-rate-tracker/output/
 .serena/
 .worktrees/
 .mimosa
+
+# APM dependencies
+apm_modules/
