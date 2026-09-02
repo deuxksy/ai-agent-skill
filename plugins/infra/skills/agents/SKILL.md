@@ -50,7 +50,7 @@ cat /etc/os-release 2>/dev/null | grep ^ID=
 | :--- | :--- |
 | `holmesgpt` | `holmes` |
 | `serena-agent` | `serena`, `serena-agent`, `serena-hooks` |
-| `shell-gpt` | `sgpt` |
+| `llm` | `llm` |
 
 #### Brew Cask AI Agents
 
@@ -140,8 +140,7 @@ pnpm add -g mcp-hub@latest @bytebase/dbhub@latest kubernetes-mcp-server@latest
 # holmesgpt는 azure-mgmt-sql pre-release 의존성으로 --prerelease=allow 필요
 uv tool install holmesgpt@latest --prerelease=allow
 uv tool install serena-agent@latest
-# shell-gpt 1.5.x는 click을 의존성으로 명시하지 않아 ModuleNotFoundError 발생 → --with click 필수
-uv tool install shell-gpt@latest --with click
+uv tool install llm@latest
 
 # MCP Servers
 uv tool install proxmox-mcp-plus@latest
@@ -215,8 +214,8 @@ uv tool list | grep -E "proxmox-mcp-plus|doris-mcp-server|postgres-mcp"
 # pnpm - MCP Servers (--version 미지원)
 pnpm list -g --depth=0 | grep -E "dbhub"
 
-# uv - shell-gpt (click 의존성 정상 로드 확인)
-sgpt --version
+# uv - llm
+llm --version
 
 # pnpm - LSP Servers
 typescript-language-server --version
@@ -242,7 +241,6 @@ nil --version
 
 > **참고**:
 > - `holmes`는 `--version` 미지원으로 하위 명령 방식 사용.
-> - `sgpt`는 `--version` 지원 (`ShellGPT x.x.x`). click 의존성 누락 시 ImportError 발생하므로 반드시 `sgpt --version`으로 실행 검증.
 > - `dbhub`, `proxmox-mcp-plus`, `doris-mcp-server`, `postgres-mcp`는 `--version` 미지원으로 `pnpm list` / `uv tool list`로 확인.
 > - `vscode-langservers-extracted`는 `--version` 미지원으로 `pnpm list`로 확인. brew LSP(lua-language-server, marksman, terraform-ls)는 `brew list --versions`로 확인.
 > - `nil`은 NixOS는 nix, 타 OS는 cargo(`cargo install --git`)로 설치·갱신.
@@ -294,7 +292,7 @@ pnpm update -g --latest mcp-hub @bytebase/dbhub kubernetes-mcp-server
 # install 시 @latest로 설치했다면 upgrade 정상 작동 (pin 해제 상태)
 uv tool upgrade holmesgpt --prerelease=allow
 uv tool upgrade serena-agent
-uv tool upgrade shell-gpt
+uv tool upgrade llm
 
 # MCP Servers
 uv tool upgrade proxmox-mcp-plus
