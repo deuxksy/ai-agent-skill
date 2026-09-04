@@ -1,6 +1,33 @@
+# Operating System Files
+# macOS
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+
+# Windows
+Thumbs.db
+Thumbs.db:encryptable
+ehthumbs.db
+ehthumbs_vista.db
+*.stackdump
+[Dd]esktop.ini
+$RECYCLE.BIN/
+
+# Linux
+*~
+.fuse_hidden*
+.directory
+.Trash-*
+
+# Agent & Workspace State
 .omc/
 .omx/
 .claude/
+.serena/
+.worktrees/
+.mimosa
 docs/work-log/
 
 # Sensitive skill data
@@ -8,9 +35,10 @@ skills/hot-game-deals-n-news/references/api-keys.md
 skills/hot-game-deals-n-news/references/my-steam-games.json
 skills/exchange-rate-tracker/references/exchange-rates.json
 skills/exchange-rate-tracker/output/
-.serena/
-.worktrees/
-.mimosa
+plugins/trackers/skills/hot-game-deals-n-news/references/api-keys.md
+plugins/trackers/skills/hot-game-deals-n-news/references/my-steam-games.json
+plugins/trackers/skills/exchange-rate-tracker/references/exchange-rates.json
+plugins/trackers/skills/exchange-rate-tracker/output/
 
 # APM dependencies
 apm_modules/
