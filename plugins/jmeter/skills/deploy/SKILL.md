@@ -1,6 +1,6 @@
 ---
 name: deploy
-description: "JMeter 부하원 원격 설치·배포·기동. 미설치 서버에 JDK17+JMeter 5.6.3을 idempotent하게 설치하고(tarball→/usr/local/bin 심링크), 프로젝트 자산을 rsync(mac/linux)·robocopy(Windows)로 증분 배포한 뒤 jmeter-server를 저장소 루트 CWD로 기동·검증. '부하원 배포', 'jmeter 서버 세팅', 'deploy'에서 사용."
+description: "JMeter 부하원 원격 설치·배포·기동. 미설치 서버에 JDK17+JMeter 5.6.3을 idempotent하게 설치하고(tarball→/usr/local/bin 심링크), 실행 자산 src/jmeter를 rsync(mac/linux)·robocopy(Windows)로 미러 동기화한 뒤 jmeter-server를 저장소 루트 CWD로 기동·검증. '부하원 배포', 'jmeter 서버 세팅', 'deploy'에서 사용."
 ---
 
 # Deploy — 설치·배포·기동
@@ -24,12 +24,14 @@ ssh <host> 'cd /tmp && curl -sLO https://dlcdn.apache.org/jmeter/binaries/apache
 
 ## 2. 자산 동기화 (로컬 OS 분기)
 
+원격 부하원은 **실행 자산 `src/jmeter/`만** 보관한다 (2026-09-04 변경 — 이전에는 저장소 전체를 exclude 증분 배포). 원격 폴더(`~/git/ecoai-gwageo`)는 빈 뼈대만 있으면 되고, run 스킬이 `results/`는 `mkdir -p`로 자동 생성한다.
+
 ```bash
-# mac/Linux — 절대경로 exclude, 증분
-rsync -az --exclude=.git --exclude=results --exclude=.mcp.json --exclude='.omc*' \
-  ./ <host>:<remote_path>/
-# Windows (PowerShell) — robocopy 증분 (/MIR 금지). SMB 미탑재면 scp -r fallback:
-# robocopy . \\<host-ip>\<share>\<path> /E /XD .git results
+# mac/Linux — src/jmeter만 미러 동기화 (상위 폴더 선보장)
+ssh <host> 'mkdir -p <remote_path 절대경로>/src/jmeter'
+rsync -az --delete ./src/jmeter/ <host>:<remote_path 절대경로>/src/jmeter/
+# Windows (PowerShell) — src/jmeter 한정이면 /MIR 안전. SMB 미탑재면 scp -r fallback:
+# robocopy .\src\jmeter \\<host-ip>\<share>\<path>\src\jmeter /MIR
 ```
 
 ## 3. jmeter-server 기동·검증 (양 노드)
