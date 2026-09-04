@@ -9,67 +9,67 @@
       "name": "security",
       "source": "./plugins/security",
       "description": "Code SAST, system vulnerability, and backdoor investigation/remediation security skills",
-      "version": "1.19.0"
+      "version": "1.22.0"
     },
     {
       "name": "infra",
       "source": "./plugins/infra",
       "description": "Dotfiles setup, system package management, AI agents/MCP/LSP lifecycle, Proxmox VM, and OpenWrt service provisioning skills",
-      "version": "1.19.0"
+      "version": "1.22.0"
     },
     {
       "name": "trackers",
       "source": "./plugins/trackers",
       "description": "Calendar sync, USD/KRW/VND exchange rates, hot game deals/news, and Notion sprint sync tracker skills",
-      "version": "1.19.0"
+      "version": "1.22.0"
     },
     {
       "name": "sessions",
       "source": "./plugins/sessions",
       "description": "Session context handoff and task resume workflow skills",
-      "version": "1.19.0"
+      "version": "1.22.0"
     },
     {
       "name": "l10n",
       "source": "./plugins/l10n",
       "description": "4K image optimization, Korean translation verification, and product planning deep research pipeline skills",
-      "version": "1.19.0"
+      "version": "1.22.0"
     },
     {
       "name": "git",
       "source": "./plugins/git",
       "description": "Safe runtime-neutral Git commit, push, pull/merge request, stale branch cleanup, and tag/release skills",
-      "version": "1.19.0"
+      "version": "1.22.0"
     },
     {
       "name": "rules",
       "source": "./plugins/rules",
       "description": "Audit and revise AGENTS.md, CLAUDE.md, GEMINI.md, and shared .ai/RULES.md",
-      "version": "1.19.0"
+      "version": "1.22.0"
     },
     {
       "name": "docs",
       "source": "./plugins/docs",
       "description": "Audit and restructure README.md and project documentation under docs/: Diátaxis indexes, orphan docs, doc migration (split/merge/move), and architecture documentation (arc42/C4/ADR)",
-      "version": "1.19.0"
+      "version": "1.22.0"
     },
     {
       "name": "review",
       "source": "./plugins/review",
       "description": "Runtime-neutral cross verification of spec/plan documents and code changes",
-      "version": "1.19.0"
+      "version": "1.22.0"
     },
     {
       "name": "dev",
       "source": "./plugins/dev",
       "description": "WiFi ADB deployment, OSS license inventory, and OpenAPI specification update skills",
-      "version": "1.19.0"
+      "version": "1.22.0"
     },
     {
       "name": "jmeter",
       "source": "./plugins/jmeter",
       "description": "JMeter 스트레스 테스트 파이프라인: JMX 린트, 원격 설치·배포·기동, 실행·집계, knee 탐색, 수집·검증, 리포트, 병목 판별",
-      "version": "1.19.0"
+      "version": "1.22.0"
     }
   ]
 }
