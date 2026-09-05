@@ -78,3 +78,6 @@ Cron 서브에이전트는 시스템 메모리를 상속하지 않으므로 프�
 - rate limit: Google Calendar ~1 req/s, Notion ~3 req/s → loop에 `time.sleep(0.1)`.
 - 스킬명 중복 금지: 같은 이름의 스킬이 2곳에 있으면 skill_view가 ambiguous로 거부하고 cron 스킬 로드도 실패함.
 - 리포트 저장 디렉터리 `/opt/data/calendar-sync/`는 미리 존재해야 함 (스크립트가 mkdir 안 함).
+- 🔴 **OAuth 클라이언트 ID 삭제 시 그 클라이언트로 발급된 모든 토큰(리프레시 포함)이 즉시 사망**. 에러: `deleted_client: The OAuth client was deleted.` 액티브 액세스 토큰은 수명(~1시간) 동안 동작해서 "동기화 성공"으로 오해할 수 있음 → `refresh_token` grant를 직접 호출해 리프레시 가능 여부를 확인해야 정확한 진단.
+- 클라이언트 재생성은 Google Cloud Console에서 수동으로만 가능 (`데스크톱 앱` 유형). `gcloud iam oauth-clients create`는 Workforce Identity용이라 calendar/gmail 스코프 미지원. 공개 REST API도 없음.
+- 호스트 경로 매핑: 컨테이너 `/opt/data` = 호스트 brla의 `/data/hermes/data`. scp 시 `brla:/data/hermes/data/.hermes/secret/google_client_secret.json`.

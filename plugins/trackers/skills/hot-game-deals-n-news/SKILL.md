@@ -83,5 +83,7 @@ description: 게임 세일, 무료 게임, 뉴스를 체크해서 보고하는 �
 3. **가격 단위 혼동:** `featuredcategories` API의 price 필드도 KRW(cc=kr)에서는 원×100 단위로 옴 (예: Cyberpunk 6600000 = ₩66,000). 표시할 때 **/100 필요**. appdetails의 `price_overview`도 센트/원×100. (2026-08-08 실측 확인 — 기존 "나누기 금지" 주석은 USD 기준 오류였음)
 4. **서브에이전트에 테이블 지시 누락:** 서브에이전트가 Epic/GOG 무료 게임을 마크다운 테이블로 반환하는 경우 있음. context에 "테이블 금지, 불릿 리스트만"을 반드시 포함할 것.
 5. **Steam specials 페이지 브라우저 로딩:** JS 렌더링 지연으로 DOM에 `tab_item` 요소가 바로 안 나타남. 스크롤 후 재검사 필요하지만 API 호출이 더 안정적.
-6. **`references/my-steam-games.json` 부재 (2026-08-08 확인):** 보유 게임 목록 파일이 실제로 존재하지 않음. 보유 게임 제외 필터링은 적용 불가 — 보고 시 "보유 목록 없음" 언급하고 인기 타이틀 위주로만 필터링할 것.
+6. **`references/my-steam-games.json` 재생성 (2026-08-24):** 파일이 한동안 부재했으나(2026-08-08 확인), 2026-08-24에 Steam API(`IPlayerService/GetOwnedGames`)로 재생성함. 재생성 스크립트: `/opt/data/tmp/fetch_steam_games.py` (sops에서 STEAM_API_KEY/STEAM_USER_ID 로드). 1,077개 게임 보유. 파일이 다시 없어지면 이 스크립트로 재생성할 것.
 7. **인벤 RSS URL 변경:** `https://www.inven.co.kr/webzine/news/?iskin=rss`는 RSS가 아닌 HTML 반환. 국내 뉴스는 HTML 파싱하거나 해외 RSS(PC Gamer, RPS 정상 동작)로 대체.
+8. **GOG partner/free_games는 상시 무료 목록:** 해당 페이지(2026-08-24 확인)는 한정 기브어웨이가 아닌 상시 무료 게임 48종 목록임(내장 `gogData.products` JSON에서 파싱 가능). 기간 한정 무료는 홈 페이지 배너에서 확인 필요.
+9. **Epic freeGamesPromotions API 유효:** `https://store-site-backend-static-ipv4.ak.epicgames.com/freeGamesPromotions?locale=ko&country=KR&allowCountries=KR` — 현재/예정 무료 게임 날짜+할인율 정상 반환. 브라우저 접근은 Cloudflare 차단됨.
