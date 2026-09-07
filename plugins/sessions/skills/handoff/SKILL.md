@@ -1,6 +1,6 @@
 ---
 name: handoff
-description: "현재 세션 작업을 .zzizily/handoff/에 구조화 저장. /clear 또는 context 압축 전 수동 호출해 작업 상태를 보존. new session에서 /sessions:resume으로 이어작업. 사용자가 /sessions:handoff를 명시적으로 입력했을 때만 실행한다. 세션 종료 감지로 자동 실행하지 않는다."
+description: "현재 세션 작업을 .zzizily/handoff/에 구조화 저장(/sessions:handoff [라벨/title]). /clear 또는 context 압축 전 수동 호출해 작업 상태를 보존. new session에서 /sessions:resume으로 이어작업. 사용자가 /sessions:handoff를 명시적으로 입력했을 때만 실행한다. 세션 종료 감지로 자동 실행하지 않는다."
 ---
 
 ## 지침
@@ -14,15 +14,19 @@ description: "현재 세션 작업을 .zzizily/handoff/에 구조화 저장. /cl
 3. `<root>/.zzizily/.gitignore` 가 없으면 생성(내용은 `*` 한 줄). **Git repository인 경우에만** `git check-ignore <root>/.zzizily/handoff/probe` 로 추적 제외 확인(출력되면 무시됨 = OK). check-ignore가 추적 제외로 보고하지 않으면 저장 **중단**. **non-Git cwd**(`git rev-parse --show-toplevel` 실패)에서는 check-ignore를 건너뛰고 .gitignore 생성만 수행
 4. symlink fail-closed (spec §9): `<root>/.zzizily`, `<root>/.zzizily/handoff`, 그리고 모든 write target(임시 파일 `.tmp-*`, `latest.md.new`, archive 파일) 각각을 `test -L` 로 검사. 하나라도 symlink면 저장 중단하고 사용자에게 통보 (참고: `readlink -f` 는 macOS BSD에서 미지원하므로 `test -L` 기반으로 검사)
 
-### 2. 메타데이터 수집
+### 2. 메타데이터 수집 및 제목(Title) 결정
 
-bash로 수집:
+1. **제목(Title) 결정**:
+   - 사용자가 `/sessions:handoff [라벨/title]` 형태로 인자를 전달한 경우: 해당 인자를 `title`로 사용
+   - 인자가 없는 경우: 작성될 `## 작업 목표`의 핵심 1줄을 `title`로 사용 (예: `## 작업 목표: 카카오 로그인 연동` → title: `카카오 로그인 연동`)
+   - 빈 세션인 경우: `title: "No active work"`
 
-- `project`: `basename "$(git rev-parse --show-toplevel 2>/dev/null || echo "$PWD")"`
-- `saved_at`: `date -u +%Y-%m-%dT%H:%M:%SZ`
-- `git_branch`: `git rev-parse --abbrev-ref HEAD 2>/dev/null`
-- `git_head`: `git rev-parse --short HEAD 2>/dev/null`
-- `git_dirty`: `[ -n "$(git status --porcelain 2>/dev/null)" ] && echo true || echo false` (tracked + untracked 모두 반영)
+2. **시스템/Git 메타데이터 수집 (bash)**:
+   - `project`: `basename "$(git rev-parse --show-toplevel 2>/dev/null || echo "$PWD")"`
+   - `saved_at`: `TZ=Asia/Seoul date +"%Y-%m-%dT%H:%M:%S+09:00"` (KST)
+   - `git_branch`: `git rev-parse --abbrev-ref HEAD 2>/dev/null`
+   - `git_head`: `git rev-parse --short HEAD 2>/dev/null`
+   - `git_dirty`: `[ -n "$(git status --porcelain 2>/dev/null)" ] && echo true || echo false` (tracked + untracked 모두 반영)
 
 ### 3. handoff 본문 작성
 
@@ -39,7 +43,8 @@ bash로 수집:
 schema_version: 1
 session_id: <uuid 또는 timestamp>
 project: <repo basename>
-saved_at: <ISO 8601 UTC>
+title: <작업 목표 1줄 요약 또는 사용자 지정 라벨>
+saved_at: <ISO 8601 KST, 예: 2026-09-07T23:48:05+09:00>
 git_branch: <branch>
 git_head: <short SHA>
 git_dirty: <true|false>
@@ -74,9 +79,13 @@ trigger: manual(handoff)
 
 1. 임시 파일에 write: `<root>/.zzizily/handoff/.tmp-<short8>` (`<short8>`는 `uuidgen | tr -dc 'a-z0-9' | head -c 8` random 8자리, 동일 초 충돌 방지)
 2. **secret scan**: `command -v gitleaks >/dev/null && gitleaks detect --source "<tmp>" --no-git -v`. 탐지 시 **저장 중단 + 사용자에게 "secret 감지, 저장 취소" 통보**. gitleaks 미설치 시 건너뛰되 결과 보고에 "gitleaks 미설치로 deterministic 보장 아님" 명시
-3. archive로 이동: 파일명 `handoff-<UTC-ts>-<short8>.md` (UTC-ts 형식 `20260716T123456Z`, Windows-safe `:` 회피). `mv "<tmp>" "<root>/.zzizily/handoff/handoff-<ts>-<short8>.md"`
+3. archive로 이동:
+   - 파일명: `handoff-<KST-ts>-<short8>.md`
+   - 타임스탬프 `<KST-ts>`: `TZ=Asia/Seoul date +%Y%m%d-%H%M%S` 형식 (KST 기준, 예: `20260907-234906`, **Windows 호환성을 위해 `:` 절대 금지**)
+   - `<short8>`: random 8자리 (`uuidgen | tr -dc 'a-z0-9' | head -c 8`, 동일 초 충돌 방지)
+   - `mv "<tmp>" "<root>/.zzizily/handoff/handoff-<KST-ts>-<short8>.md"`
 4. latest 갱신(atomic): `cp "<archive>" "<root>/.zzizily/handoff/latest.md.new" && mv "<root>/.zzizily/handoff/latest.md.new" "<root>/.zzizily/handoff/latest.md"` (같은 filesystem rename, race 방지)
 
 ### 5. 결과 보고
 
-저장된 archive 경로와 한 줄 요약 출력. 예: `Saved to .zzizily/handoff/handoff-20260716T123456Z-ab12cd34.md. new session에서 /sessions:resume으로 복원.` secret scan 결과(gitleaks 실행 여부)도 함께 보고.
+저장된 archive 경로와 title, 한 줄 요약 출력. 예: `Saved to .zzizily/handoff/handoff-20260907-234906-ab12cd34.md (Title: 카카오 로그인 연동). new session에서 /sessions:resume으로 복원.` secret scan 결과(gitleaks 실행 여부)도 함께 보고.
