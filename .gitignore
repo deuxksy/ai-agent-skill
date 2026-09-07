@@ -42,12 +42,3 @@ plugins/trackers/skills/exchange-rate-tracker/output/
 
 # APM dependencies
 apm_modules/
-/apm.yml
-/apm.lock.yaml
-/build/
-/.mcp.json
-/plugin.json
-/.claude-plugin/plugin.json
-/.agents/skills/
-/.codex/
-/.gemini/
