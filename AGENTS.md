@@ -10,16 +10,16 @@ This file provides guidance to Codex (Codex.ai/code) when working with code in t
 
 - Author: Crong (kyolim)
 - GitHub Repository: `deuxksy/ai-agent-skill`
-- 통합 버전: `1.19.0`
+- 통합 버전: `1.20.0`
 
 ## 구조
 
 ```
 .
 ├── .claude-plugin/
-│   └── marketplace.json     # Claude용 11개 도메인 플러그인 마켓플레이스 (v1.19.0)
+│   └── marketplace.json     # Claude용 11개 도메인 플러그인 마켓플레이스 (v1.20.0)
 ├── .agents/plugins/
-│   └── marketplace.json     # Codex용 11개 도메인 플러그인 마켓플레이스 (v1.19.0)
+│   └── marketplace.json     # Codex용 11개 도메인 플러그인 마켓플레이스 (v1.20.0)
 ├── agents/                  # AI 에이전트 지침 및 어댑터
 └── plugins/
     ├── security/            # 코드/시스템 보안 감사

@@ -32,7 +32,7 @@ skill이 dispatch 시 전달하는 입력:
 | `acceptance_criteria` | 선택 |
 | `runner` | `claude` 또는 `auto` |
 | `reviewers` | `codex`, `agy`, `aperture` 조합. Claude runner에서는 `codex,agy` 필수, `aperture` 선택 |
-| `provider_config` | Codex model/sandbox, Antigravity 모델, Aperture 설정. `codex_model`은 `gpt-5.6-sol`, `gpt-5.6-terra`, `gpt-5.6-luna` 중 하나. `agy_model`은 기본 `gemini-3.6-flash`, 고위험/충돌 시 `gemini-pro`. `aperture_models`는 고정 `k3,qwen3.8-max`; base URL은 `APERTURE_BASE_URL` 환경변수 참조 |
+| `provider_config` | Codex model/sandbox, Antigravity 모델, Aperture 설정. `codex_model`은 `gpt-6-astra` 기본, 레거시 `gpt-5.6-sol`/`gpt-5.6-luna` fallback. `agy_model`은 기본 `gemini-3.8-flash`, 고위험/충돌 시 `gemini-3.1-pro`. `aperture_models`는 고정 `qwen3.8-max`; base URL은 `APERTURE_BASE_URL` 환경변수 참조 |
 
 ## 도구 세트
 
@@ -47,16 +47,16 @@ skill이 dispatch 시 전달하는 입력:
 
 `target_kind`, `tier`, `reviewers`에 따라 라우팅 결정. 모든 Codex 경로는 **MCP-first**, `cwd`=격리 dir, `--sandbox read-only`.
 
-Claude runner에서는 항상 `codex,agy`를 필수 reviewer로 실행한다. 입력 `reviewers`에 `aperture`가 포함되면 `k3`와 `qwen3.8-max`를 각각 독립 reviewer로 추가한다. 입력이 `codex` 또는 `agy` 하나만 지정되어도 누락된 필수 reviewer를 자동 보강한다.
+Claude runner에서는 항상 `codex,agy`를 필수 reviewer로 실행한다. 입력 `reviewers`에 `aperture`가 포함되면 `qwen3.8-max` 단일 reviewer로 추가한다. 입력이 `codex` 또는 `agy` 하나만 지정되어도 누락된 필수 reviewer를 자동 보강한다.
 
 Codex runner 정책은 `skills/verify/SKILL.md`가 정의한다. Codex 사용 중에는 `agy CLI`가 필수 reviewer이고, `aperture`는 선택 reviewer다.
 
 | 대상 | 조건 | 라우팅 | 종료 조건 |
 | :--- | :--- | :--- | :--- |
-| spec/plan | (항상) | 필수 `codex,agy` **2-Way**. `aperture` 선택 시 K3+Qwen pair 추가 | 요구 reviewer blocker 0, 충돌 해결 |
-| 코드 | 경량 | 필수 `codex,agy` **2-Way**. `aperture` 선택 시 K3+Qwen pair 추가 | blocker 0 |
-| 코드 | 표준 | 필수 `codex,agy` **2-Way**. `aperture` 선택 시 K3+Qwen pair 추가 | blocker 0, non-blocker 확인 |
-| 코드 | 고위험 | 필수 `codex,agy` **2-Way**. `aperture` 선택 시 K3+Qwen pair 추가 | 요구 reviewer blocker 0, 충돌 해결 |
+| spec/plan | (항상) | 필수 `codex,agy` **2-Way**. `aperture` 선택 시 qwen3.8-max 추가 | 요구 reviewer blocker 0, 충돌 해결 |
+| 코드 | 경량 | 필수 `codex,agy` **2-Way**. `aperture` 선택 시 qwen3.8-max 추가 | blocker 0 |
+| 코드 | 표준 | 필수 `codex,agy` **2-Way**. `aperture` 선택 시 qwen3.8-max 추가 | blocker 0, non-blocker 확인 |
+| 코드 | 고위험 | 필수 `codex,agy` **2-Way**. `aperture` 선택 시 qwen3.8-max 추가 | 요구 reviewer blocker 0, 충돌 해결 |
 
 티어 판정: **고위험 승격조건 최우선**. 설정/minor도 보안·호환성 영향 시 고위험. "100줄+"은 보조 신호(99줄 인증 변경 > 100줄 generated). content 기반 판정.
 
@@ -91,7 +91,7 @@ Codex MCP 실패 시 순차 fallback. 항상 `--sandbox read-only`, `cwd`=격리
 
 Antigravity는 `agy -p` (격리 복사본 경로만). 모델 폴백은 `provider_config.agy_model` 기준으로 적용한다.
 
-Tailscale Aperture는 OpenAI-compatible `/v1/chat/completions`를 직접 호출한다. `APERTURE_BASE_URL`은 `/v1`까지 포함한다. `k3`와 `qwen3.8-max`에 동일한 정제 prompt를 독립 병렬 전송하고, response의 `.choices[0].message.content`를 검증 결과로 사용한다. API key와 endpoint URL은 출력하거나 저장하지 않는다. `APERTURE_BASE_URL` 미설정, HTTP 오류, 빈 응답, schema 불일치, 두 모델 중 하나의 실패는 INCOMPLETE로 처리한다.
+Tailscale Aperture는 OpenAI-compatible `/v1/chat/completions`를 직접 호출한다. `APERTURE_BASE_URL`은 `/v1`까지 포함한다. `qwen3.8-max` 단일 모델에 정제 prompt를 1회 전송하고, response의 `.choices[0].message.content`를 검증 결과로 사용한다. API key와 endpoint URL은 출력하거나 저장하지 않는다. `APERTURE_BASE_URL` 미설정, HTTP 오류, 빈 응답, schema 불일치, 모델 호출 실패는 INCOMPLETE로 처리한다.
 
 호출 전 `curl`, `jq`, `APERTURE_BASE_URL` 존재를 확인하고 하나라도 없으면 즉시 `INCOMPLETE`로 종료한다. 각 호출은 `curl --fail --silent --connect-timeout 10 --max-time 300`과 `Content-Type: application/json`을 사용한다. request body는 `jq`로 생성하고 target text를 shell interpolation하지 않는다. `curl -v`, `--show-error`, `set -x`, endpoint echo, `${APERTURE_BASE_URL%/}/chat/completions` 외 URL 호출은 금지한다. request/response 임시 파일은 취합 직후 삭제한다.
 
@@ -99,22 +99,21 @@ Tailscale Aperture는 OpenAI-compatible `/v1/chat/completions`를 직접 호출�
 
 | Provider | 모델 | 우선 사용 |
 | :--- | :--- | :--- |
-| Codex | `gpt-5.6-sol` | 기본값, high-risk code review, architecture, 보안/권한, 충돌 resolution |
-| Codex | `gpt-5.6-terra` | 공식 docs/reference, dependency/API 동작 검증, 외부 근거 기반 비교 |
+| Codex | `gpt-6-astra` | 기본값, high-risk code review, architecture, 보안/권한, 충돌 resolution |
+| Codex | `gpt-5.6-sol` | 레거시 플래그싱 fallback |
 | Codex | `gpt-5.6-luna` | 빠른 triage, small diff sanity check, 파일/심볼 mapping, 저위험 문서 변경 |
-| Antigravity | `gemini-3.6-flash` | 기본 fast lane, low/medium-risk diff, 실행 계획 sanity check, 낮은 latency 외부검증 |
-| Antigravity | `gemini-pro` | high-risk design/code review, multi-file consistency, Flash 결과가 애매하거나 Codex와 충돌할 때 |
+| Antigravity | `gemini-3.8-flash` | 기본 fast lane, low/medium-risk diff, 실행 계획 sanity check, 낮은 latency 외부검증 |
+| Antigravity | `gemini-3.1-pro` | high-risk design/code review, multi-file consistency, Flash 결과가 애매하거나 Codex와 충돌할 때 |
 
-불확실하면 Codex는 `gpt-5.6-sol`, Antigravity는 `gemini-3.6-flash`로 시작한다. 보안/권한/데이터/배포 영향이 있거나 reviewer 간 충돌이 있으면 각각 `gpt-5.6-sol`, `gemini-pro`로 승격한다.
+불확실하면 Codex는 `gpt-6-astra`, Antigravity는 `gemini-3.8-flash`로 시작한다. 보안/권한/데이터/배포 영향이 있거나 reviewer 간 충돌이 있으면 각각 `gpt-6-astra`, `gemini-3.1-pro`로 승격한다.
 
 ### Aperture 모델 선택
 
 | 모델 | 검증 관점 |
 | :--- | :--- |
-| `k3` | 긴 spec/plan, 대형 diff, cross-file consistency, 장문 문맥 기반 검증 |
-| `qwen3.8-max` | coding, research, architecture·대안 검토, K3 결과 sanity check |
+| `qwen3.8-max` | coding, research, architecture·대안 검토, Codex/Antigravity와 독립적인 제3자 관점 |
 
-두 모델은 항상 pair로 실행한다. 동일 finding 충돌 시 모델별 근거를 보존하고 보수적으로 처리한다.
+단일 모델만 실행한다. Codex/Antigravity와 동일 finding 충돌 시 reviewer별 근거를 보존하고 보수적으로 처리한다.
 
 ## fail-closed 판정
 
@@ -143,7 +142,7 @@ APPROVE 조건을 엄격하게 적용. 요구 reviewer의 빈 응답/필드 누�
 | 보안/권한 | Codex |
 | 코드 정확성 | Codex |
 | 아키텍처/설계 | Antigravity |
-| Aperture 모델 관점 | `k3`, `qwen3.8-max` |
+| Aperture 모델 관점 | `qwen3.8-max` |
 
 **상충 시 보수적 FAIL 우선**. 최종 결정은 skill(개발자).
 
@@ -159,18 +158,18 @@ APPROVE 조건을 엄격하게 적용. 요구 reviewer의 빈 응답/필드 누�
 **Target**: spec-plan | code
 **Tier**: light | standard | high
 **Runner**: claude
-**Routes used**: Codex(MCP | Bash-fallback | failed), Antigravity(agy | failed), Aperture(k3: success | failed, qwen3.8-max: success | failed)
+**Routes used**: Codex(MCP | Bash-fallback | failed), Antigravity(agy | failed), Aperture(qwen3.8-max: success | failed)
 **Integrity**: skill이 별도 보고 (subagent는 모름)
 
 ### Findings (출처 표기)
-- [Blocker] 즉시 수정 필요 — 근거(file:line/인용) — 출처: Codex | Antigravity | Aperture/k3 | Aperture/qwen3.8-max | multiple
+- [Blocker] 즉시 수정 필요 — 근거(file:line/인용) — 출처: Codex | Antigravity | Aperture/qwen3.8-max | multiple
 - [Risk] 수정 권장 — 근거 — 출처
 - [Assumption] 검증된 가정 — 출처
 - [Test] 제안 테스트 — 출처
 
 ### Cross-Check (2-Way 이상)
-| 항목 | Codex | Antigravity | Aperture/k3 | Aperture/qwen3.8-max | 일치여부 | 충돌해결 |
-| :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+| 항목 | Codex | Antigravity | Aperture/qwen3.8-max | 일치여부 | 충돌해결 |
+| :--- | :--- | :--- | :--- | :--- | :--- |
 
 ### Recommendation
 APPROVE | REQUEST_CHANGES | NEEDS_MORE_EVIDENCE
