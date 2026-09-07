@@ -101,6 +101,7 @@ Tailscale Aperture는 OpenAI-compatible `/v1/chat/completions`를 직접 호출�
 | :--- | :--- | :--- |
 | Codex | `gpt-6-astra` | 기본값, high-risk code review, architecture, 보안/권한, 충돌 resolution |
 | Codex | `gpt-5.6-sol` | 레거시 플래그싱 fallback |
+| Codex | `gpt-5.6-terra` | 공식 docs/reference 확인, dependency/API 동작 검증, 외부 근거 기반 비교처럼 research 성격이 강한 검증 |
 | Codex | `gpt-5.6-luna` | 빠른 triage, small diff sanity check, 파일/심볼 mapping, 저위험 문서 변경 |
 | Antigravity | `gemini-3.8-flash` | 기본 fast lane, low/medium-risk diff, 실행 계획 sanity check, 낮은 latency 외부검증 |
 | Antigravity | `gemini-3.1-pro` | high-risk design/code review, multi-file consistency, Flash 결과가 애매하거나 Codex와 충돌할 때 |

@@ -75,7 +75,7 @@ graph TD
 | :--- | :--- | :--- |
 | `runner` | `auto` \| `claude` \| `codex` \| `agy` | snapshot 이후 fanout을 실제로 실행하는 주체. 기본 `auto` |
 | `reviewers` | `codex`, `agy`, `aperture` 조합 | 독립 검증 결과를 내는 provider. `aperture`는 `qwen3.8-max` 단일 모델로 독립 검증 |
-| `model_profile` | provider별 모델 지정 | `codex:gpt-6-astra`, `codex:gpt-5.6-sol`, `codex:gpt-5.6-luna`, `agy:gemini-3.8-flash`; Aperture는 고정 `qwen3.8-max` |
+| `model_profile` | provider별 모델 지정 | `codex:gpt-6-astra`, `codex:gpt-5.6-sol`, `codex:gpt-5.6-terra`, `codex:gpt-5.6-luna`, `agy:gemini-3.8-flash`; Aperture는 고정 `qwen3.8-max` |
 
 `runner`는 orchestration 위치만 바꾼다. 보안 책임(snapshot/redaction/integrity)은 항상 skill이 먼저 수행하고, reviewer는 격리 복사본만 본다.
 
