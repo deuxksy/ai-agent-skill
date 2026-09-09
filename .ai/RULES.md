@@ -12,7 +12,7 @@ This document serves as the Single Source of Truth (SSoT) for all runtime AI age
 ## Versioning & Commit Convention
 
 - **SemVer**: Follow Semantic Versioning (`1.21.0`). All plugin manifests (`.claude-plugin/marketplace.json`, `.agents/plugins/marketplace.json`, `plugins/*/.claude-plugin/`, `plugins/*/.codex-plugin/`) and catalog tables must stay in sync.
-- **Local-only plugins**: Not registered in `marketplace.json` (e.g. `meridian`, independent version). Never add them to public catalog tables.
+- **Local-only plugins**: Not registered in `marketplace.json`. Never add them to public catalog tables.
 - **Conventional Commits**: Commit tag in English (e.g. `feat`, `fix`, `docs`, `chore`), commit message in Korean.
 
 ## Core Guidelines

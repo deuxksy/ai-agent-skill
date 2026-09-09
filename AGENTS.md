@@ -32,8 +32,7 @@ This file provides guidance to Codex (Codex.ai/code) when working with code in t
     ├── docs/                # README 및 문서 관리
     ├── review/              # 교차 검증
     ├── dev/                 # 빌드/배포
-    ├── jmeter/              # 부하 테스트
-    └── meridian/            # 원격 미디어 파이프라인 (마켓 미등록·로컬 전용)
+    └── jmeter/              # 부하 테스트
 ```
 
 ## 개발 명령

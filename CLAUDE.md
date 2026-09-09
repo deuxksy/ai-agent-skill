@@ -28,7 +28,7 @@ claude plugin install jmeter@zzizily
 
 ## 플러그인 메타 & 버전 정책
 
-- **통합 단일 버전**: `1.21.0` (비공개 플러그인 `meridian` 제외 — 독립 버전)
+- **통합 단일 버전**: `1.21.0`
 - **마켓플레이스 매니페스트**: `.claude-plugin/marketplace.json`
 - **GitHub repo**: `deuxksy/ai-agent-skill`
 
@@ -52,8 +52,7 @@ claude plugin install jmeter@zzizily
     ├── docs/                # README 및 프로젝트 문서 관리 (docs-md-management, docs-restructure, revise-readme-md)
     ├── review/              # 교차 검증 (verify)
     ├── dev/                 # 빌드/배포 (deploy-android-wifi, license, update-openapi)
-    ├── jmeter/              # 부하 테스트 (lint, deploy, run, knee, collect, report, bottleneck)
-    └── meridian/            # 원격 미디어 파이프라인 — 마켓플레이스 미등록·로컬 전용
+    └── jmeter/              # 부하 테스트 (lint, deploy, run, knee, collect, report, bottleneck)
 ```
 
 ## 분류 원칙
