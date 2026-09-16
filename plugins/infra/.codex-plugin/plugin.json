@@ -1,7 +1,7 @@
 {
   "name": "infra",
   "description": "Dotfiles setup, system package management, AI agents/MCP/LSP lifecycle, Proxmox VM, and OpenWrt service provisioning skills",
-  "version": "1.21.0",
+  "version": "2.0.0",
   "author": {
     "name": "Crong"
   },
@@ -9,13 +9,14 @@
   "interface": {
     "displayName": "Infra",
     "shortDescription": "인프라 구축 및 자동화 스킬 모음",
-    "longDescription": "머신 초기 설정(dotfiles/Tailscale), 시스템 패키지 관리, AI 에이전트 생명주기 관리, Proxmox 가상 머신 생성과 OpenWrt 백그라운드 서비스 구축을 지원합니다.",
+    "longDescription": "머신 초기 설정(dotfiles/Tailscale), 시스템 패키지 관리, AI 에이전트/MCP와 LSP 생명주기 관리, Proxmox 가상 머신 생성과 OpenWrt 백그라운드 서비스 구축을 지원합니다.",
     "developerName": "Crong",
     "category": "Infrastructure",
     "capabilities": ["Write"],
     "defaultPrompt": [
       "신규 머신 초기 설정을 진행해줘.",
-      "시스템 패키지를 일괄 업그레이드해줘."
+      "시스템 패키지를 일괄 업그레이드해줘.",
+      "개발 언어의 LSP server를 설치하거나 업그레이드해줘."
     ]
   }
 }

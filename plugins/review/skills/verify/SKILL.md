@@ -47,7 +47,7 @@ graph TD
     SK -->|4 원본 무결성 기록| S4[전 workspace hash-git status-mtime-perm]
     SK -->|5 runner 선택| RN[Runner Adapter]
     RN -->|Claude Code| CC[verify subagent]
-    RN -->|Codex| CX[codex exec 또는 Codex MCP]
+    RN -->|Codex| CX[codex exec]
     RN -->|Antigravity| AG[agy -p]
     RN -->|reviewer fanout| RV[Reviewer Providers]
     RV --> CXR[Codex reviewer]
@@ -67,7 +67,7 @@ graph TD
 | **skill** `verify` | 진입점 + **보안 책임**(snapshot/redaction/무결성 감시) + 판사(취합). runtime-neutral 계약 정의 | `skills/verify/SKILL.md` |
 | **runner adapter** | Claude Code/Codex/Antigravity 중 현재 실행 환경에 맞춰 reviewer fanout 수행 | skill 본문 계약 |
 | **subagent** `verify` | Claude Code runner adapter. 격리 snapshot에서 순수 검증만 수행. 보안 결정권 없음 | `agents/verify.md` |
-| **reviewer provider** | Codex, Antigravity, Tailscale Aperture 등 독립 검증 결과 생산 | CLI/MCP/OpenAI-compatible API |
+| **reviewer provider** | Codex, Antigravity, Tailscale Aperture 등 독립 검증 결과 생산 | CLI/OpenAI-compatible API |
 
 ## 실행 주체와 reviewer 분리
 
@@ -86,7 +86,7 @@ graph TD
 | `auto` | 기본값 | 현재 host가 제공하는 가장 안전한 runner 선택. Claude Code면 subagent, Codex면 local fanout, agy면 `agy -p` |
 | `claude` | Claude Code plugin/subagent 사용 가능 | `Agent(subagent_type: "verify")`로 fanout. 필수 reviewer는 `codex,agy`, `aperture` 선택 |
 | `codex` | Codex 세션 또는 `codex exec` 사용 가능 | Codex가 runner가 되고 `agy CLI`를 필수 reviewer로 호출. `aperture` 선택 |
-| `agy` | Antigravity CLI 사용 가능 | Antigravity가 runner가 되고 `codex` reviewer를 필수 호출. Codex 검증은 MCP 우선, CLI 차선. `aperture` 선택 |
+| `agy` | Antigravity CLI 사용 가능 | Antigravity가 runner가 되고 `codex` reviewer를 필수 호출. Codex 검증은 `codex exec` CLI. `aperture` 선택 |
 
 ### Claude Runner 정책
 
@@ -94,11 +94,11 @@ graph TD
 
 | 구분 | reviewer | 실행 경로 | 정책 |
 | :--- | :--- | :--- | :--- |
-| 필수 | `codex` | Codex MCP 우선, 실패 시 `codex exec --sandbox read-only` fallback | 생략 불가 |
+| 필수 | `codex` | `codex exec --sandbox read-only` | 생략 불가 |
 | 필수 | `agy` | `agy -p` CLI | 생략 불가 |
 | 선택 | `aperture` | OpenAI-compatible `/v1/chat/completions` | `--reviewers ... ,aperture` 지정 시 `qwen3.8-max` 추가 |
 
-Claude runner에서 사용자가 `--reviewers codex`처럼 일부만 지정해도 `agy`를 자동 보강해 `codex,agy`로 실행한다. Claude Code에서 Codex 검증은 **MCP 우선, `codex exec` CLI 차선**이다. `aperture`는 명시적으로 요청된 경우에만 추가한다.
+Claude runner에서 사용자가 `--reviewers codex`처럼 일부만 지정해도 `agy`를 자동 보강해 `codex,agy`로 실행한다. Claude Code에서 Codex 검증은 **`codex exec` CLI 단일 경로**다 (MCP `codex mcp-server`는 codex-cli 0.154.0에서 제거). `aperture`는 명시적으로 요청된 경우에만 추가한다.
 
 ### Codex Runner 정책
 
@@ -117,16 +117,16 @@ Codex runner에서 사용자가 `--reviewers codex`만 지정해도 `agy`를 자
 
 | 구분 | reviewer | 실행 경로 | 정책 |
 | :--- | :--- | :--- | :--- |
-| 필수 | `codex` | Codex MCP 우선, 실패 시 `codex exec --sandbox read-only` fallback | 생략 불가 |
+| 필수 | `codex` | `codex exec --sandbox read-only` | 생략 불가 |
 | 선택 | `aperture` | OpenAI-compatible `/v1/chat/completions` | `--reviewers ... ,aperture` 지정 시 `qwen3.8-max` 추가 |
 
-Antigravity runner에서 사용자가 `--reviewers agy`만 지정해도 `codex`를 자동 보강한다. 최소 검증 경로는 **`codex` 필수 + `aperture` 선택**이고, Codex 검증은 **MCP 우선, `codex exec` CLI 차선**이다.
+Antigravity runner에서 사용자가 `--reviewers agy`만 지정해도 `codex`를 자동 보강한다. 최소 검증 경로는 **`codex` 필수 + `aperture` 선택**이고, Codex 검증은 **`codex exec` CLI**다.
 
 ### Reviewer Provider
 
 | reviewer | 기본 호출 | 모델 선택 |
 | :--- | :--- | :--- |
-| `codex` | Codex MCP 우선, 실패 시 `codex exec` | `provider_config.codex_model` |
+| `codex` | `codex exec` | `provider_config.codex_model` |
 | `agy` | `agy -p` | `provider_config.agy_model` |
 | `aperture` | `curl` + OpenAI-compatible Chat Completions API | `provider_config.aperture_models` 고정값 `qwen3.8-max`; base URL은 `APERTURE_BASE_URL` 환경변수 |
 
@@ -499,7 +499,7 @@ runner의 Verification Report + skill의 Integrity 보고를 통합 표시.
 **Target**: spec-plan | code
 **Tier**: light | standard | high
 **Runner**: auto | claude | codex | agy
-**Routes used**: Codex(MCP | Bash-fallback | failed), Antigravity(agy | failed), Aperture(qwen3.8-max: success | failed)
+**Routes used**: Codex(codex exec | failed), Antigravity(agy | failed), Aperture(qwen3.8-max: success | failed)
 
 ### Integrity (skill)
 **Consent**: GRANTED | DENIED
@@ -565,11 +565,10 @@ rm -f /tmp/integrity-*-*.txt /tmp/verify-aperture-*.json /tmp/verify-isolated-* 
 - **민감 파일 원천 배제**: `.env*`, `*.key`, `*.pem`, `.sops`, `~/.codex/`, `~/.config/**` 등은 snapshot에서 제외
 - **무결성 전 workspace 감시**: 검증 전후로 tracked/untracked/hash/git status/mtime/permission 전 항목 비교. 대상 외 변경도 TAMPER
 - **TOCTOU 방지**: 모든 child process 종료 확인 후 무결성 사후 검증. timeout 잔존 process의 사후 쓰기 차단
-- **Codex workspace-write 금지**: 모든 Codex 경로 `--sandbox read-only`, `cwd`=격리 dir. MCP-first, 실패 시 `codex exec` fallback (workspace-write 절대 금지)
-- **Codex reviewer 우선순위**: Claude Code와 Antigravity CLI에서 Codex를 reviewer로 호출할 때는 MCP를 우선 사용하고, 실패/미발견/불완전 응답 시에만 `codex exec` CLI로 fallback
-- **Claude runner 필수 2-Way**: Claude Code 사용 중에는 `codex(MCP)` + `agy CLI` 검증을 반드시 수행. `aperture`는 선택 reviewer
+- **Codex workspace-write 금지**: 모든 Codex 경로 `codex exec --sandbox read-only`, `cwd`=격리 dir (workspace-write 절대 금지)
+- **Claude runner 필수 2-Way**: Claude Code 사용 중에는 `codex exec` + `agy CLI` 검증을 반드시 수행. `aperture`는 선택 reviewer
 - **Codex runner 필수 외부검증**: Codex 사용 중에는 `agy CLI` 검증을 반드시 수행. `aperture`는 선택 reviewer
-- **Antigravity runner 필수 외부검증**: Antigravity CLI 사용 중에는 `codex` 검증을 반드시 수행. Codex 경로는 MCP 우선, CLI 차선. `aperture`는 선택 reviewer
+- **Antigravity runner 필수 외부검증**: Antigravity CLI 사용 중에는 `codex` 검증을 반드시 수행. Codex 경로는 `codex exec` CLI. `aperture`는 선택 reviewer
 - **Aperture 직접 호출**: OpenAI-compatible `/v1/chat/completions`를 호출
 - **Aperture secret 금지**: endpoint/API key는 평문 출력·저장 금지. endpoint는 `APERTURE_BASE_URL` 환경변수로만 참조
 - **Aperture 단일 모델**: `aperture` 선택 시 `qwen3.8-max` 호출 성공이 required reviewer 성공 조건

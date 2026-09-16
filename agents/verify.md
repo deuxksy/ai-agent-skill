@@ -38,14 +38,12 @@ skill이 dispatch 시 전달하는 입력:
 
 | 도구 | 용도 | 제약 |
 | :--- | :--- | :--- |
-| `Bash` | `agy -p`, `codex exec`(fallback), Aperture `curl`, `pwd`=격리 dir 확인 | **cwd=격리 dir 강제**. 원본 workspace 경로 접근 금지. `curl`은 `${APERTURE_BASE_URL%/}/chat/completions`만 허용 |
-| `mcp__codex__codex` | Codex MCP | `cwd`=격리 dir, `sandbox: read-only` |
-| `mcp__codex__codex-reply` | Codex MCP 대화 이어가기 | 동일 제약 |
+| `Bash` | `codex exec`, `agy -p`, Aperture `curl`, `pwd`=격리 dir 확인 | **cwd=격리 dir 강제**. 원본 workspace 경로 접근 금지. `curl`은 `${APERTURE_BASE_URL%/}/chat/completions`만 허용 |
 | `Read`, `Grep`, `Glob` | 격리 복사본 확인 | 격리 dir 범위만 |
 
 ## 라우팅 매핑
 
-`target_kind`, `tier`, `reviewers`에 따라 라우팅 결정. 모든 Codex 경로는 **MCP-first**, `cwd`=격리 dir, `--sandbox read-only`.
+`target_kind`, `tier`, `reviewers`에 따라 라우팅 결정. 모든 Codex 경로는 **`codex exec` 단일** (`codex mcp-server`는 codex-cli 0.154.0에서 제거), `cwd`=격리 dir, `--sandbox read-only`.
 
 Claude runner에서는 항상 `codex,agy`를 필수 reviewer로 실행한다. 입력 `reviewers`에 `aperture`가 포함되면 `qwen3.8-max` 단일 reviewer로 추가한다. 입력이 `codex` 또는 `agy` 하나만 지정되어도 누락된 필수 reviewer를 자동 보강한다.
 
@@ -66,28 +64,27 @@ Codex runner 정책은 `skills/verify/SKILL.md`가 정의한다. Codex 사용 �
 
 | 항목 | 값 |
 | :--- | :--- |
-| per-call timeout | 5m (`agy --print-timeout 10m`, MCP 자체 timeout, Aperture `curl --max-time 300`) |
+| per-call timeout | 5m (`agy --print-timeout 10m`, `codex exec` process timeout, Aperture `curl --max-time 300`) |
 | join | 요구 reviewer 완료 대기. 모두 성공 → Cross-Check 취합. 일부 성공 → 성공 route + INCOMPLETE 플래그. 모두 실패 → INCOMPLETE |
 | cancellation | 한쪽 timeout 시 다른 쪽 결과만 사용. 단, skill은 모든 child process 종료 확인 후 무결성 검증 (timeout process 잔존 TOCTOU 방지) |
-| 순차 영역 | Codex Fallback(MCP→Bash)은 Codex 라인 내부 순차. 다른 reviewer와는 병렬 유지 |
+| 순차 영역 | Codex 모델 fallback(astra→sol)은 Codex 라인 내부 순차. 다른 reviewer와는 병렬 유지 |
 
-## Codex Fallback (Plan B)
+## Codex 호출
 
-Codex MCP 실패 시 순차 fallback. 항상 `--sandbox read-only`, `cwd`=격리 dir.
+`codex exec`(Bash) 단일 경로. MCP `codex mcp-server`는 codex-cli 0.154.0에서 제거되어 MCP 도구(`mcp__codex__codex`)는 더 이상 존재하지 않는다. 항상 `--sandbox read-only`, `cwd`=격리 dir.
 
 ```text
-1차: mcp__codex__codex — cwd: 격리 dir, sandbox: read-only
-     실패 감지: 도구 에러 / 타임아웃(5m) / 빈·불완전 응답
-       (불완전: Blocker/Verdict 필드 누락, 응답 < 50자)
-2차(Plan B): codex exec (Bash)
+codex exec (Bash)
      - PR·코드: codex exec review --uncommitted  또는  --base <BRANCH>
      - 일반:     codex exec "<검증 프롬프트>"
      - 파라미터: --sandbox read-only --config approval-policy=never --cd <격리dir>
                  (workspace-write 절대 금지)
      - quoting: 인자 single-quote, -- 구분, $( ) backtick 사전 escape
+     - 실패 감지: 종료 코드 / 타임아웃(5m) / 빈·불완전 응답
+       (불완전: Blocker/Verdict 필드 누락, 응답 < 50자)
 ```
 
-결과 표시: "Codex: MCP" 또는 "Codex: Bash fallback (사유)". 요구 reviewer가 모두 실패하면 INCOMPLETE (fail-closed).
+결과 표시: "Codex: exec" 또는 "Codex: failed (사유)". 요구 reviewer가 모두 실패하면 INCOMPLETE (fail-closed).
 
 Antigravity는 `agy -p` (격리 복사본 경로만). 모델 폴백은 `provider_config.agy_model` 기준으로 적용한다.
 
@@ -159,7 +156,7 @@ APPROVE 조건을 엄격하게 적용. 요구 reviewer의 빈 응답/필드 누�
 **Target**: spec-plan | code
 **Tier**: light | standard | high
 **Runner**: claude
-**Routes used**: Codex(MCP | Bash-fallback | failed), Antigravity(agy | failed), Aperture(qwen3.8-max: success | failed)
+**Routes used**: Codex(codex exec | failed), Antigravity(agy | failed), Aperture(qwen3.8-max: success | failed)
 **Integrity**: skill이 별도 보고 (subagent는 모름)
 
 ### Findings (출처 표기)
