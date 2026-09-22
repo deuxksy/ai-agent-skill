@@ -70,6 +70,12 @@
       "source": "./plugins/jmeter",
       "description": "JMeter 스트레스 테스트 파이프라인: JMX 린트, 원격 설치·배포·기동, 실행·집계, knee 탐색, 수집·검증, 리포트, 병목 판별",
       "version": "2.0.0"
+    },
+    {
+      "name": "kisa",
+      "source": "./plugins/kisa",
+      "description": "KISA 주요정보통신기반시설 취약점 점검 체계(U-01~73) 기반 서버·네트워크 진단 스킬",
+      "version": "1.0.0"
     }
   ]
 }
