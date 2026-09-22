@@ -1,0 +1,9 @@
+{
+  "name": "kisa",
+  "description": "KISA vulnerability checklist based server and network security audit skills",
+  "version": "1.0.0",
+  "author": {
+    "name": "Crong"
+  },
+  "skills": "./skills/"
+}
