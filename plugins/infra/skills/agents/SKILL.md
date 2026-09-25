@@ -54,18 +54,20 @@ cat /etc/os-release 2>/dev/null | grep ^ID=
 
 #### Brew Cask AI Agents
 
-macOS에서 `codex`·`claude-code`·`antigravity-cli`는 brew cask로 관리. pnpm `minimumReleaseAge`·native PATH 충돌·`agy` 자체 업데이터 충돌을 모두 회피.
+macOS에서 `codex`·`claude-code`·`antigravity-cli`·`google-gemini`는 brew cask로 관리. pnpm `minimumReleaseAge`·native PATH 충돌·`agy` 자체 업데이터 충돌을 모두 회피.
 
-| 패키지 | CLI | 설치 (macOS) | 업그레이드 (macOS) |
+| 패키지 | CLI/앱 | 설치 (macOS) | 업그레이드 (macOS) |
 | :--- | :--- | :--- | :--- |
 | `codex` | `codex` | `brew install --cask codex` | `brew upgrade --cask codex` |
 | `claude-code` | `claude` | `brew install --cask claude-code` | `brew upgrade --cask claude-code` |
 | `antigravity-cli` | `agy` | `brew install --cask antigravity-cli` | `brew upgrade --cask antigravity-cli` (실패 시 `agy update`) |
+| `google-gemini` | `Gemini.app` (GUI) | `brew install --cask google-gemini` | `brew upgrade --cask google-gemini` (실패 시 앱 자체 업데이트로 최신 유지) |
 
 > **antigravity-cli**: `auto_updates` cask라 `agy` 자체 업데이터가 바이너리를 덮어쓰면 `brew upgrade --cask`가 "already a Binary at .../agy" 에러로 실패. 이때 `agy update`로 갱신 (`brew info`가 Not installed로 인식하는 상태 불일치도 동일 원인).
 > **claude-code**: native installer(`~/.local/bin/claude`)와 PATH 충돌. brew 우선하려면 native 바이너리 제거 → `/opt/homebrew/bin/claude` 사용. `~/.claude/`(설정·플러그인)는 공유 유지.
 > **codex**: npm 패키지이나 macOS는 brew cask가 최신을 즉시 제공 (pnpm `minimumReleaseAge` 우회).
-> **타 OS**: SteamOS/Linux antigravity는 `curl -fsSL https://antigravity.google/cli/install.sh | bash` (자체 `agy update`). NixOS는 `nixpkgs#antigravity-cli`. codex는 타 OS에서 `@openai/codex` pnpm. claude-code는 native installer. Gemini CLI는 2026-06-18 서비스 중단.
+> **google-gemini**: Google Gemini 데스크톱 앱(`Gemini.app`, GUI, CLI 없음). `auto_updates` cask라 Google 자체 업데이터가 갱신 → `brew upgrade --cask`가 "already an App" 에러로 실패해도 앱이 이미 최신인 경우가 많음. **cask `gemini`(MacPaw 디스크 클리너)와 혼동 금지.** Gemini CLI(2026-06-18 서비스 중단)·Antigravity CLI(`agy`)·Gemini 데스크톱 앱은 서로 다른 별개 제품.
+> **타 OS**: SteamOS/Linux antigravity는 `curl -fsSL https://antigravity.google/cli/install.sh | bash` (자체 `agy update`). NixOS는 `nixpkgs#antigravity-cli`. codex는 타 OS에서 `@openai/codex` pnpm. claude-code는 native installer. Gemini CLI는 2026-06-18 서비스 중단 (데스크톱 앱 `google-gemini`는 별도 제품으로 계속 제공).
 
 ### MCP Servers
 
@@ -83,7 +85,6 @@ macOS에서 `codex`·`claude-code`·`antigravity-cli`는 brew cask로 관리. pn
 | :--- | :--- |
 | `proxmox-mcp-plus` | `proxmox-mcp`, `proxmox-mcp-plus` |
 | `doris-mcp-server` | `doris-mcp`, `doris-mcp-server` |
-| `postgres-mcp` | `postgres-mcp` |
 
 ### LSP Servers
 
@@ -145,7 +146,6 @@ uv tool install llm@latest
 # MCP Servers
 uv tool install proxmox-mcp-plus@latest
 uv tool install doris-mcp-server@latest
-uv tool install postgres-mcp@latest
 ```
 
 #### LSP Servers
@@ -168,12 +168,12 @@ nix profile install nixpkgs#lua-language-server nixpkgs#marksman nixpkgs#terrafo
 
 #### Brew Cask AI Agents (macOS 분기)
 
-macOS 감지(`uname -s = Darwin`) 시 `codex`·`claude-code`·`antigravity-cli`를 brew cask로 설치. macOS는 brew 기반.
+macOS 감지(`uname -s = Darwin`) 시 `codex`·`claude-code`·`antigravity-cli`·`google-gemini`를 brew cask로 설치. macOS는 brew 기반.
 
 ```bash
-# macOS - brew cask로 codex / claude-code / antigravity-cli 동시 설치
+# macOS - brew cask로 codex / claude-code / antigravity-cli / google-gemini 동시 설치
 if [ "$(uname -s)" = "Darwin" ]; then
-  brew install --cask codex claude-code antigravity-cli
+  brew install --cask codex claude-code antigravity-cli google-gemini
   # claude-code: native installer(~/.local/bin/claude) 잔류 시 PATH 충돌 → 제거 후 brew 우선
   # rm ~/.local/bin/claude  # 사용자 승인 후 제거
 fi
@@ -200,6 +200,8 @@ omx --version
 # Brew Cask AI Agents (macOS)
 agy --version
 claude --version
+# google-gemini (Gemini desktop) — GUI 앱이라 CLI가 없어 brew로 확인
+brew list --cask --versions google-gemini
 # pnpm - MCP Servers
 mcp-hub --version
 kubernetes-mcp-server --version
@@ -209,7 +211,7 @@ holmes version
 serena --version
 
 # uv - MCP Servers (--version 미지원)
-uv tool list | grep -E "proxmox-mcp-plus|doris-mcp-server|postgres-mcp"
+uv tool list | grep -E "proxmox-mcp-plus|doris-mcp-server"
 
 # pnpm - MCP Servers (--version 미지원)
 pnpm list -g --depth=0 | grep -E "dbhub"
@@ -241,7 +243,7 @@ nil --version
 
 > **참고**:
 > - `holmes`는 `--version` 미지원으로 하위 명령 방식 사용.
-> - `dbhub`, `proxmox-mcp-plus`, `doris-mcp-server`, `postgres-mcp`는 `--version` 미지원으로 `pnpm list` / `uv tool list`로 확인.
+> - `dbhub`, `proxmox-mcp-plus`, `doris-mcp-server`는 `--version` 미지원으로 `pnpm list` / `uv tool list`로 확인.
 > - `vscode-langservers-extracted`는 `--version` 미지원으로 `pnpm list`로 확인. brew LSP(lua-language-server, marksman, terraform-ls)는 `brew list --versions`로 확인.
 > - `nil`은 NixOS는 nix, 타 OS는 cargo(`cargo install --git`)로 설치·갱신.
 
@@ -297,7 +299,6 @@ uv tool upgrade llm
 # MCP Servers
 uv tool upgrade proxmox-mcp-plus
 uv tool upgrade doris-mcp-server
-uv tool upgrade postgres-mcp
 ```
 
 #### LSP Servers
@@ -319,10 +320,11 @@ nix profile upgrade '.*lua-language-server.*' '.*marksman.*' '.*terraform-ls.*' 
 #### Brew Cask AI Agents (macOS 분기)
 
 ```bash
-# macOS - brew cask로 codex / claude-code / antigravity-cli 업그레이드
+# macOS - brew cask로 codex / claude-code / antigravity-cli / google-gemini 업그레이드
 if [ "$(uname -s)" = "Darwin" ]; then
-  brew upgrade --cask codex claude-code antigravity-cli
+  brew upgrade --cask codex claude-code antigravity-cli google-gemini
   # antigravity-cli: auto_updates cask라 agy 자체 업데이터 충돌 시 "already a Binary" 에러 → agy update로 폴백
+  # google-gemini: auto_updates + GUI 앱 — "already an App" 에러 시 앱 자체 업데이트로 이미 최신인 경우 다수 → 앱 내 업데이트로 확인
 fi
 
 # SteamOS/Linux - 자체 update 서브커맨드
@@ -363,5 +365,6 @@ nix profile upgrade '.*antigravity-cli.*'
 - **Claude Code**: macOS는 brew cask `claude-code`로 관리 (native installer 대체). `~/.claude/` 설정은 공유. 타 OS는 native installer 유지
 - **NixOS 특례**: 모든 패키지 매니저(pnpm, uv)와 LSP가 nix로 관리됨. `nil`은 NixOS 외 cargo(mise rust)로 설치
 - **Antigravity CLI 특례**: macOS는 homebrew-cask (`auto_updates`) — `brew upgrade --cask` 실패 시 `agy update`로 폴백. SteamOS/Linux는 installer 스크립트 (자체 `agy update`), NixOS는 nixpkgs `antigravity-cli` 패키지
+- **Gemini desktop**: macOS는 brew cask `google-gemini`(`auto_updates`, Google 자체 업데이터)로 관리. Gemini CLI(2026-06-18 서비스 중단)·Antigravity CLI(`agy`)·Gemini 데스크톱 앱은 별개 제품이며, cask `gemini`(MacPaw 디스크 클리너)와 혼동 금지. GUI 앱이라 버전 검증은 `brew list --cask --versions google-gemini` 사용
 - **SteamOS 특례**: Node.js/corepack은 mise로 관리. antigravity는 installer 스크립트
 - **한국어 리포트**: 결과는 항상 한국어로 출력

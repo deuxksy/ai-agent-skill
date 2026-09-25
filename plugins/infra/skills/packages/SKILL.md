@@ -133,25 +133,6 @@ sudo dnf install <package>
 sudo nixos-rebuild switch --flake ~/git/dotfiles/nix/nixos#$HOSTNAME
 ```
 
-### k8sgpt (OS별)
-
-K8s 리소스 분석 도구. brew formula/binary로 설치.
-
-```bash
-# macOS / SteamOS - homebrew (Linuxbrew)
-brew install k8sgpt
-
-# Debian/Ubuntu/Fedora - GitHub binary
-ARCH=$(uname -m | sed 's/x86_64/x86_64/' | sed 's/aarch64/arm64/')
-TMPDIR=$(mktemp -d)
-curl -fsSL "https://github.com/k8sgpt-ai/k8sgpt/releases/latest/download/k8sgpt_Linux_${ARCH}.tar.gz" -o "${TMPDIR}/k8sgpt.tar.gz" \
-  && tar xzf "${TMPDIR}/k8sgpt.tar.gz" -C "${TMPDIR}" k8sgpt \
-  && sudo install -m 0755 "${TMPDIR}/k8sgpt" /usr/local/bin/k8sgpt \
-  && rm -rf "${TMPDIR}"
-
-# NixOS - 스킵 (nixpkgs로 관리)
-```
-
 ---
 
 ## Brewfile 관리 (macOS)
