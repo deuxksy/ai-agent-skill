@@ -109,6 +109,7 @@ Serena/OMC LSP 도구(`lsp_*`)가 코드 심볼 분석에 사용. PATH에 있어
 | marksman | brew | binary download | nix |
 | terraform-ls | brew | binary download | nix |
 | nil | cargo | cargo | nix |
+| gopls | brew | go install | nix |
 
 ---
 
@@ -155,15 +156,15 @@ uv tool install doris-mcp-server@latest
 pnpm add -g typescript-language-server@latest yaml-language-server@latest bash-language-server@latest pyright@latest vscode-langservers-extracted@latest @ansible/ansible-language-server@latest
 
 # macOS / SteamOS (Linuxbrew)
-brew install lua-language-server marksman terraform-ls
+brew install lua-language-server marksman terraform-ls gopls
 
-# Debian/Ubuntu/Fedora - 각 프로젝트 GitHub release binary
+# Debian/Ubuntu/Fedora - 각 프로젝트 GitHub release binary (gopls는 go install golang.org/x/tools/gopls@latest)
 
 # nil (macOS/SteamOS/Linux) - cargo (mise rust, 소스 빌드)
 cargo install --git https://github.com/oxalica/nil nil
 
 # NixOS - configuration.nix (environment.system.packages) 또는 nix profile
-nix profile install nixpkgs#lua-language-server nixpkgs#marksman nixpkgs#terraform-ls nixpkgs#nil
+nix profile install nixpkgs#lua-language-server nixpkgs#marksman nixpkgs#terraform-ls nixpkgs#nil nixpkgs#gopls
 ```
 
 #### Brew Cask AI Agents (macOS 분기)
@@ -230,10 +231,13 @@ ansible-language-server --version
 pnpm list -g --depth=0 | grep vscode-langservers-extracted
 
 # brew - LSP Servers
-brew list --versions lua-language-server marksman terraform-ls
+brew list --versions lua-language-server marksman terraform-ls gopls
 
 # nil (cargo/nix)
 nil --version
+
+# gopls
+gopls version
 ```
 
 | 패키지 | 관리 | 상태 | 버전 |
@@ -244,7 +248,7 @@ nil --version
 > **참고**:
 > - `holmes`는 `--version` 미지원으로 하위 명령 방식 사용.
 > - `dbhub`, `proxmox-mcp-plus`, `doris-mcp-server`는 `--version` 미지원으로 `pnpm list` / `uv tool list`로 확인.
-> - `vscode-langservers-extracted`는 `--version` 미지원으로 `pnpm list`로 확인. brew LSP(lua-language-server, marksman, terraform-ls)는 `brew list --versions`로 확인.
+> - `vscode-langservers-extracted`는 `--version` 미지원으로 `pnpm list`로 확인. brew LSP(lua-language-server, marksman, terraform-ls, gopls)는 `brew list --versions`로 확인.
 > - `nil`은 NixOS는 nix, 타 OS는 cargo(`cargo install --git`)로 설치·갱신.
 
 ---
@@ -308,13 +312,15 @@ uv tool upgrade doris-mcp-server
 pnpm update -g --latest typescript-language-server yaml-language-server bash-language-server pyright vscode-langservers-extracted @ansible/ansible-language-server
 
 # macOS / SteamOS (Linuxbrew)
-brew upgrade lua-language-server marksman terraform-ls
+brew upgrade lua-language-server marksman terraform-ls gopls
+
+# Debian/Ubuntu/Fedora - gopls는 go install golang.org/x/tools/gopls@latest
 
 # nil (macOS/SteamOS/Linux) - cargo 재설치로 갱신
 cargo install --force --git https://github.com/oxalica/nil nil
 
 # NixOS - nix profile upgrade (configuration.nix 관리 시 flake update + nixos-rebuild)
-nix profile upgrade '.*lua-language-server.*' '.*marksman.*' '.*terraform-ls.*' '.*nil.*'
+nix profile upgrade '.*lua-language-server.*' '.*marksman.*' '.*terraform-ls.*' '.*nil.*' '.*gopls.*'
 ```
 
 #### Brew Cask AI Agents (macOS 분기)
