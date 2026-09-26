@@ -2,13 +2,14 @@
 
 안전한 Git commit, PR/MR, stale branch 정리, 버전 tag와 release 발행을 제공하는 runtime-neutral Agent Skills plugin.
 
-**Version:** 1.20.0
+**Version:** 2.1.0
 
 ## Skills
 
 | Skill | 설명 |
 | :--- | :--- |
 | `commit` | 현재 task 관련 변경만 preview·승인 후 commit |
+| `commit-push` | 관련 변경 commit → normal push (PR/MR 생성 없음) |
 | `commit-push-pr` | 관련 변경 commit → normal push → GitHub PR/GitLab MR/Gitea PR 생성 |
 | `clean-gone` | merged·clean `[gone]` branch/worktree만 preview·승인 후 안전하게 제거 |
 | `tag-release` | 버전 sync 검증 후 annotated tag push → GitHub release 발행 (notes는 Conventional Commits 기반 생성) |
@@ -23,6 +24,7 @@ claude plugin install git@zzizily
 
 ```text
 /git:commit
+/git:commit-push
 /git:commit-push-pr
 /git:clean-gone
 /git:tag-release
