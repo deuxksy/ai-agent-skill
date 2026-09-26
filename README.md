@@ -1,13 +1,13 @@
 # AI-AGENT-SKILL
 
-zzizily는 Claude Code, Codex, Antigravity(Gemini) 등 멀티 Agent 런타임을 지원하는 개인 자동화 AI Agent Skill 플러그인 모음입니다. 보안 감사, 인프라 프로비저닝, 일상 자동화, 런타임 교차 검증부터 Git 워크플로우, 문서 관리 및 JMeter 스트레스 테스트까지 39개 전체 스킬을 11개 독립 도메인 플러그인으로 모듈화하여 제공합니다.
+zzizily는 Claude Code, Codex, Antigravity(Gemini) 등 멀티 Agent 런타임을 지원하는 개인 자동화 AI Agent Skill 플러그인 모음입니다. 보안 감사, 인프라 프로비저닝, 일상 자동화, 런타임 교차 검증부터 Git 워크플로우, 문서 관리 및 JMeter 스트레스 테스트까지 42개 전체 스킬을 12개 독립 도메인 플러그인으로 모듈화하여 제공합니다.
 
 ## 목차
 
 - [문서 체계 및 Diátaxis 인덱스](#문서-체계-및-diátaxis-인덱스)
 - [설치 및 사용 가이드 (Quick Start)](#설치-및-사용-가이드-quick-start)
 - [플러그인 메타 & 버전 정책](#플러그인-메타--버전-정책)
-- [독립 도메인 플러그인 카탈로그 (11)](#독립-도메인-플러그인-카탈로그-11)
+- [독립 도메인 플러그인 카탈로그 (12)](#독립-도메인-플러그인-카탈로그-12)
 - [상세 문서](#상세-문서)
 - [License](#license)
 
@@ -29,9 +29,10 @@ zzizily는 Claude Code, Codex, Antigravity(Gemini) 등 멀티 Agent 런타임을
 | | [review](./plugins/review/README.md) | spec/plan 문서 및 코드 변경 런타임 교차 검증 |
 | | [dev](./plugins/dev/README.md) | Android WiFi ADB 빌드 배포 및 오픈소스 라이선스 조사 |
 | | [jmeter](./plugins/jmeter/README.md) | JMeter 스트레스 테스트: JMX 린트, 원격 배포·기동, 실행·knee 탐색, 수집·리포트 |
+| | [kisa](./plugins/kisa/README.md) | KISA 체크리스트 기반 서버·네트워크 취약점 점검 절차 |
 | **Reference** (참조 / 규격) | [docs/README.md](./docs/README.md) | 서브 문서 디렉토리 역할 및 체계 정의 |
 | | [docs/okf/README.md](./docs/okf/README.md) | OKF(Open Knowledge Format) 명세 허브 및 작성 가이드 |
-| | [CLAUDE.md](./CLAUDE.md) | 프로젝트 구조, 분류 원칙, SKILL.md 규격 및 패키지 관리 명세 |
+| | [CLAUDE.md](./CLAUDE.md) | 프로젝트 분류 원칙 및 버전 관리 명세 |
 | | [AGENTS.md](./AGENTS.md) | Codex 런타임용 프로젝트 지침 명세 |
 | | [GEMINI.md](./GEMINI.md) | Gemini 런타임용 프로젝트 지침 명세 |
 | | [agents/verify.md](./agents/verify.md) | Claude Code runner adapter 및 교차 검증 라우팅 명세 |
@@ -49,7 +50,7 @@ Claude Code CLI 환경에서 마켓플레이스를 추가하고 필요한 도메
 # 마켓플레이스 등록
 claude plugin marketplace add deuxksy/ai-agent-skill
 
-# 11개 독립 도메인 플러그인 설치 (필요한 도메인만 선택 설치 가능)
+# 12개 독립 도메인 플러그인 설치 (필요한 도메인만 선택 설치 가능)
 claude plugin install security@zzizily
 claude plugin install infra@zzizily
 claude plugin install trackers@zzizily
@@ -61,6 +62,7 @@ claude plugin install docs@zzizily
 claude plugin install review@zzizily
 claude plugin install dev@zzizily
 claude plugin install jmeter@zzizily
+claude plugin install kisa@zzizily
 ```
 
 **사용 방법:**
@@ -93,6 +95,7 @@ codex plugin add docs@zzizily
 codex plugin add review@zzizily
 codex plugin add dev@zzizily
 codex plugin add jmeter@zzizily
+codex plugin add kisa@zzizily
 ```
 
 ### 3. AGY Mode (`agy` / Antigravity)
@@ -112,6 +115,7 @@ agy plugin install https://github.com/deuxksy/ai-agent-skill/plugins/docs
 agy plugin install https://github.com/deuxksy/ai-agent-skill/plugins/review
 agy plugin install https://github.com/deuxksy/ai-agent-skill/plugins/dev
 agy plugin install https://github.com/deuxksy/ai-agent-skill/plugins/jmeter
+agy plugin install https://github.com/deuxksy/ai-agent-skill/plugins/kisa
 
 # 설치된 플러그인 확인
 agy plugin list
@@ -120,27 +124,28 @@ agy plugin list
 ## 플러그인 메타 & 버전 정책
 
 - **마켓플레이스 저장소**: `deuxksy/ai-agent-skill`
-- **통합 단일 버전**: `1.21.0` (모든 11개 독립 플러그인 매니페스트 및 마켓플레이스 동기화)
+- **플러그인 버전**: 플러그인별 독립 SemVer (v2.0.0 epoch, `kisa`는 `1.0.0` 시작) — `.claude-plugin/marketplace.json`이 Source of Truth
 
-## 독립 도메인 플러그인 카탈로그 (11)
+## 독립 도메인 플러그인 카탈로그 (12)
 
 | Plugin | Version | 포함 스킬 | 설치 명령어 |
 | :--- | :--- | :--- | :--- |
-| `security` | 1.21.0 | `code-audit`, `system-audit`, `backdoor-investigation`, `backdoor-remediation` | `security@zzizily` |
-| `infra` | 1.21.0 | `setup`, `packages`, `agents`, `proxmox-vm-create`, `openwrt-initd`, `acl-owner-reset` | `infra@zzizily` |
-| `trackers` | 1.21.0 | `calendar-sync`, `exchange-rate-tracker`, `hot-game-deals-n-news`, `notion-sprint-sync` | `trackers@zzizily` |
-| `sessions` | 1.21.0 | `handoff`, `resume` | `sessions@zzizily` |
-| `l10n` | 1.21.0 | `optimize-images-4k`, `korean-translation-verify`, `product-planning-dr-pipeline` | `l10n@zzizily` |
-| `git` | 1.21.0 | `commit`, `commit-push-pr`, `clean-gone`, `tag-release` | `git@zzizily` |
-| `rules` | 1.21.0 | `agents-md-management`, `revise-agents-md` | `rules@zzizily` |
-| `docs` | 1.21.0 | `docs-md-management`, `docs-restructure`, `revise-readme-md` | `docs@zzizily` |
-| `review` | 1.21.0 | `verify` | `review@zzizily` |
-| `dev` | 1.21.0 | `deploy-android-wifi`, `license`, `update-openapi` | `dev@zzizily` |
-| `jmeter` | 1.21.0 | `lint`, `deploy`, `run`, `knee`, `collect`, `report`, `bottleneck` | `jmeter@zzizily` |
+| `security` | 2.0.0 | `code-audit`, `system-audit`, `backdoor-investigation`, `backdoor-remediation` | `security@zzizily` |
+| `infra` | 2.1.1 | `setup`, `packages`, `agents`, `proxmox-vm-create`, `openwrt-initd`, `acl-owner-reset` | `infra@zzizily` |
+| `trackers` | 2.0.0 | `calendar-sync`, `exchange-rate-tracker`, `hot-game-deals-n-news`, `notion-sprint-sync` | `trackers@zzizily` |
+| `sessions` | 2.0.0 | `handoff`, `resume` | `sessions@zzizily` |
+| `l10n` | 2.0.0 | `optimize-images-4k`, `korean-translation-verify`, `product-planning-dr-pipeline` | `l10n@zzizily` |
+| `git` | 2.1.0 | `commit`, `commit-push`, `commit-push-pr`, `clean-gone`, `tag-release` | `git@zzizily` |
+| `rules` | 2.0.0 | `agents-md-management`, `revise-agents-md` | `rules@zzizily` |
+| `docs` | 2.0.0 | `docs-md-management`, `docs-restructure`, `revise-readme-md` | `docs@zzizily` |
+| `review` | 2.0.0 | `verify` | `review@zzizily` |
+| `dev` | 2.0.0 | `deploy-android-wifi`, `license`, `update-openapi` | `dev@zzizily` |
+| `jmeter` | 2.0.0 | `lint`, `deploy`, `run`, `knee`, `collect`, `report`, `bottleneck` | `jmeter@zzizily` |
+| `kisa` | 1.0.0 | `server` | `kisa@zzizily` |
 
 ## 상세 문서
 
-구조 트리, 분류 원칙, SKILL.md 규격, 개발 워크플로우, 환경별 패키지 관리는 [CLAUDE.md](./CLAUDE.md) 참조.
+분류 원칙과 버전 관리 정책은 [CLAUDE.md](./CLAUDE.md), SKILL.md 규격과 공통 rule은 `.ai/RULES.md` 참조.
 
 ## License
 

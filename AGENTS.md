@@ -6,20 +6,20 @@ This file provides guidance to Codex (Codex.ai/code) when working with code in t
 
 ## 프로젝트 개요
 
-**zzizily** — 11개 독립 도메인 플러그인을 통합 제공하는 개인 자동화 AI Agent Skill 마켓플레이스.
+**zzizily** — 12개 독립 도메인 플러그인을 통합 제공하는 개인 자동화 AI Agent Skill 마켓플레이스.
 
 - Author: Crong (kyolim)
 - GitHub Repository: `deuxksy/ai-agent-skill`
-- 통합 버전: `1.21.0`
+- 플러그인 버전: 플러그인별 독립 SemVer — `.claude-plugin/marketplace.json` 기준
 
 ## 구조
 
 ```
 .
 ├── .claude-plugin/
-│   └── marketplace.json     # Claude용 11개 도메인 플러그인 마켓플레이스 (v1.21.0)
+│   └── marketplace.json     # Claude용 12개 도메인 플러그인 마켓플레이스
 ├── .agents/plugins/
-│   └── marketplace.json     # Codex용 11개 도메인 플러그인 마켓플레이스 (v1.21.0)
+│   └── marketplace.json     # Codex용 12개 도메인 플러그인 마켓플레이스
 ├── agents/                  # AI 에이전트 지침 및 어댑터
 └── plugins/
     ├── security/            # 코드/시스템 보안 감사
@@ -32,7 +32,8 @@ This file provides guidance to Codex (Codex.ai/code) when working with code in t
     ├── docs/                # README 및 문서 관리
     ├── review/              # 교차 검증
     ├── dev/                 # 빌드/배포
-    └── jmeter/              # 부하 테스트
+    ├── jmeter/              # 부하 테스트
+    └── kisa/                # KISA 서버 취약점 점검
 ```
 
 ## 개발 명령
