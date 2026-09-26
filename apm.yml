@@ -1,0 +1,21 @@
+name: ai-agent-skill
+version: 1.17.0
+description: APM project for ai-agent-skill
+author: Crong
+targets:
+- claude
+- codex
+- gemini
+dependencies:
+  apm:
+  - obra/superpowers
+  - garrytan/gstack
+  mcp:
+  - name: bun-bull
+    registry: false
+    transport: http
+    url: https://ai.bun-bull.ts.net/v1/mcp
+includes: auto
+devDependencies:
+  apm: []
+scripts: {}
