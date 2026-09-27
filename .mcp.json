@@ -1,8 +1,0 @@
-{
-  "mcpServers": {
-    "tailscale-aperture": {
-      "type": "http",
-      "url": "https://ai.bun-bull.ts.net/v1/mcp"
-    }
-  }
-}
