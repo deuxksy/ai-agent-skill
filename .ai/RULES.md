@@ -18,11 +18,12 @@ This document serves as the Single Source of Truth (SSoT) for all runtime AI age
 ## Core Guidelines
 
 1. **Runtime Neutrality**: Skills must remain runtime-neutral and cross-compatible across Claude, Gemini/Antigravity, and Codex.
-2. **SKILL.md Specification**: Every skill folder under `plugins/<domain>/` must contain a `SKILL.md` with standard YAML frontmatter:
+2. **SKILL.md Specification** (Agent Skills standard, [agentskills/agentskills](https://github.com/agentskills/agentskills)): Every skill folder under `plugins/<domain>/skills/` must contain a `SKILL.md` with YAML frontmatter:
    ```yaml
    ---
-   name: <skill-name>
-   description: <one-line summary>
+   name: <skill-name>               # 1-64 chars, lowercase/numbers/hyphens only, must match parent directory name
+   description: <one-line summary>  # 1-1024 chars: purpose, when to use, keywords
    ---
    ```
+   Keep the body under 500 lines; move details to `references/`, executable code to `scripts/`, templates/data to `assets/`. Validate with `skills-ref validate <skill-dir>`.
 3. **No Hardcoded Secrets/Paths**: Never commit credentials, personal absolute paths, or unverified environment configurations.

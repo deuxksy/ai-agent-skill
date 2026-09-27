@@ -1,6 +1,6 @@
 # AI-AGENT-SKILL
 
-zzizily는 Claude Code, Codex, Antigravity(Gemini) 등 멀티 Agent 런타임을 지원하는 개인 자동화 AI Agent Skill 플러그인 모음입니다. 보안 감사, 인프라 프로비저닝, 일상 자동화, 런타임 교차 검증부터 Git 워크플로우, 문서 관리 및 JMeter 스트레스 테스트까지 42개 전체 스킬을 12개 독립 도메인 플러그인으로 모듈화하여 제공합니다.
+zzizily는 Claude Code, Codex, Antigravity(Gemini) 등 멀티 Agent 런타임을 지원하는 개인 자동화 AI Agent Skill 플러그인 모음입니다. 보안 감사, 인프라 프로비저닝, 일상 자동화, 런타임 교차 검증부터 Git 워크플로우, 문서 관리 및 JMeter 스트레스 테스트까지 41개 전체 스킬을 12개 독립 도메인 플러그인으로 모듈화하여 제공합니다.
 
 ## 목차
 
