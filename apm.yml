@@ -10,10 +10,6 @@ dependencies:
   apm:
   - obra/superpowers
   mcp:
-  - name: bun-bull
-    registry: false
-    transport: http
-    url: https://ai.bun-bull.ts.net/v1/mcp
 includes: auto
 devDependencies:
   apm: []
