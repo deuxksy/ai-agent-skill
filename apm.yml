@@ -9,7 +9,6 @@ targets:
 dependencies:
   apm:
   - obra/superpowers
-  - garrytan/gstack
   mcp:
   - name: bun-bull
     registry: false
