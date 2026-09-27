@@ -89,7 +89,7 @@ node -e "const p=require('<패키지>/package.json');console.log(p.name,p.versio
 | 에셋 | 확인 포인트 |
 | :--- | :--- |
 | 폰트 | SIL OFL 1.1 등 — 고지 의무 있음 |
-| Lottie JSON | lottiefiles 출처별 상이 — 미확인 시 ⚠️ 표기 |
+| Lottie JSON | lottiefiles 출처별 상이 — 미확인 시 ⚠ 표기 |
 
 ## OSS Licenses plugin 병행 (Android)
 

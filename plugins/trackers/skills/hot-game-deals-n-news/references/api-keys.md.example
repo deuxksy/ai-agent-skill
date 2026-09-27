@@ -26,4 +26,4 @@
 1. https://isthereanydeal.com/dev/app/ 접속
 2. 앱 등록 후 Client ID, Client Secret, API Key 발급
 
-⚠️ **보안:** `api-keys.md`는 절대 git에 커밋하지 마세요!
+⚠ **보안:** `api-keys.md`는 절대 git에 커밋하지 마세요!

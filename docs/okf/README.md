@@ -66,7 +66,7 @@ OKF 가이드라인에 따른 `docs/okf/` 내부 서브 폴더별 문서 목록�
 #### 🎓 1. Tutorials (`docs/okf/tutorials/`)
 - *(입문자용 실습 튜토리얼 문서 추가 시 등록)*
 
-#### 🛠️ 2. How-to Guides (`docs/okf/how-to/`)
+#### 🛠 2. How-to Guides (`docs/okf/how-to/`)
 - *(특정 과제 해결을 위한 하우투 가이드 문서 추가 시 등록)*
 
 #### 📋 3. Reference (`docs/okf/reference/`)
