@@ -1,6 +1,6 @@
 ---
 name: verify
-description: "runtime-neutral 교차검증. Claude Code, Codex, Antigravity(agy) 중 실행 주체를 선택하고 Codex/agy/Tailscale Aperture reviewer를 조합해 spec/plan·코드를 격리 snapshot에서 검증. 보안(redaction·무결성)은 skill이 담당. /review:verify [대상]"
+description: "runtime-neutral 교차검증. Claude Code, Codex, Antigravity(agy) 중 실행 주체를 선택하고 Codex/agy reviewer를 조합해 spec/plan·코드를 격리 snapshot에서 검증. 보안(redaction·무결성)은 skill이 담당. /review:verify [대상]"
 ---
 
 # Verify
@@ -17,14 +17,8 @@ spec/plan·코드를 runtime-neutral 방식으로 교차검증. **skill은 신�
 /review:verify <path> --runner agy      → Antigravity에서 실행 가능한 경로로 검증
 /review:verify <path> --runner codex --reviewers agy
                                            → Codex 사용 중 필수 agy CLI 검증
-/review:verify <path> --runner codex --reviewers agy,aperture
-                                           → Codex 사용 중 agy 필수 + Aperture qwen3.8-max 검증
 /review:verify <path> --runner agy --reviewers codex
                                            → Antigravity 사용 중 필수 Codex 검증
-/review:verify <path> --runner agy --reviewers codex,aperture
-                                           → Antigravity 사용 중 Codex 필수 + Aperture qwen3.8-max 검증
-/review:verify <path> --reviewers codex,aperture
-                                           → Aperture에서 qwen3.8-max 독립 검증
 ```
 
 자동 트리거: 사용자 명시적 입력에서 "검증", "verify", "리뷰해줘" + 검증 대상 감지 시 호출.
@@ -52,10 +46,8 @@ graph TD
     RN -->|reviewer fanout| RV[Reviewer Providers]
     RV --> CXR[Codex reviewer]
     RV --> AGR[Antigravity reviewer]
-    RV --> AQW[Aperture reviewer - qwen3.8-max]
     CXR -->|독립 결과| RN
     AGR -->|독립 결과| RN
-    AQW -->|독립 결과| RN
     RN -->|B-R-A-T 반환| SK
     SK -->|6 모든 child process 종료 확인| W[TOCTOU 방지 대기]
     W -->|7 원본 무결성 사후 광범위 검증| S5[변경 탐지 시 TAMPER]
@@ -67,15 +59,15 @@ graph TD
 | **skill** `verify` | 진입점 + **보안 책임**(snapshot/redaction/무결성 감시) + 판사(취합). runtime-neutral 계약 정의 | `skills/verify/SKILL.md` |
 | **runner adapter** | Claude Code/Codex/Antigravity 중 현재 실행 환경에 맞춰 reviewer fanout 수행 | skill 본문 계약 |
 | **subagent** `verify` | Claude Code runner adapter. 격리 snapshot에서 순수 검증만 수행. 보안 결정권 없음 | `agents/verify.md` |
-| **reviewer provider** | Codex, Antigravity, Tailscale Aperture 등 독립 검증 결과 생산 | CLI/OpenAI-compatible API |
+| **reviewer provider** | Codex, Antigravity 등 독립 검증 결과 생산 | CLI |
 
 ## 실행 주체와 reviewer 분리
 
 | 축 | 값 | 의미 |
 | :--- | :--- | :--- |
 | `runner` | `auto` \| `claude` \| `codex` \| `agy` | snapshot 이후 fanout을 실제로 실행하는 주체. 기본 `auto` |
-| `reviewers` | `codex`, `agy`, `aperture` 조합 | 독립 검증 결과를 내는 provider. `aperture`는 `qwen3.8-max` 단일 모델로 독립 검증 |
-| `model_profile` | provider별 모델 지정 | `codex:gpt-6-astra`, `codex:gpt-5.6-sol`, `codex:gpt-5.6-terra`, `codex:gpt-5.6-luna`, `agy:gemini-3.8-flash`; Aperture는 고정 `qwen3.8-max` |
+| `reviewers` | `codex`, `agy` 조합 | 독립 검증 결과를 내는 provider |
+| `model_profile` | provider별 모델 지정 | `codex:gpt-6-astra`, `codex:gpt-5.6-sol`, `codex:gpt-5.6-terra`, `codex:gpt-5.6-luna`, `agy:gemini-3.8-flash` |
 
 `runner`는 orchestration 위치만 바꾼다. 보안 책임(snapshot/redaction/integrity)은 항상 skill이 먼저 수행하고, reviewer는 격리 복사본만 본다.
 
@@ -84,9 +76,9 @@ graph TD
 | runner | 사용 조건 | 실행 방식 |
 | :--- | :--- | :--- |
 | `auto` | 기본값 | 현재 host가 제공하는 가장 안전한 runner 선택. Claude Code면 subagent, Codex면 local fanout, agy면 `agy -p` |
-| `claude` | Claude Code plugin/subagent 사용 가능 | `Agent(subagent_type: "verify")`로 fanout. 필수 reviewer는 `codex,agy`, `aperture` 선택 |
-| `codex` | Codex 세션 또는 `codex exec` 사용 가능 | Codex가 runner가 되고 `agy CLI`를 필수 reviewer로 호출. `aperture` 선택 |
-| `agy` | Antigravity CLI 사용 가능 | Antigravity가 runner가 되고 `codex` reviewer를 필수 호출. Codex 검증은 `codex exec` CLI. `aperture` 선택 |
+| `claude` | Claude Code plugin/subagent 사용 가능 | `Agent(subagent_type: "verify")`로 fanout. 필수 reviewer는 `codex,agy` |
+| `codex` | Codex 세션 또는 `codex exec` 사용 가능 | Codex가 runner가 되고 `agy CLI`를 필수 reviewer로 호출 |
+| `agy` | Antigravity CLI 사용 가능 | Antigravity가 runner가 되고 `codex` reviewer를 필수 호출. Codex 검증은 `codex exec` CLI |
 
 ### Claude Runner 정책
 
@@ -96,9 +88,8 @@ graph TD
 | :--- | :--- | :--- | :--- |
 | 필수 | `codex` | `codex exec --sandbox read-only` | 생략 불가 |
 | 필수 | `agy` | `agy -p` CLI | 생략 불가 |
-| 선택 | `aperture` | OpenAI-compatible `/v1/chat/completions` | `--reviewers ... ,aperture` 지정 시 `qwen3.8-max` 추가 |
 
-Claude runner에서 사용자가 `--reviewers codex`처럼 일부만 지정해도 `agy`를 자동 보강해 `codex,agy`로 실행한다. Claude Code에서 Codex 검증은 **`codex exec` CLI 단일 경로**다 (MCP `codex mcp-server`는 codex-cli 0.154.0에서 제거). `aperture`는 명시적으로 요청된 경우에만 추가한다.
+Claude runner에서 사용자가 `--reviewers codex`처럼 일부만 지정해도 `agy`를 자동 보강해 `codex,agy`로 실행한다. Claude Code에서 Codex 검증은 **`codex exec` CLI 단일 경로**다.
 
 ### Codex Runner 정책
 
@@ -107,9 +98,8 @@ Claude runner에서 사용자가 `--reviewers codex`처럼 일부만 지정해�
 | 구분 | reviewer | 실행 경로 | 정책 |
 | :--- | :--- | :--- | :--- |
 | 필수 | `agy` | `agy -p` CLI | 생략 불가 |
-| 선택 | `aperture` | OpenAI-compatible `/v1/chat/completions` | `--reviewers ... ,aperture` 지정 시 `qwen3.8-max` 추가 |
 
-Codex runner에서 사용자가 `--reviewers codex`만 지정해도 `agy`를 자동 보강한다. 단, Codex 사용 중 최소 검증 경로는 **`agy CLI` 필수 + `aperture` 선택**이다. `aperture`는 명시적으로 요청된 경우에만 추가한다.
+Codex runner에서 사용자가 `--reviewers codex`만 지정해도 `agy`를 자동 보강한다. 단, Codex 사용 중 최소 검증 경로는 **`agy CLI` 필수**이다.
 
 ### Antigravity Runner 정책
 
@@ -118,9 +108,8 @@ Codex runner에서 사용자가 `--reviewers codex`만 지정해도 `agy`를 자
 | 구분 | reviewer | 실행 경로 | 정책 |
 | :--- | :--- | :--- | :--- |
 | 필수 | `codex` | `codex exec --sandbox read-only` | 생략 불가 |
-| 선택 | `aperture` | OpenAI-compatible `/v1/chat/completions` | `--reviewers ... ,aperture` 지정 시 `qwen3.8-max` 추가 |
 
-Antigravity runner에서 사용자가 `--reviewers agy`만 지정해도 `codex`를 자동 보강한다. 최소 검증 경로는 **`codex` 필수 + `aperture` 선택**이고, Codex 검증은 **`codex exec` CLI**다.
+Antigravity runner에서 사용자가 `--reviewers agy`만 지정해도 `codex`를 자동 보강한다. 최소 검증 경로는 **`codex` 필수**이고, Codex 검증은 **`codex exec` CLI**다.
 
 ### Reviewer Provider
 
@@ -128,7 +117,6 @@ Antigravity runner에서 사용자가 `--reviewers agy`만 지정해도 `codex`�
 | :--- | :--- | :--- |
 | `codex` | `codex exec` | `provider_config.codex_model` |
 | `agy` | `agy -p` | `provider_config.agy_model` |
-| `aperture` | `curl` + OpenAI-compatible Chat Completions API | `provider_config.aperture_models` 고정값 `qwen3.8-max`; base URL은 `APERTURE_BASE_URL` 환경변수 |
 
 ### Codex 모델 선택
 
@@ -160,82 +148,9 @@ Antigravity runner에서 사용자가 `--reviewers agy`만 지정해도 `codex`�
 2. 보안/권한/데이터/배포 영향이 있거나 reviewer 충돌이 있으면 `agy:gemini-3.1-pro`로 승격한다.
 3. latency가 더 중요하고 변경이 저위험이면 `gemini-3.8-flash`를 유지한다.
 
-`aperture`는 Tailscale Aperture의 OpenAI-compatible API에 직접 연결한다. `APERTURE_BASE_URL`은 `/v1`까지 포함한 API base URL로 환경변수에서만 읽고 출력·저장하지 않는다. client API key는 전송하지 않으며 Aperture가 tailnet identity로 인증하고 upstream credential을 주입한다.
-
-### Aperture 모델 선택
-
-| 모델 | 검증 관점 | 피할 상황 |
-| :--- | :--- | :--- |
-| `qwen3.8-max` | coding, research, architecture·대안 검토, Codex/Antigravity와 독립적인 제3자 관점 | 단독 결과로 최종 판정 |
-
-기본 선택:
-
-1. `aperture` reviewer를 선택하면 `qwen3.8-max` 단일 모델을 실행한다.
-2. 다른 reviewer 결과를 보지 않고 동일한 정제 prompt와 snapshot을 받는다.
-3. 모델 호출 실패 시 Verdict는 `INCOMPLETE`다.
-4. Codex/Antigravity와 충돌하면 근거를 reviewer별로 보존하고 보수적 판정을 적용한다.
-
-### Aperture OpenAI-compatible 호출
-
-검증 prompt를 1회 전송한다. `PROMPT_FILE`은 skill이 격리 dir 안에 생성하며 target kind, acceptance criteria, 상대경로와 정제된 파일 내용, B/R/A/T 출력 계약만 포함한다. `APERTURE_BASE_URL` 미설정, HTTP 오류, 빈 응답, JSON schema 불일치는 reviewer 실패로 처리한다. endpoint와 response body 전체를 로그에 출력하지 않는다.
-
-```bash
-command -v curl >/dev/null || { echo "INCOMPLETE: curl 미설치"; exit 1; }
-command -v jq >/dev/null || { echo "INCOMPLETE: jq 미설치"; exit 1; }
-: "${APERTURE_BASE_URL:?INCOMPLETE: APERTURE_BASE_URL 미설정}"
-
-run_aperture() (
-  MODEL="$1"
-  RESULT_FILE="$2"
-  REQUEST_FILE=$(mktemp /tmp/verify-aperture-request-XXXXXX.json)
-  RESPONSE_FILE=$(mktemp /tmp/verify-aperture-response-XXXXXX.json)
-  trap 'rm -f "$REQUEST_FILE" "$RESPONSE_FILE"' EXIT
-
-  jq -n --arg model "$MODEL" --rawfile prompt "$PROMPT_FILE" '{
-    model: $model,
-    messages: [
-      {
-        role: "system",
-        content: "격리 snapshot만 검증하라. 다른 reviewer 결과를 추측하지 말라. markdown fence 없이 JSON object만 반환하라. schema: {verdict: PASS|FAIL|INCOMPLETE, summary: string, blockers: [{message,evidence}], risks: [{message,evidence}], assumptions: [{message,evidence}], tests: [{message,evidence}]}"
-      },
-      {role: "user", content: $prompt}
-    ]
-  }' > "$REQUEST_FILE" || exit 1
-
-  curl --fail --silent \
-    --connect-timeout 10 --max-time 300 \
-    -H 'Content-Type: application/json' \
-    --data-binary "@$REQUEST_FILE" \
-    "${APERTURE_BASE_URL%/}/chat/completions" \
-    > "$RESPONSE_FILE" || exit 1
-
-  jq -er '
-    .choices[0].message.content
-    | select(type == "string" and length > 0)
-    | fromjson
-    | select(.verdict as $v | ["PASS", "FAIL", "INCOMPLETE"] | index($v))
-    | select(.summary | type == "string" and length > 0)
-    | select([.blockers, .risks, .assumptions, .tests] | all(type == "array"))
-    | select([.blockers[], .risks[], .assumptions[], .tests[]] | all(
-        (.message | type == "string" and length > 0) and
-        (.evidence | type == "string" and length > 0)
-      ))
-  ' "$RESPONSE_FILE" > "$RESULT_FILE"
-)
-
-QWEN_RESULT=$(mktemp /tmp/verify-aperture-qwen-XXXXXX.json)
-if run_aperture qwen3.8-max "$QWEN_RESULT"; then
-  APERTURE_STATUS=success
-else
-  APERTURE_STATUS=failed # runner는 INCOMPLETE로 취합한 뒤 임시 파일 정리
-fi
-```
-
-`QWEN_RESULT`를 출처로 취합한 직후 모든 임시 파일을 삭제한다. `curl -v`, `--show-error`, `set -x`, endpoint echo는 금지한다.
-
 ## 외부 전송 동의
 
-**최초 1회** 외부 provider(Codex/Antigravity/Tailscale Aperture gateway) 전송 동의 필요.
+**최초 1회** 외부 provider(Codex/Antigravity) 전송 동의 필요.
 
 | 방식 | 설명 |
 | :--- | :--- |
@@ -374,8 +289,8 @@ subagent: verify (namespace review:verify, Claude runner에서만 사용)
   - tier: light | standard | high (코드만)
   - acceptance_criteria: 선택
   - runner: auto | claude | codex | agy
-  - reviewers: codex,agy,aperture 중 1개 이상. runner=claude에서는 codex,agy 필수 + aperture 선택. runner=codex에서는 agy 필수 + aperture 선택. runner=agy에서는 codex 필수 + aperture 선택
-  - provider_config: Codex model/sandbox, Antigravity 모델, Aperture base URL 환경변수명과 고정 model(qwen3.8-max)
+  - reviewers: codex,agy 조합. runner=claude에서는 codex,agy 필수. runner=codex에서는 agy 필수. runner=agy에서는 codex 필수
+  - provider_config: Codex model/sandbox, Antigravity 모델
 반환: runner 최종 메시지 = Verification Report
 미발견 처리: Claude subagent discovery 실패 시 runner를 codex 또는 agy로 fallback. fallback 불가 시 에러 리포트 출력 후 종료
 ```
@@ -395,14 +310,11 @@ target_files:
 tier: (spec-plan은 무시)
 acceptance_criteria: (선택) "모든 섹션이 구현 가능한 단위로 분할되어 있을 것"
 runner: claude
-reviewers: codex,agy,aperture
+reviewers: codex,agy
 provider_config:
   codex_model: gpt-6-astra
   codex_sandbox: read-only
   agy_model: gemini-3.8-flash
-  aperture_base_url_env: APERTURE_BASE_URL
-  aperture_models:
-    - qwen3.8-max
 
 격리 복사본으로 reviewer fanout 검증 후 Verification Report 반환.
   """
@@ -417,14 +329,11 @@ target_kind: spec-plan
 target_files:
   - docs/spec.md
 runner: codex
-reviewers: agy,aperture
+reviewers: agy
 provider_config:
   agy_model: gemini-3.8-flash
-  aperture_base_url_env: APERTURE_BASE_URL
-  aperture_models:
-    - qwen3.8-max
 
-현재 Codex 세션이 runner로서 agy와 Aperture/qwen3.8-max를 한 fanout batch에서 독립 호출하고 join 후 Verification Report를 반환한다.
+현재 Codex 세션이 runner로서 agy CLI reviewer를 fanout batch에서 독립 호출하고 join 후 Verification Report를 반환한다.
 ```
 
 ### Antigravity runner 예시
@@ -454,11 +363,11 @@ runner 반환 후, **모든 child process 종료를 확인한 뒤** 원본 무�
 # 주 게이트: runner dispatch는 동기식 — runner 및 하위 reviewer 호출이 완전히 종료된 후에만 반환.
 # 아래 폴링은 timeout으로 잔존할 수 있는 고아 프로세스 정리 대기 (벨트 서스펜더스)
 for i in $(seq 1 60); do
-  pgrep -f 'codex exec|agy -p|curl.*v1/chat/completions' >/dev/null 2>&1 || break
+  pgrep -f 'codex exec|agy -p' >/dev/null 2>&1 || break
   sleep 1
 done
 # 잔존 시 경고 후에도 무결성 검증 진행 (잔존 = timeout 프로세스)
-pgrep -f 'codex exec|agy -p|curl.*v1/chat/completions' >/dev/null 2>&1 && echo "WARNING: 외부 검증 프로세스 잔존 가능"
+pgrep -f 'codex exec|agy -p' >/dev/null 2>&1 && echo "WARNING: 외부 검증 프로세스 잔존 가능"
 
 # 2. 전 workspace 무결성 재측정 (검증 전과 동일 항목)
 INTEGRITY_TRACKED_POST=$(mktemp /tmp/verify-integrity-tracked-post-XXXXXX.txt)
@@ -499,7 +408,7 @@ runner의 Verification Report + skill의 Integrity 보고를 통합 표시.
 **Target**: spec-plan | code
 **Tier**: light | standard | high
 **Runner**: auto | claude | codex | agy
-**Routes used**: Codex(codex exec | failed), Antigravity(agy | failed), Aperture(qwen3.8-max: success | failed)
+**Routes used**: Codex(codex exec | failed), Antigravity(agy | failed)
 
 ### Integrity (skill)
 **Consent**: GRANTED | DENIED
@@ -507,14 +416,14 @@ runner의 Verification Report + skill의 Integrity 보고를 통합 표시.
 **Integrity**: VERIFIED | TAMPER-DETECTED
 
 ### Findings (runner, 출처 표기)
-- [Blocker] 즉시 수정 필요 — 근거(file:line/인용) — 출처: Codex | Antigravity | Aperture/qwen3.8-max | multiple
+- [Blocker] 즉시 수정 필요 — 근거(file:line/인용) — 출처: Codex | Antigravity | multiple
 - [Risk] 수정 권장 — 근거 — 출처
 - [Assumption] 검증된 가정 — 출처
 - [Test] 제안 테스트 — 출처
 
 ### Cross-Check (2-Way 이상)
-| 항목 | Codex | Antigravity | Aperture/qwen3.8-max | 일치여부 | 충돌해결 |
-| :--- | :--- | :--- | :--- | :--- | :--- |
+| 항목 | Codex | Antigravity | 일치여부 | 충돌해결 |
+| :--- | :--- | :--- | :--- | :--- |
 
 ### Recommendation
 APPROVE | REQUEST_CHANGES | NEEDS_MORE_EVIDENCE
@@ -529,7 +438,7 @@ APPROVE | REQUEST_CHANGES | NEEDS_MORE_EVIDENCE
 # 결과 표시 완료 후 격리 dir 정리 (민감 정보 잔류 방지)
 rm -rf "$ISOLATED_DIR"
 # 무결성 측정 파일도 정리
-rm -f /tmp/integrity-*-*.txt /tmp/verify-aperture-*.json /tmp/verify-isolated-* 2>/dev/null
+rm -f /tmp/integrity-*-*.txt /tmp/verify-isolated-* 2>/dev/null
 ```
 
 ## 데이터 흐름
@@ -550,10 +459,10 @@ rm -f /tmp/integrity-*-*.txt /tmp/verify-aperture-*.json /tmp/verify-isolated-* 
 
 | 대상 | 조건 | 라우팅 | 종료 조건 |
 | :--- | :--- | :--- | :--- |
-| spec/plan | (항상) | 기본 `codex,agy` **2-Way**. Claude runner는 `codex,agy` 필수, Codex runner는 `agy` 필수, Antigravity runner는 `codex` 필수. `aperture` 선택 시 qwen3.8-max 추가 | 요구 reviewer blocker 0, 충돌 해결 |
+| spec/plan | (항상) | 기본 `codex,agy` **2-Way**. Claude runner는 `codex,agy` 필수, Codex runner는 `agy` 필수, Antigravity runner는 `codex` 필수 | 요구 reviewer blocker 0, 충돌 해결 |
 | 코드 | 경량 | Claude runner는 `codex,agy` 필수. Codex runner는 `agy` 필수. Antigravity runner는 `codex` 필수. 그 외 runner는 티어 기본값 적용 | blocker 0 |
 | 코드 | 표준 | Claude runner는 `codex,agy` 필수. Codex runner는 `agy` 필수. Antigravity runner는 `codex` 필수. 그 외 runner는 티어 기본값 적용 | blocker 0, non-blocker 확인 |
-| 코드 | 고위험 | 기본 `codex,agy` **2-Way**. Codex runner는 `agy` 필수, Antigravity runner는 `codex` 필수. `aperture` 선택 시 qwen3.8-max 추가 | 요구 reviewer blocker 0, 충돌 해결 |
+| 코드 | 고위험 | 기본 `codex,agy` **2-Way**. Codex runner는 `agy` 필수, Antigravity runner는 `codex` 필수 | 요구 reviewer blocker 0, 충돌 해결 |
 
 티어 판정: **고위험 승격조건 최우선** (인증/권한/비밀값/네트워크 경계 변경, 데이터 모델/마이그레이션, 배포 파이프라인, public API 호환성, 대규모 삭제/리팩토링 100줄+, 롤백 어려운 변경). 설정/minor도 보안·호환성 영향 시 고위험.
 
@@ -566,15 +475,12 @@ rm -f /tmp/integrity-*-*.txt /tmp/verify-aperture-*.json /tmp/verify-isolated-* 
 - **무결성 전 workspace 감시**: 검증 전후로 tracked/untracked/hash/git status/mtime/permission 전 항목 비교. 대상 외 변경도 TAMPER
 - **TOCTOU 방지**: 모든 child process 종료 확인 후 무결성 사후 검증. timeout 잔존 process의 사후 쓰기 차단
 - **Codex workspace-write 금지**: 모든 Codex 경로 `codex exec --sandbox read-only`, `cwd`=격리 dir (workspace-write 절대 금지)
-- **Claude runner 필수 2-Way**: Claude Code 사용 중에는 `codex exec` + `agy CLI` 검증을 반드시 수행. `aperture`는 선택 reviewer
-- **Codex runner 필수 외부검증**: Codex 사용 중에는 `agy CLI` 검증을 반드시 수행. `aperture`는 선택 reviewer
-- **Antigravity runner 필수 외부검증**: Antigravity CLI 사용 중에는 `codex` 검증을 반드시 수행. Codex 경로는 `codex exec` CLI. `aperture`는 선택 reviewer
-- **Aperture 직접 호출**: OpenAI-compatible `/v1/chat/completions`를 호출
-- **Aperture secret 금지**: endpoint/API key는 평문 출력·저장 금지. endpoint는 `APERTURE_BASE_URL` 환경변수로만 참조
-- **Aperture 단일 모델**: `aperture` 선택 시 `qwen3.8-max` 호출 성공이 required reviewer 성공 조건
+- **Claude runner 필수 2-Way**: Claude Code 사용 중에는 `codex exec` + `agy CLI` 검증을 반드시 수행
+- **Codex runner 필수 외부검증**: Codex 사용 중에는 `agy CLI` 검증을 반드시 수행
+- **Antigravity runner 필수 외부검증**: Antigravity CLI 사용 중에는 `codex` 검증을 반드시 수행. Codex 경로는 `codex exec` CLI
 - **fail-closed 판정**: APPROVE는 (요구된 reviewer 성공) + blocker 0 + Integrity VERIFIED + Consent OK. timeout/빈 응답/요구 reviewer 실패/무결성 변경 → INCOMPLETE (CI/merge에서 FAIL 동급 차단)
 - **spec/plan 항상 2-Way**: 티어 무관 최소 2개 reviewer로 검증. 기본은 `codex,agy`
 - **외부 전송 동의 최초 1회**: 미동의 시 수동 검증 안내. 동의는 세션 또는 project-level
 - **무한 루프 방지**: 자기 출력/실행 중 재트리거 금지 (제외 필터). rules 트리거는 최소 규칙만 잔류
 - **격리 dir 정리**: 결과 표시 후 격리 tmp directory 및 무결성 측정 파일 삭제 (민감 정보 잔류 방지)
-- **한국어 리포트**: 결과는 항상 한국어로 출력. finding은 provider/model 출처(Codex | Antigravity | Aperture/qwen3.8-max | multiple) 표기
+- **한국어 리포트**: 결과는 항상 한국어로 출력. finding은 provider/model 출처(Codex | Antigravity | multiple) 표기

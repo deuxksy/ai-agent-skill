@@ -138,7 +138,7 @@ agy plugin list
 | `git` | 2.1.0 | `commit`, `commit-push`, `commit-push-pr`, `clean-gone`, `tag-release` | `git@zzizily` |
 | `rules` | 2.0.0 | `agents-md-management`, `revise-agents-md` | `rules@zzizily` |
 | `docs` | 2.1.0 | `docs-md-management`, `docs-restructure`, `revise-readme-md` | `docs@zzizily` |
-| `review` | 2.0.0 | `verify` | `review@zzizily` |
+| `review` | 2.1.0 | `verify` | `review@zzizily` |
 | `dev` | 2.0.0 | `deploy-android-wifi`, `license`, `update-openapi` | `dev@zzizily` |
 | `jmeter` | 2.0.0 | `lint`, `deploy`, `run`, `knee`, `collect`, `report`, `bottleneck` | `jmeter@zzizily` |
 | `kisa` | 1.0.0 | `server` | `kisa@zzizily` |
