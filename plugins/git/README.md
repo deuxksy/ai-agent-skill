@@ -1,8 +1,8 @@
 # git
 
-안전한 Git commit, PR/MR, stale branch 정리, 버전 tag와 release 발행을 제공하는 runtime-neutral Agent Skills plugin.
+안전한 Git commit, PR/MR, stale branch 정리, 버전 tag와 release 발행, `.gitignore` 관리를 제공하는 runtime-neutral Agent Skills plugin.
 
-**Version:** 2.1.0
+**Version:** 2.2.0
 
 ## Skills
 
@@ -13,6 +13,7 @@
 | `commit-push-pr` | 관련 변경 commit → normal push → GitHub PR/GitLab MR/Gitea PR 생성 |
 | `clean-gone` | merged·clean `[gone]` branch/worktree만 preview·승인 후 안전하게 제거 |
 | `tag-release` | 버전 sync 검증 후 annotated tag push → GitHub release 발행 (notes는 Conventional Commits 기반 생성) |
+| `gitignore` | 프로젝트 생성물을 확인해 `.gitignore` 생성·증분 갱신 |
 
 ## Claude Code
 
@@ -28,6 +29,7 @@ claude plugin install git@zzizily
 /git:commit-push-pr
 /git:clean-gone
 /git:tag-release
+/git:gitignore
 ```
 
 ## Codex와 Antigravity

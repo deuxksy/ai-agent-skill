@@ -1,6 +1,6 @@
 # AI-AGENT-SKILL
 
-zzizily는 Claude Code, Codex, Antigravity(Gemini) 등 멀티 Agent 런타임을 지원하는 개인 자동화 AI Agent Skill 플러그인 모음입니다. 보안 감사, 인프라 프로비저닝, 일상 자동화, 런타임 교차 검증부터 Git 워크플로우, 문서 관리 및 JMeter 스트레스 테스트까지 41개 전체 스킬을 12개 독립 도메인 플러그인으로 모듈화하여 제공합니다.
+zzizily는 Claude Code, Codex, Antigravity(Gemini) 등 멀티 Agent 런타임을 지원하는 개인 자동화 AI Agent Skill 플러그인 모음입니다. 보안 감사, 인프라 프로비저닝, 일상 자동화, 런타임 교차 검증부터 Git 워크플로우, 문서 관리 및 JMeter 스트레스 테스트까지 42개 전체 스킬을 12개 독립 도메인 플러그인으로 모듈화하여 제공합니다.
 
 ## 목차
 
@@ -23,7 +23,7 @@ zzizily는 Claude Code, Codex, Antigravity(Gemini) 등 멀티 Agent 런타임을
 | | [trackers](./plugins/trackers/README.md) | 일정 동기화, 환율 추적 및 게임 핫딜 알림 |
 | | [sessions](./plugins/sessions/README.md) | 세션 작업 저장(handoff) 및 복원(resume) 절차 |
 | | [l10n](./plugins/l10n/README.md) | 이미지 4K 최적화, 한국어 번역 검증 및 딥리서치 기획 |
-| | [git](./plugins/git/README.md) | Git 커밋, PR 생성, 태그 릴리스 및 스태일 브랜치 정리 절차 |
+| | [git](./plugins/git/README.md) | Git 커밋, PR 생성, 태그 릴리스, 스태일 브랜치 정리 및 `.gitignore` 관리 절차 |
 | | [rules](./plugins/rules/README.md) | 에이전트 지침 파일 구조 감사 및 세션 러닝 반영 |
 | | [docs](./plugins/docs/README.md) | README 요약 감사, 문서 재구성(분리/합병/이동), Diátaxis 인덱싱 및 고아 문서 관리 |
 | | [review](./plugins/review/README.md) | spec/plan 문서 및 코드 변경 런타임 교차 검증 |
@@ -135,7 +135,7 @@ agy plugin list
 | `trackers` | 2.0.0 | `calendar-sync`, `exchange-rate-tracker`, `hot-game-deals-n-news`, `notion-sprint-sync` | `trackers@zzizily` |
 | `sessions` | 2.0.0 | `handoff`, `resume` | `sessions@zzizily` |
 | `l10n` | 2.0.0 | `optimize-images-4k`, `korean-translation-verify`, `product-planning-dr-pipeline` | `l10n@zzizily` |
-| `git` | 2.1.0 | `commit`, `commit-push`, `commit-push-pr`, `clean-gone`, `tag-release` | `git@zzizily` |
+| `git` | 2.2.0 | `commit`, `commit-push`, `commit-push-pr`, `clean-gone`, `tag-release`, `gitignore` | `git@zzizily` |
 | `rules` | 2.0.0 | `agents-md-management`, `revise-agents-md` | `rules@zzizily` |
 | `docs` | 2.1.0 | `docs-md-management`, `docs-restructure`, `revise-readme-md` | `docs@zzizily` |
 | `review` | 2.1.0 | `verify` | `review@zzizily` |
