@@ -11,7 +11,7 @@ This document serves as the Single Source of Truth (SSoT) for all runtime AI age
 
 ## Versioning & Commit Convention
 
-- **SemVer**: Follow Semantic Versioning per plugin. All plugin manifests (`.claude-plugin/marketplace.json`, `.agents/plugins/marketplace.json`, `plugins/*/.claude-plugin/`, `plugins/*/.codex-plugin/`, `plugins/*/plugin.json`) and catalog tables must stay in sync.
+- **SemVer**: Follow Semantic Versioning per plugin. All plugin manifests (`.claude-plugin/marketplace.json`, `.agents/plugins/marketplace.json`, `plugins/*/.claude-plugin/`, `plugins/*/.codex-plugin/`, `plugins/*/plugin.json`) and catalog tables must stay in sync. `plugins/*/plugin.json` is a symlink to `.claude-plugin/plugin.json` — edit the real file only.
 - **Local-only plugins**: Not registered in `marketplace.json`. Never add them to public catalog tables.
 - **Conventional Commits**: Commit tag in English (e.g. `feat`, `fix`, `docs`, `chore`), commit message in Korean.
 
@@ -25,5 +25,5 @@ This document serves as the Single Source of Truth (SSoT) for all runtime AI age
    description: <one-line summary>  # 1-1024 chars: purpose, when to use, keywords
    ---
    ```
-   Keep the body under 500 lines; move details to `references/`, executable code to `scripts/`, templates/data to `assets/`. Validate with `skills-ref validate <skill-dir>`.
+   Keep the body under 500 lines; move details to `references/`, executable code to `scripts/`, templates/data to `assets/`. Validate with `skills-ref validate <skill-dir>` (Python tool — `uv sync` from the repo's `skills-ref/`, not on npm).
 3. **No Hardcoded Secrets/Paths**: Never commit credentials, personal absolute paths, or unverified environment configurations.
