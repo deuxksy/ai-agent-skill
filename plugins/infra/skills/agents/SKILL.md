@@ -88,7 +88,7 @@ macOS에서 `codex`·`claude-code`·`antigravity-cli`·`google-gemini`는 brew c
 
 ### LSP Servers
 
-Serena/OMC LSP 도구(`lsp_*`)가 코드 심볼 분석에 사용. PATH에 있어야 자동 감지. `nil`은 NixOS는 nix, 타 OS는 cargo(mise rust)로 설치.
+Serena/OMC LSP 도구(`lsp_*`)가 코드 심볼 분석에 사용. PATH에 있어야 자동 감지. `nil`은 NixOS에서만 설치한다.
 
 #### pnpm
 
@@ -108,8 +108,30 @@ Serena/OMC LSP 도구(`lsp_*`)가 코드 심볼 분석에 사용. PATH에 있어
 | lua-language-server | brew | binary download | nix |
 | marksman | brew | binary download | nix |
 | terraform-ls | brew | binary download | nix |
-| nil | cargo | cargo | nix |
+| nil | — | — | nix |
 | gopls | brew | go install | nix |
+| jdtls | brew | [Eclipse milestone build](https://github.com/eclipse-jdtls/eclipse.jdt.ls#installation) | nix |
+| kotlin-lsp | brew cask | [공식 standalone archive](https://github.com/Kotlin/kotlin-lsp/releases) | 공식 archive |
+| sourcekit-lsp | Xcode/Swift toolchain | Swift toolchain | Swift toolchain |
+
+#### Java / Spring Boot
+
+| 서버 | 용도 | 배포 경로 |
+| :--- | :--- | :--- |
+| Eclipse JDT LS (`jdtls`) | Java 코드 분석, Maven/Gradle 프로젝트 인식 | [Eclipse JDT LS](https://github.com/eclipse-jdtls/eclipse.jdt.ls) |
+| Spring Boot Language Server | Spring 코드와 `application.yml`/`application.properties` 지원 | [Spring Boot Tools VS Code 확장](https://github.com/spring-projects/spring-tools/tree/main/vscode-extensions/vscode-spring-boot) 내 JAR |
+
+Spring Boot Language Server의 전체 Java 기능은 실행 중인 JDT LS와의 통신에 의존한다. 두 서버 설치 후 LSP 클라이언트의 Java/Spring 연동도 설정해야 한다. Spring 서버 JAR만 PATH에 두어서는 자동 감지되지 않는다. [Spring Tools 클라이언트 통합 문서](https://github.com/spring-projects/spring-tools/wiki/Developer-Manual-Integrate-Language-Server-Into-Client) 참조.
+
+#### iOS / Android
+
+| 도구 | 용도 | 설치 경로 |
+| :--- | :--- | :--- |
+| SourceKit-LSP | iOS/Swift 코드 분석 | [Xcode 또는 Swift toolchain에 포함](https://github.com/swiftlang/sourcekit-lsp) |
+| Kotlin LSP | Kotlin 코드 분석; Android Gradle Plugin 지원은 experimental | [JetBrains 공식 배포](https://github.com/Kotlin/kotlin-lsp) |
+| Android Studio | Android/Kotlin 통합 IDE (별도 LSP 아님) | [Android Studio](https://developer.android.com/studio/install) |
+
+Kotlin LSP의 VS Code 확장 ID는 `jetbrains.kotlin-server`이며, standalone CLI는 macOS에서 `kotlin-lsp` Homebrew cask로 설치한다. Android Studio는 자체 Kotlin 도구를 제공하므로 별도 Kotlin LSP와 중복 실행하지 않는다.
 
 ---
 
@@ -156,15 +178,35 @@ uv tool install doris-mcp-server@latest
 pnpm add -g typescript-language-server@latest yaml-language-server@latest bash-language-server@latest pyright@latest vscode-langservers-extracted@latest @ansible/ansible-language-server@latest
 
 # macOS / SteamOS (Linuxbrew)
-brew install lua-language-server marksman terraform-ls gopls
+brew install lua-language-server marksman terraform-ls gopls jdtls
+
+# macOS - Kotlin standalone LSP
+brew install --cask kotlin-lsp
 
 # Debian/Ubuntu/Fedora - 각 프로젝트 GitHub release binary (gopls는 go install golang.org/x/tools/gopls@latest)
 
-# nil (macOS/SteamOS/Linux) - cargo (mise rust, 소스 빌드)
-cargo install --git https://github.com/oxalica/nil nil
+# iOS/macOS - Xcode 또는 Swift toolchain에 포함된 SourceKit-LSP 확인
+command -v sourcekit-lsp
+
+# Android Studio (macOS) - GUI IDE; 이미 설치된 경우 스킵
+brew install --cask android-studio
 
 # NixOS - configuration.nix (environment.system.packages) 또는 nix profile
-nix profile install nixpkgs#lua-language-server nixpkgs#marksman nixpkgs#terraform-ls nixpkgs#nil nixpkgs#gopls
+nix profile install nixpkgs#lua-language-server nixpkgs#marksman nixpkgs#terraform-ls nixpkgs#nil nixpkgs#gopls nixpkgs#jdt-language-server
+```
+
+Java/Spring Boot: `jdtls` 실행에는 JDK 21 이상이 필요하다. Debian/Ubuntu/Fedora에서는 위 Eclipse milestone build를 내려받아 설치한다. Spring Boot Tools를 쓰는 VS Code에서는 Java 확장과 Spring Boot Tools 확장을 설치하면 두 서버가 함께 실행된다. 다른 LSP 클라이언트에서는 [공식 Spring Boot Tools VSIX](https://github.com/spring-projects/spring-tools/wiki/Developer-Manual-Integrate-Language-Server-Into-Client)에서 서버 JAR를 추출하고, 해당 클라이언트에 JDT LS와 Spring Boot LS 실행 및 상호 통신을 설정한다. 설치 파일을 받기 전에 클라이언트의 Spring 연동 지원 여부를 확인한다.
+
+```bash
+# VS Code가 설치된 경우에만 Java/Spring 확장 설치
+if command -v code >/dev/null; then code --install-extension redhat.java; code --install-extension vmware.vscode-spring-boot; fi
+```
+
+Kotlin: VS Code에서는 `jetbrains.kotlin-server` 확장을 설치한다. 다른 클라이언트에서는 OS별 [standalone archive](https://github.com/Kotlin/kotlin-lsp/releases)를 사용한다. Android 프로젝트 import는 experimental이며, 최신 standalone 배포의 JDK 요구사항을 릴리스 노트에서 확인한다. Android Studio는 macOS 외에는 [공식 설치 절차](https://developer.android.com/studio/install)를 따른다. iOS 빌드는 Xcode가 필요하다.
+
+```bash
+# VS Code가 설치된 경우에만 Kotlin LSP 확장 설치
+command -v code >/dev/null && code --install-extension jetbrains.kotlin-server
 ```
 
 #### Brew Cask AI Agents (macOS 분기)
@@ -231,13 +273,23 @@ ansible-language-server --version
 pnpm list -g --depth=0 | grep vscode-langservers-extracted
 
 # brew - LSP Servers
-brew list --versions lua-language-server marksman terraform-ls gopls
+brew list --versions lua-language-server marksman terraform-ls gopls jdtls
 
-# nil (cargo/nix)
-nil --version
+# Kotlin / iOS / Android
+command -v kotlin-lsp
+command -v sourcekit-lsp
+brew list --cask --versions kotlin-lsp android-studio
+command -v code >/dev/null && code --list-extensions --show-versions | grep '^jetbrains.kotlin-server@'
+
+# nil (NixOS)
+if [ -f /etc/os-release ] && grep -q '^ID=nixos' /etc/os-release; then nil --version; fi
 
 # gopls
 gopls version
+
+# Java / Spring Boot - JDT LS 패키지 확인 후 클라이언트에서 두 서버의 초기화/진단 확인
+command -v jdtls || command -v jdt-language-server
+command -v code >/dev/null && code --list-extensions --show-versions | grep -E '^(redhat.java|vmware.vscode-spring-boot)@'
 ```
 
 | 패키지 | 관리 | 상태 | 버전 |
@@ -249,7 +301,7 @@ gopls version
 > - `holmes`는 `--version` 미지원으로 하위 명령 방식 사용.
 > - `dbhub`, `proxmox-mcp-plus`, `doris-mcp-server`는 `--version` 미지원으로 `pnpm list` / `uv tool list`로 확인.
 > - `vscode-langservers-extracted`는 `--version` 미지원으로 `pnpm list`로 확인. brew LSP(lua-language-server, marksman, terraform-ls, gopls)는 `brew list --versions`로 확인.
-> - `nil`은 NixOS는 nix, 타 OS는 cargo(`cargo install --git`)로 설치·갱신.
+> - `nil`은 NixOS에서만 nix로 설치·갱신한다.
 
 ---
 
@@ -312,16 +364,20 @@ uv tool upgrade doris-mcp-server
 pnpm update -g --latest typescript-language-server yaml-language-server bash-language-server pyright vscode-langservers-extracted @ansible/ansible-language-server
 
 # macOS / SteamOS (Linuxbrew)
-brew upgrade lua-language-server marksman terraform-ls gopls
+brew upgrade lua-language-server marksman terraform-ls gopls jdtls
+
+# macOS - Kotlin standalone LSP
+brew upgrade --cask kotlin-lsp
 
 # Debian/Ubuntu/Fedora - gopls는 go install golang.org/x/tools/gopls@latest
 
-# nil (macOS/SteamOS/Linux) - cargo 재설치로 갱신
-cargo install --force --git https://github.com/oxalica/nil nil
-
 # NixOS - nix profile upgrade (configuration.nix 관리 시 flake update + nixos-rebuild)
-nix profile upgrade '.*lua-language-server.*' '.*marksman.*' '.*terraform-ls.*' '.*nil.*' '.*gopls.*'
+nix profile upgrade '.*lua-language-server.*' '.*marksman.*' '.*terraform-ls.*' '.*nil.*' '.*gopls.*' '.*jdt-language-server.*'
 ```
+
+SourceKit-LSP는 Xcode/Swift toolchain 업데이트로, Android Studio는 macOS에서 `brew upgrade --cask android-studio`로 갱신한다. Kotlin LSP의 standalone archive를 수동 설치했다면 공식 최신 archive로 교체한다.
+
+Spring Boot Language Server는 배포에 사용한 Spring Boot Tools 확장을 업데이트한다. VSIX에서 수동 추출했다면 새 VSIX로 JAR를 교체한 뒤 LSP 클라이언트를 재시작하고 Java/Spring 진단을 확인한다. JDT LS는 Debian/Ubuntu/Fedora에서 새 Eclipse milestone build로 교체한다.
 
 #### Brew Cask AI Agents (macOS 분기)
 
@@ -369,7 +425,7 @@ nix profile upgrade '.*antigravity-cli.*'
 - **pnpm minimumReleaseAge 주의**: pnpm global은 supply chain 보호로 publish 후 약 24시간 동안 최신 버전 설치 차단 (`ERR_PNPM_NO_MATURE_MATCHING_VERSION`). `(x.xx.x is available)`가 떠도 강제 설치 불가 → macOS는 brew cask로 우회
 - **mise/pnpm PATH 충돌 주의**: mise node global bin이 pnpm global bin보다 PATH에서 선행하면 stale 구버전이 실행됨. 업그레이드 후 반드시 `which <cli>` + `--version` 교차 검증. mise node global 중복 패키지는 `npm uninstall -g`로 제거
 - **Claude Code**: macOS는 brew cask `claude-code`로 관리 (native installer 대체). `~/.claude/` 설정은 공유. 타 OS는 native installer 유지
-- **NixOS 특례**: 모든 패키지 매니저(pnpm, uv)와 LSP가 nix로 관리됨. `nil`은 NixOS 외 cargo(mise rust)로 설치
+- **NixOS 특례**: 모든 패키지 매니저(pnpm, uv)와 LSP가 nix로 관리됨. `nil`은 NixOS에서만 설치
 - **Antigravity CLI 특례**: macOS는 homebrew-cask (`auto_updates`) — `brew upgrade --cask` 실패 시 `agy update`로 폴백. SteamOS/Linux는 installer 스크립트 (자체 `agy update`), NixOS는 nixpkgs `antigravity-cli` 패키지
 - **Gemini desktop**: macOS는 brew cask `google-gemini`(`auto_updates`, Google 자체 업데이터)로 관리. Gemini CLI(2026-06-18 서비스 중단)·Antigravity CLI(`agy`)·Gemini 데스크톱 앱은 별개 제품이며, cask `gemini`(MacPaw 디스크 클리너)와 혼동 금지. GUI 앱이라 버전 검증은 `brew list --cask --versions google-gemini` 사용
 - **SteamOS 특례**: Node.js/corepack은 mise로 관리. antigravity는 installer 스크립트
