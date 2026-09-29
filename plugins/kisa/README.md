@@ -2,9 +2,10 @@
 
 KISA 주요정보통신기반시설 취약점 점검 체계 기반 진단 스킬을 제공하는 보안 도메인 플러그인입니다.
 
-## 🛠 포함 스킬 (1)
+## 🛠 포함 스킬 (2)
 
 - **`server`**: Unix/Linux 서버 취약점 점검 (KISA U-01~U-73, 읽기 전용 명령, 양호/취약 판정 + 증빙 리포트) — `/kisa:server <ip-or-hostname>`
+- **`web`**: 웹 서비스 취약점 점검 (KISA WEB-01~WEB-26, 외부 실측 curl·openssl + 서버측 kubectl 보완, 양호/취약 판정 + 증빙 리포트) — `/kisa:web <domain>`
 
 ## 🚀 설치 방법
 

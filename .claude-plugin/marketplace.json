@@ -74,8 +74,8 @@
     {
       "name": "kisa",
       "source": "./plugins/kisa",
-      "description": "KISA 주요정보통신기반시설 취약점 점검 체계(U-01~73) 기반 서버·네트워크 진단 스킬",
-      "version": "1.0.0"
+      "description": "KISA 주요정보통신기반시설 취약점 점검 체계(U-01~73, WEB-01~26) 기반 서버·웹서비스 진단 스킬",
+      "version": "1.1.0"
     }
   ]
 }

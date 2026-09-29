@@ -141,7 +141,7 @@ agy plugin list
 | `review` | 2.1.0 | `verify` | `review@zzizily` |
 | `dev` | 2.0.0 | `deploy-android-wifi`, `license`, `update-openapi` | `dev@zzizily` |
 | `jmeter` | 2.0.0 | `lint`, `deploy`, `run`, `knee`, `collect`, `report`, `bottleneck` | `jmeter@zzizily` |
-| `kisa` | 1.0.0 | `server` | `kisa@zzizily` |
+| `kisa` | 1.1.0 | `server`, `web` | `kisa@zzizily` |
 
 ## 상세 문서
 
