@@ -29,7 +29,7 @@ zzizily는 Claude Code, Codex, Antigravity(Gemini) 등 멀티 Agent 런타임을
 | | [review](./plugins/review/README.md) | spec/plan 문서 및 코드 변경 런타임 교차 검증 |
 | | [dev](./plugins/dev/README.md) | Android WiFi ADB 빌드 배포 및 오픈소스 라이선스 조사 |
 | | [jmeter](./plugins/jmeter/README.md) | JMeter 스트레스 테스트: JMX 린트, 원격 배포·기동, 실행·knee 탐색, 수집·리포트 |
-| | [kisa](./plugins/kisa/README.md) | KISA 체크리스트 기반 서버·네트워크 취약점 점검 절차 |
+| | [kisa](./plugins/kisa/README.md) | KISA·KECO 체크리스트 기반 서버·웹·AI·DB 취약점 점검 절차 |
 | **Reference** (참조 / 규격) | [docs/README.md](./docs/README.md) | 서브 문서 디렉토리 역할 및 체계 정의 |
 | | [docs/okf/README.md](./docs/okf/README.md) | OKF(Open Knowledge Format) 명세 허브 및 작성 가이드 |
 | | [CLAUDE.md](./CLAUDE.md) | 프로젝트 분류 원칙 및 버전 관리 명세 |
@@ -131,7 +131,7 @@ agy plugin list
 | Plugin | Version | 포함 스킬 | 설치 명령어 |
 | :--- | :--- | :--- | :--- |
 | `security` | 2.0.0 | `code-audit`, `system-audit`, `backdoor-investigation`, `backdoor-remediation` | `security@zzizily` |
-| `infra` | 2.4.0 | `setup`, `packages`, `agents`, `lsp`, `proxmox-vm-create`, `openwrt-initd`, `acl-owner-reset` | `infra@zzizily` |
+| `infra` | 2.4.1 | `setup`, `packages`, `agents`, `lsp`, `proxmox-vm-create`, `openwrt-initd`, `acl-owner-reset` | `infra@zzizily` |
 | `trackers` | 2.0.0 | `calendar-sync`, `exchange-rate-tracker`, `hot-game-deals-n-news`, `notion-sprint-sync` | `trackers@zzizily` |
 | `sessions` | 2.0.0 | `handoff`, `resume` | `sessions@zzizily` |
 | `l10n` | 2.0.0 | `optimize-images-4k`, `korean-translation-verify`, `product-planning-dr-pipeline` | `l10n@zzizily` |
@@ -141,7 +141,7 @@ agy plugin list
 | `review` | 2.1.0 | `verify` | `review@zzizily` |
 | `dev` | 2.0.0 | `deploy-android-wifi`, `license`, `update-openapi` | `dev@zzizily` |
 | `jmeter` | 2.0.0 | `lint`, `deploy`, `run`, `knee`, `collect`, `report`, `bottleneck` | `jmeter@zzizily` |
-| `kisa` | 1.2.0 | `linux`, `web`, `ai`, `db` | `kisa@zzizily` |
+| `kisa` | 1.2.1 | `linux`, `web`, `ai`, `db` | `kisa@zzizily` |
 
 ## 상세 문서
 

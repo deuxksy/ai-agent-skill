@@ -19,7 +19,7 @@ PostgreSQL·Apache Doris의 계정·권한·민감컬럼을 읽기 전용 쿼리
 /kisa:db          # 기본 대상: ecoai-dev PostgreSQL + mgmt-system Doris
 ```
 
-- 인자 없이 호출하면 기본 대상으로 실행한다. 다른 DB 점검 시 접속 정보를 지정해 안내받은 뒤 진행
+- 인자 없이 호출하면 기본 대상(ecoai-dev PG·mgmt-system Doris — ecoai 프로덕션 환경 값)으로 실행한다. 다른 DB 점검 시 DBHub·Doris MCP 접속 설정과 점검 대상 계정·테이블 목록을 먼저 조정한다
 
 ## 절차
 
@@ -112,7 +112,7 @@ kubectl get pvc -A | grep -E 'NAMESPACE|<DB namespace>'  # -n 중복 불가 → 
 
 형식은 linux·web·ai 스킬과 동일한 구조(메타 헤더 → 섹션 → 항목별 판정·쿼리·결과). SQL 점검은 `명령:` 대신 `쿼리:` 블록에 원문을 남긴다.
 
-```markdown
+````markdown
 # <DB 대상> DB 보안 점검 증빙
 - 대상: PostgreSQL(<namespace/클러스터>), Doris(<namespace>)
 - 기준: KECO Ⅱ-5 (DB 구축) · Ⅴ-2 (개인정보)
@@ -128,7 +128,7 @@ kubectl get pvc -A | grep -E 'NAMESPACE|<DB namespace>'  # -n 중복 불가 → 
 ```text
 <쿼리 출력 원문>
 ```
-```
+````
 
 ## 안전 규칙
 

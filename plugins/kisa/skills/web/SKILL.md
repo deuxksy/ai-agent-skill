@@ -34,7 +34,7 @@ sh scripts/web-check.sh <domain> > /tmp/web-check-<domain>-raw.txt
 ```
 
 - 커버 항목: WEB-04~07·10·13·14·16·18·20~22 (경로 탐색·헤더·TLS·리디렉션·에러 페이지)
-- 스크립트는 `@@SEC@@`(항목) / `@@CMD@@`(명령) / `@@END@@` 마커로 명령·결과 원문을 남긴다
+- 스크립트는 `@@META@@`(도메인·실행 일시) / `@@SEC@@`(항목) / `@@CMD@@`(명령) / `@@END@@` 마커로 명령·결과 원문을 남긴다
 - 사용 명령: `curl`(GET·HEAD·PROPFIND)·`openssl s_client` — 서버 상태 변경 없음
 
 ### 3. 서버측 보완 점검 (K8s 환경)
@@ -46,7 +46,11 @@ sh scripts/web-check.sh <domain> > /tmp/web-check-<domain>-raw.txt
 | WEB-08 업로드 용량 | `kubectl -n ingress-nginx get cm ingress-nginx-controller -o yaml \| grep -i body-size` |
 | WEB-09 프로세스 권한 | `kubectl get deploy <웹서버-deploy> -o jsonpath='{.spec.template.spec.containers[0].securityContext}'` |
 | WEB-11·17 경로·가상디렉토리 | `kubectl get ingress -A` |
-| WEB-25 패치 | `kubectl get deploy -o custom-columns='NAME:.metadata.name,IMAGE:.spec.template.spec.containers[*].image'` |
+| WEB-12 심볼릭 링크 추적 | ingress-nginx: nginx 기본 심링크 미추적 — ConfigMap·`disable_symlinks` 설정 확인 (설정 없으면 양호) |
+| WEB-15 불필요 매핑 | 앱 라우팅 점검 — Actuator·불필요 핸들러 경로가 WEB-14 탐색에서 노출됐는지로 판정 |
+| WEB-19 SSI | nginx `ssi` 지시자·Tomcat SSI 미설정 → 해당없음 (웹서버 설정에서 `ssi` grep) |
+| WEB-24 업로드 경로·권한 | `kubectl get deploy,pvc -n <ns>` — 업로드 PVC가 웹루트와 분리·비실행 마운트인지 확인 |
+| WEB-25 패치 | `kubectl get deploy -A -o custom-columns='NAME:.metadata.name,IMAGE:.spec.template.spec.containers[*].image'` |
 | WEB-26 로그 | `kubectl logs deploy/<웹서버-deploy> --tail=5` |
 | WEB-01~03·23 계정·인증 | 관리 콘솔(Keycloak 등) 확인 — 판정 보류 가능 |
 
@@ -91,7 +95,7 @@ sh scripts/web-check.sh <domain> > /tmp/web-check-<domain>-raw.txt
 
 항목 포맷 — `관점:` 라인으로 확인 대상을 먼저 밝힌다:
 
-```markdown
+````markdown
 ### WEB-14 경로 내 파일의 접근 통제 — 판정: **양호**
 관점: 관리·민감 경로 비인가 접근 차단 (401/403/404)
 명령:
@@ -102,7 +106,7 @@ sh scripts/web-check.sh <domain> > /tmp/web-check-<domain>-raw.txt
 ```text
 <명령 출력 원문>
 ```
-```
+````
 
 ## 안전 규칙
 

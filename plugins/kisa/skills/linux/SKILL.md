@@ -40,6 +40,7 @@ ssh <target> 'bash -s 2>&1' < scripts/u73-check.sh > /tmp/u-check-<target>-raw.t
 
 - 스크립트는 `@@SEC@@`(항목) / `@@CMD@@`(명령) / `@@END@@` 마커로 명령·결과 원문을 남긴다 — 증빙 재현성 보장
 - 사용 명령: `grep`·`cat`·`ls`·`awk`·`find`·`systemctl is-active`·`ss -tnl`·`postconf -h`·`apt list` — 설정 변경 없음
+- **스크립트 미커버 항목** (U-53~57 웹서버 디렉터리·인증계열, U-61~62 FTP): 수동 확인이 필요하다 — 서비스 부재(`systemctl is-active apache2 nginx vsftpd`)면 해당없음, 설치돼 있으면 설정 파일 `cat`·`grep`으로 근거를 남긴다
 
 ### 3. 판정
 
@@ -63,7 +64,7 @@ mkdir -p ./report   # 예: ./report/ecoai-cluster-05-2609222037.md
 
 출력 형식 (md) — KECO 정보보안점검표 대응 작성의 원본이 된다:
 
-```markdown
+````markdown
 # <target> 정보보안점검 증빙 (U-01~U-73)
 - 대상: <target> — <서버 역할> (<하드웨어 모델/서비스태그>, <OS + 플랫폼>)
 - 실행: <YYYY-MM-DD KST>, 읽기 전용 명령 (<ssh 사용자>, Port <n>, <ProxyJump 경로>)
@@ -78,7 +79,7 @@ mkdir -p ./report   # 예: ./report/ecoai-cluster-05-2609222037.md
 ```text
 <명령 출력 원문>
 ```
-```
+````
 
 - 항목 포맷은 `### U-XX <항목명> — 판정: **양호|취약**` + `명령:`/`결과:` 블록 쌍. 명령이 여러 개면 블록 쌍을 반복
 - 그룹 경계: `## 1. 계정 관리 (U-01~U-23)` / `## 2. 서비스·파일/디렉터리 관리 (U-24~U-58)` / `## 3. 로그·서비스·패치 관리 (U-59~U-73)`

@@ -65,3 +65,8 @@ KISA 주요정보통신기반시설 기술적 취약점 분석·평가 방법 �
 | 에러 페이지 (WEB-22) | `error_page` 지시자 | web.xml `<error-page>` | `server.error.include-stacktrace=never` 등 |
 | 디렉터리 리스팅 (WEB-04) | `autoindex off` | web.xml DefaultServlet `listings=false` | 기본 미제공 (Welcome file 없으면 403/404) |
 | 관리 계정 (WEB-01) | htpasswd | tomcat-users.xml | 앱 계정 체계 (Keycloak 연동 등) |
+
+## TLS 1.0/1.1 실측 제약 (WEB-20)
+
+- OpenSSL 3+ 클라이언트는 `-tls1_1`·`-tls1` 프로토콜을 서버 접속 전에 클라이언트측에서 거부한다 — 원문 출력에 `no protocols available`이 남으면 **클라이언트 제약**이며 서버 허용 여부는 판정 불가 (별도 도구 필요, "확인 불가"로 기록)
+- `Protocol :  TLSv1.1` 등 협상 성공 출력만 취약 판정의 근거로 사용한다

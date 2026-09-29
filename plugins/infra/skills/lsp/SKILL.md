@@ -82,7 +82,7 @@ brew install lua-language-server marksman terraform-ls jdtls gopls
 
 # Spring Boot LSP (Spring Tools 4)
 # release vsix(또는 OpenVSX)에서 language-server를 ~/.local/share/spring-boot-language-server 에 추출하고
-# ~/.local/bin/spring-boot-language-server 실행 래퍼 등록
+# ~/.local/bin/spring-boot-language-server 실행 래퍼 등록 (--version 인자에 버전을 출력하고 종료 — 검증 단계에서 사용)
 ```
 
 #### Debian / Ubuntu / Fedora
@@ -95,7 +95,7 @@ pnpm add -g typescript@latest typescript-language-server@latest yaml-language-se
 go install golang.org/x/tools/gopls@latest
 
 # Spring Boot LSP (Spring Tools 4)
-# release vsix에서 추출 후 ~/.local/share/ 및 ~/.local/bin 래퍼 등록
+# release vsix에서 추출 후 ~/.local/share/ 및 ~/.local/bin 래퍼 등록 (--version 처리 포함)
 ```
 
 - `jdtls`: Eclipse JDT.LS의 최신 milestone archive를 내려받아 압축을 풀고 upstream `bin/jdtls`를 `PATH`에 노출한다. (Java 21+ 필요)
@@ -126,7 +126,7 @@ nix profile install \
 typescript-language-server --version
 pyright --version
 gopls version
-terraform-ls -v
+terraform-ls -version
 ansible-language-server --version
 command -v jdtls
 spring-boot-language-server --version

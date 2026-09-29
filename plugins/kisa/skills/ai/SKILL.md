@@ -21,7 +21,7 @@ AI 인프라(vllm·embedding·reranker·pgvector 등)를 읽기 전용 kubectl�
 /kisa:ai ns-a ns-b          # 복수 namespace 지정
 ```
 
-- 인자 없이 호출하면 기본값(mgmt-system·llm-prod)으로 실행한다
+- 인자 없이 호출하면 기본값(mgmt-system·llm-prod — ecoai 프로덕션 환경 값)으로 실행한다. 다른 클러스터 점검 시 `KUBECONFIG`와 대상 namespace를 먼저 조정한다
 
 ## 절차
 
@@ -56,7 +56,7 @@ kubectl get deploy,sts -n <ns> \
 | 4. 모니터링·로깅 | ⑥ | `kubectl get deploy,sts -n monitoring` + AI 파드 `logs --tail=5` |
 | 5. 백업·PVC | ⑬ 복구방안·① 신뢰 출처 | `kubectl get cronjobs -A` + `kubectl get pvc -A \| grep <ns>` |
 | 6. 이미지 출처 | ⑤ 모델·라이브러리 출처 | deploy/sts 이미지 `sort -u` 조회 — 공식 레지스트리 여부 |
-| 7. API 인증 | ⑦ 입·출력 보안 | 식별한 ingress 도메인에 `curl` 무인증 GET·빈 JSON POST — 응답코드로 판정 |
+| 7. API 인증 | ⑦ 입·출력 보안 | 식별한 ingress 도메인에 `curl` 무인증 GET — 401/403이면 인증 적용, 200이면 무인증 공개. POST(빈 JSON)는 상태 변경 가능하므로 사용자 승인 후에만 |
 | 8. 취약점 스캐너 | ⑫ | 스캐너 파드 상태 조회 (예: `kubectl get pods -A \| grep -i trivy`) |
 
 - `-n`은 중복 지정 불가 — 전체 조회가 필요하면 `-A` 후 grep 필터
@@ -92,7 +92,7 @@ kubectl get deploy,sts -n <ns> \
 
 ## 안전 규칙
 
-- **읽기 전용만 실행** — kubectl get·describe·logs와 무인증 curl GET·빈 JSON POST 외 서버 조작 금지
+- **읽기 전용만 실행** — kubectl get·describe·logs와 무인증 curl GET만 기본 실행. POST는 상태 변경 가능(GPU 작업 생성·행 생성)하므로 사용자 승인 후에만 제한 실행
 - 판정은 실측 사실 기반 — 추측으로 충족 판정 금지
 - 증빙에는 자격증명·세션 쿠키가 남지 않는지 확인 후 산출물 저장
 - 조치(remediation)는 별도 작업 — 이 스킬은 진단만

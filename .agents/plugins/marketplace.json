@@ -24,7 +24,7 @@
         "source": "local",
         "path": "./plugins/infra",
         "description": "Dotfiles setup, system package management, AI agents/MCP/LSP lifecycle, Proxmox VM, and OpenWrt service provisioning skills",
-        "version": "2.4.0"
+        "version": "2.4.1"
       },
       "policy": {
         "installation": "AVAILABLE",
@@ -157,6 +157,20 @@
         "authentication": "ON_INSTALL"
       },
       "category": "Development"
+    },
+    {
+      "name": "kisa",
+      "source": {
+        "source": "local",
+        "path": "./plugins/kisa",
+        "description": "KISA·KECO 취약점 점검 체계(U-01~73, WEB-01~26, 별첨6 AI, DB) 기반 서버·웹·AI·DB 진단 스킬",
+        "version": "1.2.1"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Security"
     }
   ]
 }
