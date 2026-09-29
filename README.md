@@ -131,7 +131,7 @@ agy plugin list
 | Plugin | Version | 포함 스킬 | 설치 명령어 |
 | :--- | :--- | :--- | :--- |
 | `security` | 2.0.0 | `code-audit`, `system-audit`, `backdoor-investigation`, `backdoor-remediation` | `security@zzizily` |
-| `infra` | 2.3.0 | `setup`, `packages`, `agents`, `proxmox-vm-create`, `openwrt-initd`, `acl-owner-reset` | `infra@zzizily` |
+| `infra` | 2.4.0 | `setup`, `packages`, `agents`, `lsp`, `proxmox-vm-create`, `openwrt-initd`, `acl-owner-reset` | `infra@zzizily` |
 | `trackers` | 2.0.0 | `calendar-sync`, `exchange-rate-tracker`, `hot-game-deals-n-news`, `notion-sprint-sync` | `trackers@zzizily` |
 | `sessions` | 2.0.0 | `handoff`, `resume` | `sessions@zzizily` |
 | `l10n` | 2.0.0 | `optimize-images-4k`, `korean-translation-verify`, `product-planning-dr-pipeline` | `l10n@zzizily` |
