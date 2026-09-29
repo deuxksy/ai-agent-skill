@@ -1,7 +1,7 @@
 {
   "name": "kisa",
-  "description": "KISA vulnerability checklist based server, web service and network security audit skills",
-  "version": "1.1.0",
+  "description": "KISA and KECO vulnerability checklist based server, web, AI and DB security audit skills",
+  "version": "1.2.0",
   "author": {
     "name": "Crong"
   },

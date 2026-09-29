@@ -1,7 +1,7 @@
 {
   "name": "kisa",
-  "description": "KISA vulnerability checklist based server, web service and network security audit skills",
-  "version": "1.1.0",
+  "description": "KISA and KECO vulnerability checklist based server, web, AI and DB security audit skills",
+  "version": "1.2.0",
   "author": {
     "name": "Crong"
   },
@@ -9,13 +9,15 @@
   "interface": {
     "displayName": "KISA",
     "shortDescription": "KISA 취약점 점검 체계 기반 보안 진단 스킬",
-    "longDescription": "KISA 주요정보통신기반시설 취약점 점검 체계(U-01~73, N-01~15) 기반 서버·네트워크 장비 진단 스킬을 제공합니다.",
+    "longDescription": "KISA·KECO 취약점 점검 체계(U-01~73, WEB-01~26, 별첨6 AI 체크리스트, DB) 기반 서버·웹·AI·DB 진단 스킬을 제공합니다.",
     "developerName": "Crong",
     "category": "Security",
     "capabilities": ["Write"],
     "defaultPrompt": [
       "이 서버의 KISA 취약점 U-01~73을 점검해줘.",
-      "네트워크 스위치 N-01~15를 점검해줘."
+      "웹 서비스 취약점 WEB-01~26을 점검해줘.",
+      "AI 시스템 별첨6 체크리스트를 점검해줘.",
+      "DB 계정·권한·개인정보 저장을 점검해줘."
     ]
   }
 }

@@ -63,13 +63,46 @@ sh scripts/web-check.sh <domain> > /tmp/web-check-<domain>-raw.txt
 | 보안 설정 (WEB-20~24) | SSL/TLS·리디렉션·에러 페이지·업로드 | TLS 1.2+만 허용, HTTP→HTTPS 리디렉션, 스택트레이스 미노출 |
 | 패치·로그 (WEB-25~26) | 웹서버 버전·로그 | 최신 안정판, 접속 로그 기록 |
 
-**판정 원칙**: server 스킬과 동일 — 양호 조건을 문자 그대로 충족할 때만 양호, 확인 불가·부재는 취약(보수적). 대상 기능이 존재하지 않으면 해당없음 (근거 기록).
+**판정 원칙**: linux 스킬과 동일 — 양호 조건을 문자 그대로 충족할 때만 양호, 확인 불가·부재는 취약(보수적). 대상 기능이 존재하지 않으면 해당없음 (근거 기록). 확인 수단이 없는 관리 콘솔 항목은 **미점검**으로 판정 보류 가능.
 
 ### 5. 증빙 리포트
 
 출력 경로: **`./report/web-<domain>-<YYMMDDhhmm>.md`** (`report/` 없으면 생성)
 
-형식은 server 스킬과 동일 (메타 헤더 → 항목별 판정·명령·결과). 공통 메타: 대상 도메인·웹서버 계층·실행 일시·요약(양호 N·취약 M·해당없음 K).
+형식은 linux 스킬과 동일한 구조(메타 헤더 → KISA 그룹 → 항목별 판정·명령·결과)에 웹 계층 메타를 추가한다.
+
+메타 헤더 — 대상 계층·기준 명시:
+
+```markdown
+# <domain> 웹 서비스 정보보안점검 증빙
+- 대상 (계층): ① ingress-nginx — K8s 인그레스 (KISA nginx 항목 직접 적용)
+              ② Spring Boot embedded Undertow — Tomcat 항목의 유사 적용 (Spring property 대체 점검)
+- 기준: KISA 2026 상세가이드 III. 웹 서비스 + 기후에너지환경부 보안성검토매뉴얼 Ⅱ-1
+- 실행: <YYYY-MM-DD KST>, 읽기 전용 명령 (curl·openssl s_client·kubectl get)
+- 요약: **양호 N · 취약 M · 해당없음 K** (미점검 항목 병기)
+```
+
+매뉴얼 Ⅱ-1 ↔ WEB 코드 매핑 (자체보안대책·확인서 회신 시 사용):
+
+| 매뉴얼 Ⅱ-1 대항목 | KISA 대응 |
+| :--- | :--- |
+| 시큐어 코딩 및 보안취약점 제거 대책 | WEB-04~19·22·24·25·26 (웹서버 설정 계열) + 정적분석(행안부) |
+| 로그인 SSL 암호화 및 관리자페이지 통제 | WEB-01~03 (계정) + WEB-20·21 (SSL) + WEB-23 (인증) + 접근통제 실측 |
+
+항목 포맷 — `관점:` 라인으로 확인 대상을 먼저 밝힌다:
+
+```markdown
+### WEB-14 경로 내 파일의 접근 통제 — 판정: **양호**
+관점: 관리·민감 경로 비인가 접근 차단 (401/403/404)
+명령:
+```bash
+<실측 명령>
+```
+결과:
+```text
+<명령 출력 원문>
+```
+```
 
 ## 안전 규칙
 
@@ -84,4 +117,4 @@ sh scripts/web-check.sh <domain> > /tmp/web-check-<domain>-raw.txt
 - KISA 가이드 미수록 컨테이너(Undertow)는 Tomcat 항목 관점 유지 + Spring property(`server.undertow.*`·`server.*`)로 점검 방법 변환
 - SQLi·XSS 등 애플리케이션 취약점·시큐어코딩은 본 스킬 범위 외 (행정안전부 소프트웨어 개발 보안 가이드)
 - 판정 기준 상세: [references/verdict-criteria.md](references/verdict-criteria.md)
-- 관련 스킬: `server`(U-01~73), `security:code-audit`(애플리케이션 코드)
+- 관련 스킬: `linux`(U-01~73), `security:code-audit`(애플리케이션 코드)
