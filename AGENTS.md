@@ -33,7 +33,8 @@ This file provides guidance to Codex (Codex.ai/code) when working with code in t
     ├── review/              # 교차 검증
     ├── dev/                 # 빌드/배포
     ├── jmeter/              # 부하 테스트
-    └── kisa/                # KISA 서버 취약점 점검
+    ├── kisa/                # KISA 서버 취약점 점검
+    └── email/               # hiworks 메일 수신·조회·발송
 ```
 
 ## 개발 명령

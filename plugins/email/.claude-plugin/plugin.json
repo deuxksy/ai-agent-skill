@@ -1,0 +1,9 @@
+{
+  "name": "email",
+  "description": "Email reading and sending skills for agent-driven mail workflows",
+  "version": "1.0.0",
+  "author": {
+    "name": "Crong"
+  },
+  "skills": "./skills/"
+}

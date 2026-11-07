@@ -1,0 +1,21 @@
+{
+  "name": "email",
+  "description": "Email reading and sending skills for agent-driven mail workflows",
+  "version": "1.0.0",
+  "author": {
+    "name": "Crong"
+  },
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Email",
+    "shortDescription": "hiworks 메일 수신·조회·승인 발송 스킬",
+    "longDescription": "POP3(getmail)로 hiworks 메일을 증분 수신해 로컬 Maildir에 아카이브하고, himalaya로 목록·본문을 조회하며, 사용자 승인을 거쳐 SMTP 발송하는 스킬을 제공합니다.",
+    "developerName": "Crong",
+    "category": "Productivity",
+    "capabilities": ["Write", "Bash"],
+    "defaultPrompt": [
+      "hiworks 메일 확인해줘.",
+      "이 메일에 답장 보내줘."
+    ]
+  }
+}

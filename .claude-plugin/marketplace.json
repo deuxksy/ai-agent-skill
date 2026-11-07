@@ -76,6 +76,12 @@
       "source": "./plugins/kisa",
       "description": "KISA·KECO 취약점 점검 체계(U-01~73, WEB-01~26, 별첨6 AI, DB) 기반 서버·웹·AI·DB 진단 스킬",
       "version": "1.2.1"
+    },
+    {
+      "name": "email",
+      "source": "./plugins/email",
+      "description": "hiworks mail on-demand POP3 fetch, Maildir browse, and approval-gated SMTP send skills",
+      "version": "1.0.0"
     }
   ]
 }
