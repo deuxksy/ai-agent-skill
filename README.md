@@ -1,6 +1,6 @@
 # AI-AGENT-SKILL
 
-zzizily는 Claude Code, Codex, Antigravity(Gemini) 등 멀티 Agent 런타임을 지원하는 개인 자동화 AI Agent Skill 플러그인 모음입니다. 보안 감사, 인프라 프로비저닝, 일상 자동화, 런타임 교차 검증부터 Git 워크플로우, 문서 관리, JMeter 스트레스 테스트 및 hiworks 메일까지 47개 전체 스킬을 13개 독립 도메인 플러그인으로 모듈화하여 제공합니다.
+zzizily는 Claude Code, Codex, Antigravity(Gemini) 등 멀티 Agent 런타임을 지원하는 개인 자동화 AI Agent Skill 플러그인 모음입니다. 보안 감사, 인프라 프로비저닝, 일상 자동화, 런타임 교차 검증부터 Git 워크플로우, 문서 관리, JMeter 스트레스 테스트 및 hiworks 메일까지 전체 스킬을 독립 도메인 플러그인으로 모듈화하여 제공합니다.
 
 ## 목차
 
@@ -36,6 +36,7 @@ zzizily는 Claude Code, Codex, Antigravity(Gemini) 등 멀티 Agent 런타임을
 | | [CLAUDE.md](./CLAUDE.md) | 프로젝트 분류 원칙 및 버전 관리 명세 |
 | | [AGENTS.md](./AGENTS.md) | Codex 런타임용 프로젝트 지침 명세 |
 | | [GEMINI.md](./GEMINI.md) | Gemini 런타임용 프로젝트 지침 명세 |
+| | [.github/copilot-instructions.md](./.github/copilot-instructions.md) | GitHub Copilot 런타임용 프로젝트 지침 명세 |
 | | [agents/verify.md](./agents/verify.md) | Claude Code runner adapter 및 교차 검증 라우팅 명세 |
 | **Explanation** (원리 / 설계) | [분류 원칙](./CLAUDE.md#분류-원칙) | 스킬 분류 배치 원칙 및 아키텍처 배경 설명 |
 
@@ -103,23 +104,27 @@ codex plugin add email@zzizily
 
 ### 3. AGY Mode (`agy` / Antigravity)
 
-Antigravity CLI(`agy`) 환경에서 `agy plugin` CLI 명령어 또는 스킬 경로 연동으로 설치합니다.
+Antigravity CLI(`agy`) 환경에서 설치합니다. URL subpath 설치는 미지원이므로 로컬 디렉토리 설치 또는 타 런타임 import를 사용합니다.
 
 ```bash
-# 원하는 독립 도메인 플러그인 설치
-agy plugin install https://github.com/deuxksy/ai-agent-skill/plugins/security
-agy plugin install https://github.com/deuxksy/ai-agent-skill/plugins/infra
-agy plugin install https://github.com/deuxksy/ai-agent-skill/plugins/trackers
-agy plugin install https://github.com/deuxksy/ai-agent-skill/plugins/sessions
-agy plugin install https://github.com/deuxksy/ai-agent-skill/plugins/l10n
-agy plugin install https://github.com/deuxksy/ai-agent-skill/plugins/git
-agy plugin install https://github.com/deuxksy/ai-agent-skill/plugins/rules
-agy plugin install https://github.com/deuxksy/ai-agent-skill/plugins/docs
-agy plugin install https://github.com/deuxksy/ai-agent-skill/plugins/review
-agy plugin install https://github.com/deuxksy/ai-agent-skill/plugins/dev
-agy plugin install https://github.com/deuxksy/ai-agent-skill/plugins/jmeter
-agy plugin install https://github.com/deuxksy/ai-agent-skill/plugins/kisa
-agy plugin install https://github.com/deuxksy/ai-agent-skill/plugins/email
+# 1) 저장소 클론 후 로컬 디렉토리로 설치 (필요한 도메인만 선택 설치 가능)
+git clone https://github.com/deuxksy/ai-agent-skill
+agy plugin install ./ai-agent-skill/plugins/security
+agy plugin install ./ai-agent-skill/plugins/infra
+agy plugin install ./ai-agent-skill/plugins/trackers
+agy plugin install ./ai-agent-skill/plugins/sessions
+agy plugin install ./ai-agent-skill/plugins/l10n
+agy plugin install ./ai-agent-skill/plugins/git
+agy plugin install ./ai-agent-skill/plugins/rules
+agy plugin install ./ai-agent-skill/plugins/docs
+agy plugin install ./ai-agent-skill/plugins/review
+agy plugin install ./ai-agent-skill/plugins/dev
+agy plugin install ./ai-agent-skill/plugins/jmeter
+agy plugin install ./ai-agent-skill/plugins/kisa
+agy plugin install ./ai-agent-skill/plugins/email
+
+# 2) 또는 claude/gemini에 이미 설치된 플러그인 import
+agy plugin import claude
 
 # 설치된 플러그인 확인
 agy plugin list
