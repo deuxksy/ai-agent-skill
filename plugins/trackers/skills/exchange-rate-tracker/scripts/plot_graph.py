@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 환율 그래프 생성 스크립트
-USD/KRW, USD/VND 환율 xychart 생성
+USD 기준 6개 통화(KRW, VND, JPY, CNY, EUR, GBP) 환율 xychart 생성
 """
 
 import json
@@ -11,16 +11,26 @@ from pathlib import Path
 DATA_FILE = Path(__file__).parent.parent / "references" / "exchange-rates.json"
 OUTPUT_DIR = Path(__file__).parent.parent / "output"
 
+# 통화별 표시 설정 (USD 기준: 1 USD = N 통화)
+CURRENCIES = {
+    "KRW": {"unit": "원",    "fmt": "{:,.1f}", "color": "#1E88E5"},
+    "VND": {"unit": "동",    "fmt": "{:,.0f}", "color": "#E53935"},
+    "JPY": {"unit": "엔",    "fmt": "{:,.1f}", "color": "#43A047"},
+    "CNY": {"unit": "위안",  "fmt": "{:,.2f}", "color": "#8E24AA"},
+    "EUR": {"unit": "유로",  "fmt": "{:,.2f}", "color": "#F4511E"},
+    "GBP": {"unit": "파운드", "fmt": "{:,.2f}", "color": "#00897B"},
+}
+
 def load_data():
-    """환율 데이터 로드"""
+    """환율 데이터 로드 → {통화: 엔트리 리스트}"""
     if not DATA_FILE.exists():
         print("No data file found")
-        return None, None
+        return {}
 
     with open(DATA_FILE, 'r', encoding='utf-8') as f:
         data = json.load(f)
 
-    return data.get("krw_rates", []), data.get("vnd_rates", [])
+    return {ccy: data.get(f"{ccy.lower()}_rates", []) for ccy in CURRENCIES}
 
 def generate_sparkline(values, bars=8):
     """스파크라인 생성 (유니코드 블록)"""
@@ -60,40 +70,34 @@ def get_trend(values):
     else:
         return "→"
 
-def generate_xychart(krw_rates, vnd_rates, days=7):
-    """Mermaid xychart 생성 (KRW + VND, 색상 구분)"""
-    if not krw_rates:
+def _fmt_bound(value):
+    """xychart y-axis 경계값 포맷 (EUR/GBP 등 소수 통화 대응)"""
+    return f"{value:g}"
+
+def generate_xychart(rates, points=8):
+    """Mermaid xychart 생성 — 기준 통화 포인트 수와 일치하는 통화만 라인 추가"""
+    available = {c: r[-points:] for c, r in rates.items() if r}
+    if not available:
         return None
 
-    recent_krw = krw_rates[-(days*4):] if len(krw_rates) > days*4 else krw_rates
-    recent_vnd = vnd_rates[-(days*4):] if vnd_rates and len(vnd_rates) > days*4 else vnd_rates
-
-    krw_recent = recent_krw[-8:]
-    x_labels = [f'"{r["date"][5:]} {r["time"]}"' for r in krw_recent]
-    krw_values = [r['rate'] for r in krw_recent]
-
-    vnd_values = None
-    if recent_vnd and len(recent_vnd) >= 8:
-        vnd_recent = recent_vnd[-8:]
-        vnd_values = [r['rate'] for r in vnd_recent]
-
-    min_krw = int(min(krw_values) - 10)
-    max_krw = int(max(krw_values) + 10)
+    base = next(iter(available.values()))
+    base_len = len(base)
+    matched = {c: r[-base_len:] for c, r in available.items() if len(r) >= base_len}
+    x_labels = [f'"{r["date"][5:]} {r["time"]}"' for r in base]
+    palette = ", ".join(CURRENCIES[c]['color'] for c in matched)
 
     output = []
     output.append("```mermaid")
-    output.append("%%{init: {'theme': 'base', 'themeVariables': { 'xyChart': {'plotColorPalette': '#3b82f6, #ef4444'}}}}%%")
+    output.append(f"%%{{init: {{'theme': 'base', 'themeVariables': {{ 'xyChart': {{'plotColorPalette': '{palette}'}}}}}}}}%%")
     output.append("xychart")
-    output.append(f'    title "Exchange Rates (USD)"')
+    output.append('    title "Exchange Rates (per 1 USD)"')
     output.append(f'    x-axis [{", ".join(x_labels)}]')
-    output.append(f'    y-axis "KRW" {min_krw} --> {max_krw}')
-    output.append(f'    line [{", ".join([str(v) for v in krw_values])}]')
 
-    if vnd_values:
-        min_vnd = int(min(vnd_values) - 100)
-        max_vnd = int(max(vnd_values) + 100)
-        output.append(f'    y-axis "VND" {min_vnd} --> {max_vnd}')
-        output.append(f'    line [{", ".join([str(v) for v in vnd_values])}]')
+    for ccy, entries in matched.items():
+        values = [e['rate'] for e in entries]
+        pad = max((max(values) - min(values)) * 0.2, max(values) * 0.001, 0.01)
+        output.append(f'    y-axis "{ccy}" {_fmt_bound(min(values) - pad)} --> {_fmt_bound(max(values) + pad)}')
+        output.append(f'    line [{", ".join(_fmt_bound(v) for v in values)}]')
 
     output.append("```")
 
@@ -107,10 +111,9 @@ def _parse_dt(entry):
         return datetime.fromtimestamp(entry.get("timestamp", 0))
 
 
-def generate_png_charts(krw_rates, vnd_rates, output_dir, points=8):
-    """matplotlib PNG 그래프 생성 — 일별 + 추세선 (KRW/VND)
+def generate_png_charts(rates, output_dir, points=8):
+    """matplotlib PNG 그래프 생성 — 일별 + 추세선 (통화별)
 
-    workspace create_graphs.py 로직을 실제 JSON 데이터 기반으로 이식.
     지연 import로 Mermaid 리포트 경로는 matplotlib 의존성 없이 동작.
     """
     import matplotlib
@@ -119,19 +122,18 @@ def generate_png_charts(krw_rates, vnd_rates, output_dir, points=8):
     import matplotlib.dates as mdates
     import numpy as np
 
-    if not krw_rates or len(krw_rates) < 2:
-        return None
-
-    # Default font (no CJK — labels are in English)
     plt.rcParams["axes.unicode_minus"] = False
 
     files = {}
 
-    def _plot_pair(rates, title, color, trend_color, prefix):
+    def _plot_pair(rates_list, title, color, trend_color, prefix):
         """단일 통화 일별 + 추세 PNG 2종 생성"""
-        recent = rates[-points:]
+        recent = rates_list[-points:]
         dates = [_parse_dt(r) for r in recent]
         values = [r["rate"] for r in recent]
+
+        # 값 크기에 따라 주석 포맷 결정 (EUR/GBP 등 소수 통화 대응)
+        annot_fmt = "{:,.2f}" if max(values) < 10 else "{:,.0f}"
 
         # 일별 그래프
         fig, ax = plt.subplots(figsize=(10, 6))
@@ -144,7 +146,7 @@ def generate_png_charts(krw_rates, vnd_rates, output_dir, points=8):
         ax.xaxis.set_major_locator(mdates.AutoDateLocator())
         fig.autofmt_xdate(rotation=45)
         for d, v in zip(dates, values):
-            ax.annotate(f"{v:,.0f}", (d, v), xytext=(0, 10),
+            ax.annotate(annot_fmt.format(v), (d, v), xytext=(0, 10),
                         textcoords="offset points", ha="center", fontsize=10, fontweight="bold")
         fig.tight_layout()
         daily_path = output_dir / f"{prefix}_daily.png"
@@ -174,16 +176,17 @@ def generate_png_charts(krw_rates, vnd_rates, output_dir, points=8):
         plt.close(fig)
         files[f"{prefix}_trend"] = trend_path
 
-    _plot_pair(krw_rates, "USD/KRW", "#1E88E5", "#FF6F00", "krw")
-    if vnd_rates and len(vnd_rates) >= 2:
-        _plot_pair(vnd_rates, "USD/VND", "#E53935", "#FF6F00", "vnd")
+    for ccy, conf in CURRENCIES.items():
+        ccy_rates = rates.get(ccy) or []
+        if len(ccy_rates) >= 2:
+            _plot_pair(ccy_rates, f"USD/{ccy}", conf["color"], "#FF6F00", ccy.lower())
 
     return files
 
 
-def generate_report(krw_rates, vnd_rates):
+def generate_report(rates):
     """환율 리포트 생성"""
-    if not krw_rates:
+    if not any(rates.values()):
         return "데이터 없음"
 
     output = []
@@ -194,36 +197,29 @@ def generate_report(krw_rates, vnd_rates):
 
     output.append("\n**현재 환율**")
 
-    if krw_rates:
-        latest = krw_rates[-1]
-        current_krw = latest['rate']
+    for ccy, conf in CURRENCIES.items():
+        ccy_rates = rates.get(ccy) or []
+        if not ccy_rates:
+            continue
+        latest = ccy_rates[-1]
         date_str = f"{latest['date']} {latest['time']}"
-        sparkline_krw = generate_sparkline([r['rate'] for r in krw_rates])
-        trend_krw = get_trend([r['rate'] for r in krw_rates])
-        output.append(f"- **USD/KRW** ({date_str}): {current_krw:,.1f}원 {sparkline_krw} {trend_krw}")
+        values = [r['rate'] for r in ccy_rates]
+        sparkline = generate_sparkline(values)
+        trend = get_trend(values)
+        output.append(f"- **USD/{ccy}** ({date_str}): {conf['fmt'].format(latest['rate'])}{conf['unit']} {sparkline} {trend}")
 
-    if vnd_rates:
-        latest = vnd_rates[-1]
-        current_vnd = latest['rate']
-        date_str = f"{latest['date']} {latest['time']}"
-        sparkline_vnd = generate_sparkline([r['rate'] for r in vnd_rates])
-        trend_vnd = get_trend([r['rate'] for r in vnd_rates])
-        output.append(f"- **USD/VND** ({date_str}): {current_vnd:,.0f}동 {sparkline_vnd} {trend_vnd}")
-
-    xychart = generate_xychart(krw_rates, vnd_rates)
+    xychart = generate_xychart(rates)
     if xychart:
         output.append("\n**7일 추세 그래프**")
         output.append(xychart)
 
     output.append("\n**7일 통계**")
 
-    if krw_rates and len(krw_rates) >= 7:
-        week_krw = [r['rate'] for r in krw_rates[-7:]]
-        output.append(f"- KRW: {min(week_krw):,.0f} ~ {max(week_krw):,.0f} (평균 {sum(week_krw)/len(week_krw):,.0f})")
-
-    if vnd_rates and len(vnd_rates) >= 7:
-        week_vnd = [r['rate'] for r in vnd_rates[-7:]]
-        output.append(f"- VND: {min(week_vnd):,.0f} ~ {max(week_vnd):,.0f} (평균 {sum(week_vnd)/len(week_vnd):,.0f})")
+    for ccy, conf in CURRENCIES.items():
+        ccy_rates = rates.get(ccy) or []
+        if len(ccy_rates) >= 7:
+            week = [r['rate'] for r in ccy_rates[-7:]]
+            output.append(f"- {ccy}: {conf['fmt'].format(min(week))} ~ {conf['fmt'].format(max(week))} (평균 {conf['fmt'].format(sum(week)/len(week))}) {conf['unit']}")
 
     output.append("━" * 40)
 
@@ -231,13 +227,13 @@ def generate_report(krw_rates, vnd_rates):
 
 def main():
     """메인 실행"""
-    krw_rates, vnd_rates = load_data()
+    rates = load_data()
 
-    if not krw_rates and not vnd_rates:
+    if not any(rates.values()):
         print("데이터 없음")
         return
 
-    report = generate_report(krw_rates, vnd_rates)
+    report = generate_report(rates)
     print("\n" + report)
 
     OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
@@ -248,10 +244,10 @@ def main():
 
     print(f"\n저장됨: {report_file}")
 
-    # PNG 그래프 (matplotlib, 데이터 2포인트 이상 시)
-    png_files = generate_png_charts(krw_rates, vnd_rates, OUTPUT_DIR)
+    # PNG 그래프 (matplotlib, 통화별 데이터 2포인트 이상 시)
+    png_files = generate_png_charts(rates, OUTPUT_DIR)
     if png_files:
-        for key, path in png_files.items():
+        for path in png_files.values():
             print(f"PNG: {path}")
 
 if __name__ == "__main__":

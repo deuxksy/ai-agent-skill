@@ -20,8 +20,8 @@
     {
       "name": "trackers",
       "source": "./plugins/trackers",
-      "description": "Calendar sync, USD/KRW/VND exchange rates, hot game deals/news, and Notion sprint sync tracker skills",
-      "version": "2.0.1"
+      "description": "Calendar sync, USD-based 6-currency (KRW/VND/JPY/CNY/EUR/GBP) exchange rates, hot game deals/news, and Notion sprint sync tracker skills",
+      "version": "2.1.0"
     },
     {
       "name": "sessions",

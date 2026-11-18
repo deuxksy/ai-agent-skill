@@ -1,0 +1,9 @@
+[project]
+name = "exchange-rate-tracker"
+version = "0.1.0"
+description = "USD/KRW, USD/VND exchange rate tracker skill scripts"
+requires-python = ">=3.9"
+dependencies = [
+    "requests",
+    "matplotlib",
+]

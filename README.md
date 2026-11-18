@@ -141,7 +141,7 @@ agy plugin list
 | :--- | :--- | :--- | :--- |
 | `security` | 2.0.0 | `code-audit`, `system-audit`, `backdoor-investigation`, `backdoor-remediation` | `security@zzizily` |
 | `infra` | 2.4.1 | `setup`, `packages`, `agents`, `lsp`, `proxmox-vm-create`, `openwrt-initd`, `acl-owner-reset` | `infra@zzizily` |
-| `trackers` | 2.0.1 | `calendar-sync`, `exchange-rate-tracker`, `hot-game-deals-n-news`, `notion-sprint-sync` | `trackers@zzizily` |
+| `trackers` | 2.1.0 | `calendar-sync`, `exchange-rate-tracker`, `hot-game-deals-n-news`, `notion-sprint-sync` | `trackers@zzizily` |
 | `sessions` | 2.0.0 | `handoff`, `resume` | `sessions@zzizily` |
 | `l10n` | 2.0.0 | `optimize-images-4k`, `korean-translation-verify`, `product-planning-dr-pipeline` | `l10n@zzizily` |
 | `git` | 2.2.0 | `commit`, `commit-push`, `commit-push-pr`, `clean-gone`, `tag-release`, `gitignore` | `git@zzizily` |
