@@ -4,7 +4,7 @@
 
 ## 프로젝트 개요
 
-**zzizily** — 12개 독립 도메인 플러그인을 통합 제공하는 개인 자동화 AI Agent Skill 마켓플레이스.
+**zzizily** — 독립 도메인 플러그인을 통합 제공하는 개인 자동화 AI Agent Skill 마켓플레이스 (플러그인 등록 현황은 `.claude-plugin/marketplace.json` 기준).
 
 ## 분류 원칙
 

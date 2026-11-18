@@ -4,7 +4,7 @@ This document serves as the Single Source of Truth (SSoT) for all runtime AI age
 
 ## Project Overview
 
-- **Project**: `zzizily` — Personal automation AI Agent Skill marketplace providing 12 domain plugins.
+- **Project**: `zzizily` — Personal automation AI Agent Skill marketplace providing domain plugins (등록 현황은 `.claude-plugin/marketplace.json` 기준).
 - **Repository**: `deuxksy/ai-agent-skill`
 - **Plugin Versions**: independent per-plugin SemVer (v2.0.0 epoch; `kisa` starts at `1.0.0`). Source of Truth: `.claude-plugin/marketplace.json` (marketplace-registered plugins only)
 - **Author**: Crong (kyolim)
@@ -25,5 +25,5 @@ This document serves as the Single Source of Truth (SSoT) for all runtime AI age
    description: <one-line summary>  # 1-1024 chars: purpose, when to use, keywords
    ---
    ```
-   Keep the body under 500 lines; move details to `references/`, executable code to `scripts/`, templates/data to `assets/`. Validate with `skills-ref validate <skill-dir>` (Python tool — `uv sync` from the repo's `skills-ref/`, not on npm).
+   Keep the body under 500 lines; move details to `references/`, executable code to `scripts/`, templates/data to `assets/`. Validate that `name` matches the parent directory name and the format rules above.
 3. **No Hardcoded Secrets/Paths**: Never commit credentials, personal absolute paths, or unverified environment configurations.

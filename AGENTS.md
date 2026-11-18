@@ -2,11 +2,11 @@
 
 > **[IMPORTANT]** Before starting work in this repository, read `.ai/RULES.md` for shared repository rules, commit conventions, and core guidelines.
 
-This file provides guidance to Codex (Codex.ai/code) when working with code in this repository.
+This file provides guidance to OpenAI Codex CLI when working with code in this repository.
 
 ## 프로젝트 개요
 
-**zzizily** — 12개 독립 도메인 플러그인을 통합 제공하는 개인 자동화 AI Agent Skill 마켓플레이스.
+**zzizily** — 독립 도메인 플러그인을 통합 제공하는 개인 자동화 AI Agent Skill 마켓플레이스.
 
 - Author: Crong (kyolim)
 - GitHub Repository: `deuxksy/ai-agent-skill`
@@ -17,10 +17,11 @@ This file provides guidance to Codex (Codex.ai/code) when working with code in t
 ```
 .
 ├── .claude-plugin/
-│   └── marketplace.json     # Claude용 12개 도메인 플러그인 마켓플레이스
+│   └── marketplace.json     # Claude용 도메인 플러그인 마켓플레이스
 ├── .agents/plugins/
-│   └── marketplace.json     # Codex용 12개 도메인 플러그인 마켓플레이스
+│   └── marketplace.json     # Codex용 도메인 플러그인 마켓플레이스
 ├── agents/                  # AI 에이전트 지침 및 어댑터
+├── docs/                    # 프로젝트 문서 (Diátaxis·OKF 허브·archive)
 └── plugins/
     ├── security/            # 코드/시스템 보안 감사
     ├── infra/               # 인프라 프로비저닝
@@ -42,5 +43,5 @@ This file provides guidance to Codex (Codex.ai/code) when working with code in t
 플러그인 자체는 빌드/테스트 과정이 없음. Skill 파일(SKILL.md)을 직접 편집 후 커밋.
 
 새 Skill 추가 시:
-1. `plugins/<domain-name>/<skill-name>/SKILL.md` 생성
+1. `plugins/<domain-name>/skills/<skill-name>/SKILL.md` 생성
 2. Claude/Codex plugin manifest와 양쪽 marketplace 메타데이터 확인 및 동기화
