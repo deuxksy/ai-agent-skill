@@ -29,6 +29,9 @@ $RECYCLE.BIN/
 .worktrees/
 .mimosa
 docs/work-log/
+/logs/
+/.zcode/
+/proxmox-jobs.sqlite3
 
 # Sensitive skill data
 skills/hot-game-deals-n-news/references/api-keys.md
