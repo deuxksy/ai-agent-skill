@@ -18,10 +18,19 @@ description: 게임 세일, 무료 게임, 뉴스를 체크해서 보고하는 �
 - ⚠ **appdetails 응답 구조:** `data[str(aid)]["data"]` 안에 `name`이 포함되지만, `price_overview` 필터를 요청하면 `name`이 응답에 없을 수 있음. 이름이 필요하면 필터에서 `price_overview,name`을 함께 지정할 것.
 
 ### 2. 위시리스트 할인
-- Steam API로 위시리스트 게임 할인 체크
-- API 키: `references/api-keys.md` 참조
-- ⚠ **위험:** `dynamicstore/userdata` 엔드포인트는 로그인 없이 빈 위시리스트 반환. 개별 appdetails 체크는 N개 게임에 대해 N회 요청 필요 → 서브에이전트 타임아웃(600s) 위험. 
-- **권장 접근:** 위시리스트 체크는 SteamDB 위시리스트 페이지(`https://steamdb.info/calculator/76561198002874693/`)를 브라우저로 확인하거나, `featuredcategories` API의 specials/top_sellers 결과로 대체. 개별 게임 가격 확인이 필요할 때는 반드시 타임아웃 5초로 설정하고 최대 10개까지만 순차 확인.
+- **권장:** `IWishlistService/GetWishlist/v1` API (API 키만 있으면 동작, 로그인 불필요)
+  - `https://api.steampowered.com/IWishlistService/GetWishlist/v1/?key={KEY}&steamid={STEAM_USER_ID}` — appid+priority 목록 반환. 응답에 게임명 없음 → `featuredcategories` 결과와 appid 교집합으로 이름 확보
+- ⚠ **위험:** `dynamicstore/userdata` 엔드포인트는 로그인 없이 빈 위시리스트 반환. 개별 appdetails 체크는 N개 게임에 대해 N회 요청 필요 → 서브에이전트 타임아웃(600s) 위험. 개별 게임 가격 확인이 필요할 때는 반드시 타임아웃 5초로 설정하고 최대 10개까지만 순차 확인.
+
+## 자격증명 (Steam API)
+
+키 로드 순서:
+
+1. `printenv STEAM_API_KEY` — 환경변수에 이미 있으면 그대로 사용
+2. 없으면 `set -a; source ~/.config/steam/.env; set +a` (평문 dotenv: `STEAM_API_KEY`, `STEAM_USER_ID`)
+3. 둘 다 없으면 키 불필요 소스(`featuredcategories`, Epic, RSS)만으로 리포트하고 키 부재 명시
+
+⚠ `~/.config/steam/.env`는 로컬 전용 평문(git 밖). git 추적이 필요한 시크릿은 sops 규칙(전역 01-operations.md) 적용.
 
 ### 3. 무료 게임
 - **Epic Games:** https://store.epicgames.com/free-games
@@ -61,7 +70,8 @@ description: 게임 세일, 무료 게임, 뉴스를 체크해서 보고하는 �
 
 ## 필터링 규칙
 
-- **보유 게임 제외:** `references/my-steam-games.json`에 있는 게임은 할인 알림에서 제외
+- **보유 게임 제외:** `~/.local/share/steam/my-steam-games.json`의 appid와 세일 목록 appid 교집합으로 제외 (이름 매칭 금지 — 지역화명 불일치)
+- 파일이 없으면 `scripts/fetch_steam_games.py`로 재생성 (키는 `~/.config/steam/.env`에서 로드)
 - 이미 소유한 게임은 알림 불필요
 
 ## 사용자 취향 (참고용)
@@ -72,18 +82,21 @@ description: 게임 세일, 무료 게임, 뉴스를 체크해서 보고하는 �
 
 ## Resources
 
+### scripts/
+- `fetch_steam_games.py` - 보유 게임 목록 재생성 (`~/.local/share/steam/my-steam-games.json` 저장)
+
 ### references/
-- `api-keys.md` - Steam, IsThereAnyDeal API 키
 - `sources.md` - 상세 소스 URL 목록
+- `api-keys.md.example` - 템플릿 (실제 키는 `~/.config/steam/.env` 사용 — 위 자격증명 섹션 참조)
 
 ## ⚠ Pitfalls (실전에서 발견)
 
 1. **Steam appdetails 순차 조회 타임아웃:** 위시리스트 N개 게임을 하나씩 `appdetails` API로 확인하면 N×(응답시간)으로 서브에이전트 600s 제한 초과. 반드시 `featuredcategories` API로 한 번에 조회하거나 최대 10개 제한.
-2. **`dynamicstore/userdata` 위시리스트 빈 응답:** 로그인 세션 없이 호출하면 `rgWishlist: []` 반환. Steam은 공개 위시리스트 API를 제공하지 않음.
+2. **위시리스트 API:** `dynamicstore/userdata`는 로그인 없이 빈 응답이지만 `IWishlistService/GetWishlist/v1`은 API 키만으로 정상 동작 (2026-11-18 실측, 36개 반환). 위시리스트는 이쪽으로 조회할 것.
 3. **가격 단위 혼동:** `featuredcategories` API의 price 필드도 KRW(cc=kr)에서는 원×100 단위로 옴 (예: Cyberpunk 6600000 = ₩66,000). 표시할 때 **/100 필요**. appdetails의 `price_overview`도 센트/원×100. (2026-08-08 실측 확인 — 기존 "나누기 금지" 주석은 USD 기준 오류였음)
 4. **서브에이전트에 테이블 지시 누락:** 서브에이전트가 Epic/GOG 무료 게임을 마크다운 테이블로 반환하는 경우 있음. context에 "테이블 금지, 불릿 리스트만"을 반드시 포함할 것.
 5. **Steam specials 페이지 브라우저 로딩:** JS 렌더링 지연으로 DOM에 `tab_item` 요소가 바로 안 나타남. 스크롤 후 재검사 필요하지만 API 호출이 더 안정적.
-6. **`references/my-steam-games.json` 재생성 (2026-08-24):** 파일이 한동안 부재했으나(2026-08-08 확인), 2026-08-24에 Steam API(`IPlayerService/GetOwnedGames`)로 재생성함. 재생성 스크립트: `/opt/data/tmp/fetch_steam_games.py` (sops에서 STEAM_API_KEY/STEAM_USER_ID 로드). 1,077개 게임 보유. 파일이 다시 없어지면 이 스크립트로 재생성할 것.
+6. **보유 게임 목록은 플러그인 캐시 밖에 둘 것:** 캐시(`~/.claude/plugins/cache/`)는 업데이트 시 초기화되어 `references/` 데이터가 유실됨 (2026-08-24, 2026-11-18 두 차례 발생). 저장 위치 `~/.local/share/steam/my-steam-games.json`, 재생성 `scripts/fetch_steam_games.py` (키는 `~/.config/steam/.env` 로드).
 7. **인벤 RSS URL 변경:** `https://www.inven.co.kr/webzine/news/?iskin=rss`는 RSS가 아닌 HTML 반환. 국내 뉴스는 HTML 파싱하거나 해외 RSS(PC Gamer, RPS 정상 동작)로 대체.
 8. **GOG partner/free_games는 상시 무료 목록:** 해당 페이지(2026-08-24 확인)는 한정 기브어웨이가 아닌 상시 무료 게임 48종 목록임(내장 `gogData.products` JSON에서 파싱 가능). 기간 한정 무료는 홈 페이지 배너에서 확인 필요.
 9. **Epic freeGamesPromotions API 유효:** `https://store-site-backend-static-ipv4.ak.epicgames.com/freeGamesPromotions?locale=ko&country=KR&allowCountries=KR` — 현재/예정 무료 게임 날짜+할인율 정상 반환. 브라우저 접근은 Cloudflare 차단됨.
