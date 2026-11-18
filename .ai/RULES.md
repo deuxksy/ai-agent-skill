@@ -6,7 +6,7 @@ This document serves as the Single Source of Truth (SSoT) for all runtime AI age
 
 - **Project**: `zzizily` — Personal automation AI Agent Skill marketplace providing domain plugins (등록 현황은 `.claude-plugin/marketplace.json` 기준).
 - **Repository**: `deuxksy/ai-agent-skill`
-- **Plugin Versions**: independent per-plugin SemVer (v2.0.0 epoch; `kisa` starts at `1.0.0`). Source of Truth: `.claude-plugin/marketplace.json` (marketplace-registered plugins only)
+- **Plugin Versions**: independent per-plugin SemVer (v2.0.0 epoch; latecomer plugins `kisa`, `email` start at 1.x). Source of Truth: `.claude-plugin/marketplace.json` (marketplace-registered plugins only)
 - **Author**: Crong (kyolim)
 
 ## Versioning & Commit Convention

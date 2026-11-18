@@ -133,7 +133,7 @@ agy plugin list
 ## 플러그인 메타 & 버전 정책
 
 - **마켓플레이스 저장소**: `deuxksy/ai-agent-skill`
-- **플러그인 버전**: 플러그인별 독립 SemVer (v2.0.0 epoch, `kisa`는 `1.0.0` 시작) — `.claude-plugin/marketplace.json`이 Source of Truth
+- **플러그인 버전**: 플러그인별 독립 SemVer (v2.0.0 epoch, 후발 신규 플러그인 `kisa`·`email`은 1.x로 시작) — `.claude-plugin/marketplace.json`이 Source of Truth
 
 ## 독립 도메인 플러그인 카탈로그 (13)
 
