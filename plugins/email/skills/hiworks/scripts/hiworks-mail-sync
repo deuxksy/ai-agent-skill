@@ -1,0 +1,115 @@
+#!/usr/bin/env python3
+# hiworks-mail-sync — hiworks POP3 증분 수신 → 로컬 Maildir 적립
+# 사양: docs/superpowers/specs/2026-11-07-hiworks-mail-design.md (ai-agent-skill)
+# 자격증명: ~/.config/hiworks/.env (HIWORKS_USER / HIWORKS_MAIL_PASS, chmod 600)
+# 의존: Python 3 표준 라이브러리만 (poplib + mailbox) — macOS/Linux/Windows 공통
+# 삭제 금지: DELE를 호출하는 코드 경로가 없음 — 구조적 배제
+import os
+import poplib
+import mailbox
+import ssl
+import sys
+from email import message_from_bytes
+from pathlib import Path
+
+HOME = Path.home()
+ENV_FILE = HOME / ".config" / "hiworks" / ".env"
+CACHE_DIR = HOME / ".cache" / "hiworks"
+# himalaya v2 maildir: root 아래 mailbox별 Maildir — inbox는 <root>/inbox
+MAILDIR = HOME / ".local" / "share" / "hiworks-mail" / "inbox"
+STATE_FILE = CACHE_DIR / "seen-uids"
+# getmail 시드 상태 (무손전 이전: oldmail UIDL → seen-uids)
+OLDMAIL_GLOB = "oldmail-pop3s.hiworks.com-995-*"
+POP3_HOST = "pop3s.hiworks.com"
+POP3_PORT = 995
+TIMEOUT = 60
+
+
+def die(msg):
+    print(f"error: {msg}", file=sys.stderr)
+    sys.exit(1)
+
+
+def load_env():
+    """자격증명 로드 — .env 존재 + (POSIX) 퍼미션 600 검사"""
+    if not ENV_FILE.is_file():
+        die(f"{ENV_FILE} 없음 — 생성 후 chmod 600 (HIWORKS_USER/HIWORKS_MAIL_PASS)")
+    if os.name != "nt":
+        perm = f"{os.stat(ENV_FILE).st_mode & 0o777:03o}"
+        if perm != "600":
+            die(f"{ENV_FILE} 퍼미션 {perm} — chmod 600 필수")
+    user = passwd = None
+    for line in ENV_FILE.read_text(encoding="utf-8").splitlines():
+        line = line.strip()
+        if not line or line.startswith("#") or "=" not in line:
+            continue
+        key, val = line.split("=", 1)
+        key, val = key.strip(), val.strip().strip('"').strip("'")
+        if key == "HIWORKS_USER":
+            user = val
+        elif key == "HIWORKS_MAIL_PASS":
+            passwd = val
+    if not user or not passwd:
+        die("HIWORKS_USER/HIWORKS_MAIL_PASS 미설정")
+    return user, passwd
+
+
+def load_seen():
+    """증분 상태 로드 — seen-uids 우선, 없으면 getmail oldmail에서 시드"""
+    if STATE_FILE.exists():
+        return set(STATE_FILE.read_text(encoding="utf-8").split())
+    olds = sorted(CACHE_DIR.glob(OLDMAIL_GLOB)) if CACHE_DIR.exists() else []
+    if olds:
+        # getmail oldmail 형식: "UIDL\x00timestamp" — NUL 구분자 분리 후 UIDL만 취함
+        uids = [
+            uid
+            for line in olds[0].read_text(encoding="utf-8").splitlines()
+            if (uid := line.split("\x00")[0].strip())
+        ]
+        STATE_FILE.write_text("\n".join(uids) + "\n", encoding="utf-8")
+        print(f"== getmail 상태 이전: {len(uids)}건 시드 ==")
+        return set(uids)
+    # 상태·시드 모두 없음 — Maildir에 기존 메일이 있으면 이중 적립 방지차 중단
+    if MAILDIR.exists() and any(MAILDIR.glob("*/*")):
+        die("상태 파일 없음 + Maildir 비어 있지 않음 — 이중 적립 위험. seen-uids 복원 또는 Maildir 비우기 필요")
+    print("== 첫 실행: 받은편지함 전체 수신 — 수 분 소요 가능 ==")
+    return set()
+
+
+def main():
+    user, passwd = load_env()
+    CACHE_DIR.mkdir(parents=True, exist_ok=True)
+    md = mailbox.Maildir(str(MAILDIR), create=True)
+    seen = load_seen()
+
+    ctx = ssl.create_default_context()
+    try:
+        pop = poplib.POP3_SSL(POP3_HOST, POP3_PORT, timeout=TIMEOUT, context=ctx)
+    except Exception as exc:
+        die(f"POP3 연결 실패 ({POP3_HOST}:{POP3_PORT}): {exc}")
+    try:
+        pop.user(user)
+        pop.pass_(passwd)
+        _, items, _ = pop.uidl()
+        entries = [item.decode("utf-8", "replace").split(" ", 1) for item in items]
+        new = [(num, uid) for num, uid in entries if uid not in seen]
+        fetched = 0
+        with STATE_FILE.open("a", encoding="utf-8") as state:
+            for num, uid in new:
+                _, lines, _ = pop.retr(int(num))
+                md.add(message_from_bytes(b"\r\n".join(lines)))
+                state.write(uid + "\n")
+                state.flush()
+                fetched += 1
+                if fetched % 25 == 0:
+                    print(f"  ... {fetched}/{len(new)}")
+        print(f"수신 완료: 신규 {fetched}건 / 서버 {len(entries)}건 / 기존 {len(seen)}건")
+    finally:
+        try:
+            pop.quit()
+        except Exception:
+            pass
+
+
+if __name__ == "__main__":
+    main()
