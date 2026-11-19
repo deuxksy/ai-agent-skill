@@ -21,7 +21,7 @@ This file provides guidance to OpenAI Codex CLI when working with code in this r
 ├── .agents/plugins/
 │   └── marketplace.json     # Codex용 도메인 플러그인 마켓플레이스
 ├── agents/                  # AI 에이전트 지침 및 어댑터
-├── docs/                    # 프로젝트 문서 (Diátaxis·OKF 허브·archive)
+├── docs/                    # 프로젝트 문서 (OKF 허브·superpowers specs·archive)
 └── plugins/
     ├── security/            # 코드/시스템 보안 감사
     ├── infra/               # 인프라 프로비저닝
@@ -41,6 +41,7 @@ This file provides guidance to OpenAI Codex CLI when working with code in this r
 ## 개발 명령
 
 플러그인 자체는 빌드/테스트 과정이 없음. Skill 파일(SKILL.md)을 직접 편집 후 커밋.
+`scripts/`를 동봉한 스킬(email 등)은 커밋 전 구문 검증 실행 (예: `python3 -m py_compile`).
 
 새 Skill 추가 시:
 1. `plugins/<domain-name>/skills/<skill-name>/SKILL.md` 생성
