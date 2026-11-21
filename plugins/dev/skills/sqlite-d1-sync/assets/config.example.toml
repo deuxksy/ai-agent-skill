@@ -1,0 +1,9 @@
+d1_account_id = "replace-with-your-cloudflare-account-id"
+
+[[databases]]
+local_path = "./data/catalog.db"
+d1_database = "catalog"
+
+[[databases]]
+local_path = "./data/downloads.db"
+d1_database = "downloads"

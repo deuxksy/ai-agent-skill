@@ -1,15 +1,15 @@
 {
   "name": "dev",
-  "description": "개발 보조 스킬 — WiFi ADB 배포, 오픈소스 라이선스 인벤토리, OpenAPI 스펙 갱신",
-  "version": "2.0.0",
+  "description": "개발 보조 스킬 — WiFi ADB 배포, 오픈소스 라이선스 인벤토리, OpenAPI 스펙 갱신, SQLite–D1 복제",
+  "version": "2.1.0",
   "author": {
     "name": "Crong"
   },
   "skills": "./skills/",
   "interface": {
     "displayName": "Dev",
-    "shortDescription": "RN 배포·라이선스·OpenAPI 스킬",
-    "longDescription": "WiFi ADB 기반 React Native 앱 빌드·배포, 산출물 기준 오픈소스 라이선스 인벤토리, OpenAPI 스펙 갱신 스킬을 제공합니다.",
+    "shortDescription": "RN 배포·라이선스·OpenAPI·SQLite–D1",
+    "longDescription": "WiFi ADB 기반 React Native 앱 빌드·배포, 산출물 기준 오픈소스 라이선스 인벤토리, OpenAPI 스펙 갱신과 SQLite–D1 복제 스킬을 제공합니다.",
     "developerName": "Crong",
     "category": "Development",
     "capabilities": ["Write"],

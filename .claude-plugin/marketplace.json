@@ -62,8 +62,8 @@
     {
       "name": "dev",
       "source": "./plugins/dev",
-      "description": "WiFi ADB deployment, OSS license inventory, and OpenAPI specification update skills",
-      "version": "2.0.0"
+      "description": "WiFi ADB deployment, OSS license inventory, OpenAPI updates, and SQLite–D1 replication",
+      "version": "2.1.0"
     },
     {
       "name": "jmeter",
