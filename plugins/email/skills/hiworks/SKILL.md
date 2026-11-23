@@ -21,7 +21,11 @@ hiworks 메일을 사용자 요청 시점에 읽어오고, 승인된 메일만 �
 1. 이 스킬의 `scripts/hiworks-mail-sync` 실행 (POSIX: 직접 실행 또는 `python3`, Windows: `python`) — POP3 995 SSL 증분 수신 → `~/.local/share/hiworks-mail/` Maildir 적립
    - **첫 실행은 받은편지함 전체 일괄 수신** — 사용자에게 소요 시간 안내 후 진행
 2. `himalaya --account hiworks envelope list --json` — 최근 메일 목록 (발신자·제목·날짜 요약 출력)
+   - JSON 최상위 구조: `{"queued": <n>, "envelopes": [...]}` — 배열 키는 `envelopes` (2026-11-23 실측)
+   - envelope 필드: `subject`는 **문자열**, `from`은 `[{name, email}]` 배열, `date`는 ISO 8601, `has-attachment`는 bool
 3. 사용자가 특정 메일 선택 시 `himalaya --account hiworks message read <ID>` — 본문 출력
+   - **추가 플래그 금지** — `--output-format` 는 존재하지 않아 exit code 2 (2026-11-23 실측). ID만 인자로 준다
+   - 출력은 헤더 블록 + MIME 파트별 요약(`[3] text/plain` = 본문, `[4] text/html`, `[5] image/...`) — text/plain 파트가 디코딩된 본문
 
 ### 2. 발송 승인 게이트 ("메일 보내줘")
 
