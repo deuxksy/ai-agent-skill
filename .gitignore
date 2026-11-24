@@ -47,3 +47,7 @@ plugins/trackers/skills/exchange-rate-tracker/output/
 apm_modules/
 build/
 .agents/skills/
+
+# Python
+__pycache__/
+*.py[cod]
