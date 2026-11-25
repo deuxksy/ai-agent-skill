@@ -11,7 +11,7 @@ docs/
 ├── README.md                      # [Sub-Hub] docs/ 하위 디렉토리 역할 및 문서 체계 정의
 ├── archive/                       # [Reference Archive] 직접 관리하지 않는 참조 기획 문서(화면설계서, 요구서), API 명세(openapi.json, swagger.json), Figma 토큰 등
 ├── okf/
-│   ├── README.md                  # [OKF Hub] OKF 명세 문서 허브 및 Diátaxis 작성 가이드
+│   ├── README.md                  # [OKF Hub] Diátaxis 문서 인덱스
 │   ├── tutorials/                 # [Tutorials] 입문자용 실습 문서
 │   ├── how-to/                    # [How-to] 과제 해결 가이드 문서
 │   ├── reference/                 # [Reference] 기술 명세 및 참고 문서
@@ -25,5 +25,5 @@ docs/
 
 ## 🧭 문서 작성 표준
 
-- **Diátaxis 프레임워크**: 모든 사용자의 행동 및 목적 중심 문서 분류 적용 ([`docs/okf/README.md`](./okf/README.md) 참조)
-- **OKF 표준**: `docs/okf/` 하위 명세 문서는 OKF 최신 가이드라인에 맞추어 `docs/okf/README.md` 내에서 인덱싱 관리
+- **Diátaxis 프레임워크**: 모든 사용자의 행동 및 목적 중심 문서 분류 적용 ([Diátaxis 문서화 프레임워크 가이드](./okf/explanation/diataxis.md) 참조)
+- **OKF 표준**: `docs/okf/` 하위 명세 문서는 OKF 최신 가이드라인에 맞추어 [OKF 문서 허브](./okf/README.md)에서 인덱싱 관리

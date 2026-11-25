@@ -2,7 +2,7 @@
 
 hiworks 메일 온디맨드 수신·조회·승인 발송(`hiworks`) 스킬을 제공하는 이메일 도메인 플러그인입니다.
 
-## 🛠 포함 스킬 (1)
+## 🛠 포함 스킬
 
 - **`hiworks`**: `hiworks-mail-sync`(Python stdlib POP3 증분 수신, 스킬 `scripts/` 동봉) + `himalaya`(Maildir 조회·SMTP 발송) 연동 — 발송은 매번 사용자 승인 후, 서버 메일 삭제 금지
 
