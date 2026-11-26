@@ -51,8 +51,8 @@
       "source": {
         "source": "local",
         "path": "./plugins/sessions",
-        "description": "Session context handoff and task resume workflow skills",
-        "version": "2.0.0"
+        "description": "Session context handoff and task pickup workflow skills",
+        "version": "3.0.0"
       },
       "policy": {
         "installation": "AVAILABLE",

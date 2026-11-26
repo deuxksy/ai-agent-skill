@@ -1,18 +1,17 @@
 ---
 name: handoff
-description: "현재 세션 작업을 .zzizily/handoff/에 구조화 저장(/sessions:handoff [라벨/title]). /clear 또는 context 압축 전 수동 호출해 작업 상태를 보존. new session에서 /sessions:resume으로 이어작업. 사용자가 /sessions:handoff를 명시적으로 입력했을 때만 실행한다. 세션 종료 감지로 자동 실행하지 않는다."
+description: "현재 세션 작업을 ~/.local/state/handoff/<project>/에 구조화 저장(/sessions:handoff [라벨/title]). /clear 또는 context 압축 전 수동 호출해 작업 상태를 보존. new session에서 /sessions:pickup으로 이어작업. 사용자가 /sessions:handoff를 명시적으로 입력했을 때만 실행한다. 세션 종료 감지로 자동 실행하지 않는다."
 ---
 
 ## 지침
 
-현재 세션 작업을 handoff 파일로 저장한다. 목표: new session의 `/sessions:resume`이 TODO·진행상태·다음 액션을 복원할 수 있게.
+현재 세션 작업을 handoff 파일로 저장한다. 목표: new session의 `/sessions:pickup`이 TODO·진행상태·다음 액션을 복원할 수 있게.
 
 ### 1. 저장 경로 준비
 
-1. repo root 결정: `git rev-parse --show-toplevel`. 실패(비-Git) 시 cwd를 root로 사용하고 frontmatter의 `git_*` 필드를 생략
-2. handoff dir: `<root>/.zzizily/handoff/`. 미존재 시 생성
-3. `<root>/.zzizily/.gitignore` 가 없으면 생성(내용은 `*` 한 줄). **Git repository인 경우에만** `git check-ignore <root>/.zzizily/handoff/probe` 로 추적 제외 확인(출력되면 무시됨 = OK). check-ignore가 추적 제외로 보고하지 않으면 저장 **중단**. **non-Git cwd**(`git rev-parse --show-toplevel` 실패)에서는 check-ignore를 건너뛰고 .gitignore 생성만 수행
-4. symlink fail-closed (spec §9): `<root>/.zzizily`, `<root>/.zzizily/handoff`, 그리고 모든 write target(임시 파일 `.tmp-*`, `latest.md.new`, archive 파일) 각각을 `test -L` 로 검사. 하나라도 symlink면 저장 중단하고 사용자에게 통보 (참고: `readlink -f` 는 macOS BSD에서 미지원하므로 `test -L` 기반으로 검사)
+1. 프로젝트명(`<project>`) 결정: `basename "$(git rev-parse --show-toplevel 2>/dev/null || echo "$PWD")"`. 비-Git 디렉토리(`git rev-parse --show-toplevel` 실패)에서는 frontmatter의 `git_*` 필드를 생략
+2. handoff dir: `${XDG_STATE_HOME:-$HOME/.local/state}/handoff/<project>/` (기본 `~/.local/state/handoff/<project>/`). 미존재 시 생성하고 베이스 디렉토리(`~/.local/state/handoff`) 권한을 `700`으로 설정(`mkdir -p` + `chmod 700`)
+3. symlink fail-closed (spec §9): 베이스 디렉토리(`~/.local/state/handoff`), 프로젝트 디렉토리(`~/.local/state/handoff/<project>`), 그리고 모든 write target(임시 파일 `.tmp-*`, `latest.md.new`, archive 파일) 각각을 `test -L` 로 검사. 하나라도 symlink면 저장 중단하고 사용자에게 통보 (참고: `readlink -f` 는 macOS BSD에서 미지원하므로 `test -L` 기반으로 검사)
 
 ### 2. 메타데이터 수집 및 제목(Title) 결정
 
@@ -63,7 +62,7 @@ trigger: manual(handoff)
 <현재 task + 관련 파일/현재 상태>
 
 ## 다음 액션
-<resume 즉시 실행할 것 1-3, 우선순위순>
+<pickup 즉시 실행할 것 1-3, 우선순위순>
 
 ## 블로커 / 의존
 <막힌 것, 대기 — 없으면 섹션 생략>
@@ -72,20 +71,20 @@ trigger: manual(handoff)
 <gotcha, 결정 사유, 취향 — 없으면 섹션 생략>
 
 ## TODO 스냅샷
-<현재 TaskList 상태 요약 — resume이 task 재구성에 사용>
+<현재 TaskList 상태 요약 — pickup이 task 재구성에 사용>
 ```
 
 ### 4. 안전한 저장 순서
 
-1. 임시 파일에 write: `<root>/.zzizily/handoff/.tmp-<short8>` (`<short8>`는 `uuidgen | tr -dc 'a-z0-9' | head -c 8` random 8자리, 동일 초 충돌 방지)
+1. 임시 파일에 write: `<handoff_dir>/.tmp-<short8>` (`<short8>`는 `uuidgen | tr -dc 'a-z0-9' | head -c 8` random 8자리, 동일 초 충돌 방지)
 2. **secret scan**: `command -v gitleaks >/dev/null && gitleaks detect --source "<tmp>" --no-git -v`. 탐지 시 **저장 중단 + 사용자에게 "secret 감지, 저장 취소" 통보**. gitleaks 미설치 시 건너뛰되 결과 보고에 "gitleaks 미설치로 deterministic 보장 아님" 명시
 3. archive로 이동:
    - 파일명: `handoff-<KST-ts>-<short8>.md`
    - 타임스탬프 `<KST-ts>`: `TZ=Asia/Seoul date +%Y%m%d-%H%M%S` 형식 (KST 기준, 예: `20260907-234906`, **Windows 호환성을 위해 `:` 절대 금지**)
    - `<short8>`: random 8자리 (`uuidgen | tr -dc 'a-z0-9' | head -c 8`, 동일 초 충돌 방지)
-   - `mv "<tmp>" "<root>/.zzizily/handoff/handoff-<KST-ts>-<short8>.md"`
-4. latest 갱신(atomic): `cp "<archive>" "<root>/.zzizily/handoff/latest.md.new" && mv "<root>/.zzizily/handoff/latest.md.new" "<root>/.zzizily/handoff/latest.md"` (같은 filesystem rename, race 방지)
+   - `mv "<tmp>" "<handoff_dir>/handoff-<KST-ts>-<short8>.md"`
+4. latest 갱신(atomic): `cp "<archive>" "<handoff_dir>/latest.md.new" && mv "<handoff_dir>/latest.md.new" "<handoff_dir>/latest.md"` (같은 filesystem rename, race 방지)
 
 ### 5. 결과 보고
 
-저장된 archive 경로와 title, 한 줄 요약 출력. 예: `Saved to .zzizily/handoff/handoff-20260907-234906-ab12cd34.md (Title: 카카오 로그인 연동). new session에서 /sessions:resume으로 복원.` secret scan 결과(gitleaks 실행 여부)도 함께 보고.
+저장된 archive 경로와 title, 한 줄 요약 출력. 예: `Saved to ~/.local/state/handoff/<project>/handoff-20260907-234906-ab12cd34.md (Title: 카카오 로그인 연동). new session에서 /sessions:pickup으로 복원.` secret scan 결과(gitleaks 실행 여부)도 함께 보고.
