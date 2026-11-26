@@ -135,8 +135,8 @@
       "source": {
         "source": "local",
         "path": "./plugins/dev",
-        "description": "WiFi ADB deployment, OSS license inventory, OpenAPI updates, and SQLite–D1 replication",
-        "version": "2.1.0"
+        "description": "OSS license inventory, OpenAPI updates, and SQLite–D1 replication",
+        "version": "3.0.0"
       },
       "policy": {
         "installation": "AVAILABLE",

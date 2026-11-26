@@ -18,7 +18,7 @@
 | [rules](../../../plugins/rules/README.md) | 에이전트 지침 파일 구조 감사 및 세션 러닝 반영 | 2.0.0 | `agents-md-management`, `revise-agents-md` | `rules@zzizily` |
 | [docs](../../../plugins/docs/README.md) | README 요약 감사, 문서 재구성(분리/합병/이동), Diátaxis 인덱싱 및 고아 문서 관리 | 2.1.0 | `docs-md-management`, `docs-restructure`, `revise-readme-md` | `docs@zzizily` |
 | [review](../../../plugins/review/README.md) | spec/plan 문서 및 코드 변경 런타임 교차 검증 | 2.1.0 | `verify` | `review@zzizily` |
-| [dev](../../../plugins/dev/README.md) | Android WiFi ADB 빌드 배포 및 오픈소스 라이선스 조사 | 2.1.0 | `deploy-android-wifi`, `license`, `update-openapi`, `sqlite-d1-sync` | `dev@zzizily` |
+| [dev](../../../plugins/dev/README.md) | 오픈소스 라이선스 조사, OpenAPI 스펙 갱신 및 SQLite–D1 복제 | 3.0.0 | `license`, `update-openapi`, `sqlite-d1-sync` | `dev@zzizily` |
 | [jmeter](../../../plugins/jmeter/README.md) | JMeter 스트레스 테스트: JMX 린트, 원격 배포·기동, 실행·knee 탐색, 수집·리포트 | 2.0.0 | `lint`, `deploy`, `run`, `knee`, `collect`, `report`, `bottleneck` | `jmeter@zzizily` |
 | [kisa](../../../plugins/kisa/README.md) | KISA·KECO 체크리스트 기반 서버·웹·AI·DB 취약점 점검 절차 | 1.2.1 | `linux`, `web`, `ai`, `db` | `kisa@zzizily` |
 | [email](../../../plugins/email/README.md) | hiworks 메일 수신·조회·승인 발송 절차 | 1.2.1 | `hiworks` | `email@zzizily` |
